@@ -45,7 +45,7 @@
 
       <div class="text-center mt-4 text-sm text-gray-600">
         Already have an account?
-        <NuxtLink to="/login" class="text-blue-500 hover:underline"
+        <NuxtLink to="/auth/login" class="text-blue-500 hover:underline"
           >Sign in</NuxtLink
         >
       </div>

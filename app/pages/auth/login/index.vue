@@ -50,7 +50,7 @@
 
       <div class="text-center mt-4 text-sm text-gray-600">
         New here?
-        <NuxtLink to="/register" class="text-blue-500 hover:underline"
+        <NuxtLink to="/auth/register" class="text-blue-500 hover:underline"
           >Create</NuxtLink
         >
         your account.<br />
