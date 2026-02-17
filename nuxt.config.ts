@@ -1,8 +1,14 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import tsconfigPaths from "vite-tsconfig-paths";
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@sidebase/nuxt-auth"],
+  modules: ["@nuxtjs/tailwindcss", "@sidebase/nuxt-auth", "@nuxt/icon"],
+
+  vite: {
+    plugins: [[tsconfigPaths()]],
+  },
 
   auth: {
     isEnabled: true,

@@ -69,9 +69,6 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
 // Reactive variables for form inputs and state management
 const email = ref("");
 const password = ref("");

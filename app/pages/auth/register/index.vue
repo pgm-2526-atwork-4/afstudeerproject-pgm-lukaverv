@@ -56,18 +56,12 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
-
 // Reactive variables for form inputs and state management
 const email = ref("");
 const password = ref("");
 const error = ref("");
 const success = ref("");
 const loading = ref(false);
-
-// Router instance for navigation
-const router = useRouter();
 
 // Function to handle user registration
 const handleRegister = async () => {
@@ -85,7 +79,7 @@ const handleRegister = async () => {
 
     // On successful registration, show a success message and navigate to the login page
     success.value = "Account created successfully! Redirecting to login...";
-    router.push("/auth/login");
+    useRedirectToLogin(); // Use the composable to redirect
   } catch (err) {
     error.value =
       err.data?.message || "Failed to create account. Please try again.";
