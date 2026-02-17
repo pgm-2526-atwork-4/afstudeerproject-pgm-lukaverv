@@ -25,7 +25,8 @@ export default defineEventHandler(async (event) => {
       data: { isVerified: true },
     });
 
-    return { message: "Email verified successfully!" };
+    // Redirect the user to the Discover page after successful verification
+    return sendRedirect(event, "/discover");
   } catch {
     throw createError({
       statusCode: 400,
