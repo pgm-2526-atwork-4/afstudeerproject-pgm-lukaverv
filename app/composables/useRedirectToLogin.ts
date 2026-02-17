@@ -1,5 +1,3 @@
-import { useRouter } from "vue-router";
-
 export function useRedirectToLogin() {
   const router = useRouter();
 
