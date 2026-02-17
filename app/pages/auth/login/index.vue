@@ -75,9 +75,6 @@ const password = ref("");
 const error = ref("");
 const loading = ref(false);
 
-// Router instance for navigation
-const router = useRouter();
-
 // Function to handle user login
 const handleLogin = async () => {
   try {
@@ -92,10 +89,10 @@ const handleLogin = async () => {
       },
     });
 
-    // On successful login, store the token and navigate to the discover page
+    // On successful login, store the token and redirect to discover
     if (response && response.user) {
       localStorage.setItem("token", response.token);
-      router.push("/discover");
+      await navigateTo("/discover", { replace: true });
     } else {
       error.value = "Invalid email or password. Please try again.";
     }
