@@ -2,21 +2,10 @@
   <div class="flex items-center justify-center min-h-screen bg-gray-100">
     <div class="bg-white p-8 rounded-lg shadow-md text-center max-w-md w-full">
       <h1 class="text-2xl font-semibold mb-4">
-        {{ status === "success" ? "Email Verified!" : "Email Verification" }}
+        {{ status === "success" ? "Email Verified!" : "Verification Failed" }}
       </h1>
 
-      <div
-        v-if="status === 'loading'"
-        class="text-gray-600 flex flex-col items-center"
-      >
-        <div class="animate-spin h-16 w-16 text-gray-800 mt-4">
-          <Icon name="mdi-loading" class="h-full w-full" />
-          <!-- Centered loading icon -->
-        </div>
-        <p>Verifying your email...</p>
-      </div>
-
-      <div v-else-if="status === 'success'">
+      <div v-if="status === 'success'">
         <div class="flex flex-col items-center">
           <Icon name="mdi-check-circle" class="h-16 w-16 text-green-500 mb-4" />
           <p class="text-gray-600 mb-4">
@@ -31,7 +20,7 @@
         </div>
       </div>
 
-      <div v-else-if="status === 'error'">
+      <div v-else>
         <div class="flex flex-col items-center">
           <Icon name="bx:bxs-error-alt" class="h-16 w-16 text-red-500 mb-4" />
           <p class="text-red-600">
@@ -45,21 +34,10 @@
 </template>
 
 <script setup>
-const status = ref("loading");
 const route = useRoute();
 
 const { redirectToLogin } = useRedirectToLogin();
 
-onMounted(async () => {
-  const token = route.query.token;
-
-  if (!token) {
-    status.value = "error";
-    return;
-  }
-
-  const { error } = await useFetch(`/api/verify?token=${token}`);
-
-  status.value = error.value ? "error" : "success";
-});
+// Read the status from the query parameter (passed from /api/verify)
+const status = computed(() => route.query.status || "error");
 </script>

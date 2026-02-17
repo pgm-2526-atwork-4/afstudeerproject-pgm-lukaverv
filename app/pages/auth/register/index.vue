@@ -79,7 +79,7 @@ const handleRegister = async () => {
 
     // On successful registration, show a success message and navigate to the login page
     success.value = "Account created successfully! Redirecting to login...";
-    useRedirectToLogin(); // Use the composable to redirect
+    navigateTo("/auth/verification-pending"); // Redirect to the pending verification page
   } catch (err) {
     error.value =
       err.data?.message || "Failed to create account. Please try again.";

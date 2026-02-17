@@ -25,12 +25,9 @@ export default defineEventHandler(async (event) => {
       data: { isVerified: true },
     });
 
-    // Redirect the user to the Discover page after successful verification
-    return sendRedirect(event, "/discover");
+    // Redirect to the verify page with success or error status
+    return sendRedirect(event, `/auth/verify?status=success`);
   } catch {
-    throw createError({
-      statusCode: 400,
-      message: "Invalid or expired token",
-    });
+    return sendRedirect(event, `/auth/verify?status=error`);
   }
 });

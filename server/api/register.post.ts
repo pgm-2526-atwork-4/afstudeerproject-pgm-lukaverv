@@ -63,7 +63,7 @@ export default defineEventHandler(async (event) => {
       html: `
         <h1>Welcome to BeatStack!</h1>
         <p>Please verify your email by clicking the link below:</p>
-        <a href="http://localhost:3000/auth/verify?token=${token}">Verify Email</a>
+        <a href="http://localhost:3000/api/verify?token=${token}">Verify Email</a>
       `,
     });
 
