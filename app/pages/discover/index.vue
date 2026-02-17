@@ -4,3 +4,9 @@
     <p>Welcome to the Discover page!</p>
   </div>
 </template>
+
+<script setup>
+definePageMeta({
+  middleware: "require-verification",
+});
+</script>
