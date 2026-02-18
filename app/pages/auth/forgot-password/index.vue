@@ -61,9 +61,12 @@ const handleSubmit = async () => {
     error.value = "";
 
     // Send the email to the backend API
-    const response = await $fetch("/api/forgot-password", {
+    await fetch("/api/auth/forgot-password", {
       method: "POST",
-      body: { email: email.value },
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email: email.value }),
     });
 
     // Success message
