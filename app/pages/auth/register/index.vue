@@ -69,17 +69,16 @@ const handleRegister = async () => {
     loading.value = true; // Indicate that the registration process is ongoing
 
     // Send registration data to the backend
-    const response = await $fetch("/api/register", {
+    await $fetch("/api/register", {
       method: "POST",
-      body: {
-        email: email.value,
-        password: password.value,
-      },
+      body: { email: email.value, password: password.value },
     });
 
-    // On successful registration, show a success message and navigate to the login page
-    success.value = "Account created successfully! Redirecting to login...";
-    navigateTo("/auth/verification-pending"); // Redirect to the pending verification page
+    // On successful registration, redirect to the verification-pending page with the email
+    success.value = "Account created successfully! Please verify your email.";
+    navigateTo(
+      `/auth/verification-pending?email=${encodeURIComponent(email.value)}`,
+    );
   } catch (err) {
     error.value =
       err.data?.message || "Failed to create account. Please try again.";

@@ -1,4 +1,3 @@
-import { prisma } from "../utils/db";
 import jwt from "jsonwebtoken";
 
 export default defineEventHandler(async (event) => {
