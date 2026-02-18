@@ -12,9 +12,11 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
       headers: { Authorization: `Bearer ${token}` },
     });
 
-    // User not verified - redirect to verification pending
+    // User not verified - redirect to verification pending with email
     if (!user.isVerified) {
-      return navigateTo("/auth/verification-pending");
+      return navigateTo(
+        `/auth/verification-pending?email=${encodeURIComponent(user.email)}`,
+      );
     }
 
     // User is verified - allow access (no redirect)
