@@ -92,7 +92,7 @@ const handleLogin = async () => {
     // On successful login, store the token and redirect to discover
     if (response && response.user) {
       localStorage.setItem("token", response.token);
-      await navigateTo("/discover", { replace: true });
+      await navigateTo("/discover");
     } else {
       error.value = "Invalid email or password. Please try again.";
     }

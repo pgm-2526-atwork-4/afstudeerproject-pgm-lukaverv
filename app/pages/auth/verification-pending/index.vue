@@ -14,12 +14,21 @@
         <span v-if="loading">Sending...</span>
         <span v-else>Resend Verification Email</span>
       </button>
+      <div class="mt-4">
+        <button
+          @click="goBack"
+          class="flex items-center text-gray-500 hover:text-gray-700"
+        >
+          <span class="mr-2">←</span> Back
+        </button>
+      </div>
     </div>
   </div>
 </template>
 
 <script setup>
 const route = useRoute();
+const { goBack } = useNavigation();
 const loading = ref(false);
 const userEmail = route.query.email || "";
 
