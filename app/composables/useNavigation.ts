@@ -1,5 +1,3 @@
-import { useRouter } from "#app";
-
 export function useNavigation() {
   const router = useRouter();
 
