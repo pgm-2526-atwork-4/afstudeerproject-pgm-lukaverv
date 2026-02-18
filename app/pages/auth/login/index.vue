@@ -37,7 +37,7 @@
           />
           <div class="text-right mt-1">
             <NuxtLink
-              to="/forgot-password"
+              to="/auth/forgot-password"
               class="text-sm text-blue-500 hover:underline"
               >Forgot password?</NuxtLink
             >
