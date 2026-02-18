@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { sendResetPasswordEmail } from "../utils/sendResetPasswordEmail";
 
 export default defineEventHandler(async (event) => {
   try {
