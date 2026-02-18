@@ -22,6 +22,13 @@
           >Register</NuxtLink
         >
       </div>
+      <div>
+        <NuxtLink
+          to="/discover"
+          class="btn px-6 py-2 border border-gray-300 rounded"
+          >Continue as Guest</NuxtLink
+        >
+      </div>
     </div>
   </div>
 </template>
