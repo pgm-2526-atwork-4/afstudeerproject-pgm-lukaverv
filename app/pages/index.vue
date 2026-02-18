@@ -23,12 +23,23 @@
         >
       </div>
       <div>
-        <NuxtLink
-          to="/discover"
+        <button
+          @click="continueAsGuest"
           class="btn px-6 py-2 border border-gray-300 rounded"
-          >Continue as Guest</NuxtLink
         >
+          Continue as Guest
+        </button>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+const router = useRouter();
+
+// Clear any existing token and navigate to discover page
+const continueAsGuest = () => {
+  localStorage.removeItem("token");
+  router.push("/discover");
+};
+</script>

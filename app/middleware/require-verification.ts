@@ -1,11 +1,15 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
   const token = localStorage.getItem("token");
 
-  // No token - redirect to login
+  // No token - only allow access to '/discover' for guests
   if (!token) {
+    if (to.path === "/discover") {
+      return; // Allow guest access to discover page
+    }
     return navigateTo("/auth/login");
   }
 
+  // Token exists - verify user status
   try {
     // Fetch user with token
     const user = await $fetch("/api/user", {
