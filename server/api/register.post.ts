@@ -1,6 +1,4 @@
-import { prisma } from "../utils/db";
 import bcrypt from "bcrypt";
-import { sendVerificationEmail } from "../utils/sendVerificationEmail";
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
