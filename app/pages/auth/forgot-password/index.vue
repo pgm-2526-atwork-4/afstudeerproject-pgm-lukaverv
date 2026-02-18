@@ -2,70 +2,77 @@
   <div
     class="forgot-password-page flex flex-col items-center justify-center min-h-screen"
   >
-    <h1 class="text-2xl font-semibold mb-4">Forgot Password</h1>
-    <p class="text-base mb-6">Enter your email to reset your password.</p>
+    <div class="w-full max-w-md p-6 bg-gray-100 rounded-lg shadow-md">
+      <h1 class="text-2xl font-semibold text-center mb-2">Forgot Password</h1>
+      <p class="text-center text-sm text-gray-600 mb-6">
+        Enter your email to receive a password reset link
+      </p>
 
-    <form
-      @submit.prevent="handleSubmit"
-      class="flex flex-col space-y-4 w-full max-w-md"
-    >
-      <input
-        v-model="email"
-        type="email"
-        placeholder="Email address"
-        class="px-4 py-2 border border-gray-300 rounded"
-        required
-      />
-      <button
-        type="submit"
-        class="btn px-6 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-      >
-        Send Reset Link
-      </button>
-    </form>
+      <form class="space-y-4" @submit.prevent="handleSubmit">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700"
+            >Email</label
+          >
+          <input
+            id="email"
+            v-model="email"
+            type="email"
+            placeholder="e.g username@gmail.com"
+            class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
+            required
+          />
+        </div>
 
-    <p v-if="message" class="mt-4 text-green-500">{{ message }}</p>
-    <p v-if="error" class="mt-4 text-red-500">{{ error }}</p>
+        <p v-if="message" class="text-green-500 text-sm">{{ message }}</p>
+        <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+
+        <button
+          type="submit"
+          class="w-full px-4 py-2 bg-gray-800 text-white rounded hover:bg-gray-900"
+          :disabled="loading"
+        >
+          <span v-if="loading">Sending...</span>
+          <span v-else>Send Reset Link</span>
+        </button>
+      </form>
+
+      <div class="text-center mt-4 text-sm text-gray-600">
+        Remember your password?
+        <NuxtLink to="/auth/login" class="text-blue-500 hover:underline"
+          >Sign In</NuxtLink
+        >
+      </div>
+    </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      email: "", // User's email input
-      message: "", // Success message
-      error: "", // Error message
-    };
-  },
-  methods: {
-    async handleSubmit() {
-      try {
-        // Clear previous messages
-        this.message = "";
-        this.error = "";
+<script setup>
+// Reactive variables for form inputs and state management
+const email = ref("");
+const message = ref("");
+const error = ref("");
+const loading = ref(false);
 
-        // Send POST request to the API
-        const response = await fetch("/api/forgot-password", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ email: this.email }),
-        });
+// Function to handle the forgot password form submission
+const handleSubmit = async () => {
+  try {
+    loading.value = true; // Start loading state
+    message.value = ""; // Clear previous messages
+    error.value = "";
 
-        // Handle response
-        if (!response.ok) {
-          throw new Error("Failed to send reset link. Please try again.");
-        }
+    // Send the email to the backend API
+    const response = await $fetch("/api/forgot-password", {
+      method: "POST",
+      body: { email: email.value },
+    });
 
-        // Show success message
-        this.message = "A password reset link has been sent to your email.";
-      } catch (err) {
-        // Show error message
-        this.error = err.message;
-      }
-    },
-  },
+    // Success message
+    message.value = "A password reset link has been sent to your email.";
+  } catch (err) {
+    // Handle errors
+    error.value = "Failed to send reset link. Please try again.";
+  } finally {
+    loading.value = false; // End loading state
+  }
 };
 </script>
