@@ -1,8 +1,9 @@
+import { defineNuxtPlugin } from "#app";
 import { defineRule } from "vee-validate";
 import { required, email, min, max } from "@vee-validate/rules";
 
-// Define validation rules with custom messages
-export const setupValidationRules = () => {
+export default defineNuxtPlugin(() => {
+  // Define validation rules with custom messages
   defineRule("required", (value: any) => {
     if (!required(value)) {
       return "This field is required";
@@ -30,4 +31,4 @@ export const setupValidationRules = () => {
     }
     return true;
   });
-};
+});
