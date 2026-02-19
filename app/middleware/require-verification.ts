@@ -1,19 +1,13 @@
 export default defineNuxtRouteMiddleware(async (to, from) => {
-  const token = localStorage.getItem("token");
-
-  // No token - only allow access to '/discover' for guests
-  if (!token) {
-    if (to.path === "/discover") {
-      return; // Allow guest access to discover page
-    }
-    return navigateTo("/auth/login");
+  // Allow guest access to '/discover'
+  if (to.path === "/discover") {
+    return;
   }
 
-  // Token exists - verify user status
+  // Verify user status by fetching user info (cookie is sent automatically)
   try {
-    // Fetch user with token
     const user = await $fetch("/api/user", {
-      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include",
     });
 
     // User not verified - redirect to verification pending with email
@@ -26,7 +20,6 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
     // User is verified - allow access (no redirect)
   } catch (error) {
     // Invalid token or error - redirect to login
-    localStorage.removeItem("token");
     return navigateTo("/auth/login");
   }
 });

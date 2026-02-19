@@ -41,9 +41,17 @@ export default defineEventHandler(async (event) => {
     { expiresIn: "1h" },
   );
 
+  // Set the token as an httpOnly cookie
+  setCookie(event, "auth_token", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "strict",
+    path: "/",
+    maxAge: 60 * 60, // 1 hour
+  });
+
   return {
     message: "Login successful",
-    token,
     user: {
       id: user.id,
       email: user.email,
