@@ -27,19 +27,24 @@
 </template>
 
 <script setup>
+// Import necessary composables for route and navigation handling
 const route = useRoute();
 const { goBack } = useNavigation();
-const loading = ref(false);
-const userEmail = route.query.email || "";
 
+// Reactive variables for managing state
+const loading = ref(false); // Loading state for the resend button
+const userEmail = route.query.email || ""; // Extract email from query parameters
+
+// Function to resend the verification email
 const resendVerificationEmail = async () => {
   if (!userEmail) {
     alert("No email found. Please register again.");
     return;
   }
 
-  loading.value = true;
+  loading.value = true; // Start loading state
   try {
+    // Send a request to resend the verification email
     await $fetch("/api/resend-verification", {
       method: "POST",
       body: { email: userEmail },
@@ -48,12 +53,13 @@ const resendVerificationEmail = async () => {
       "A new verification email has been sent to your inbox. Please check your email and follow the instructions to verify your account.",
     );
   } catch (error) {
+    // Handle errors during the resend process
     alert(
       error.data?.message ||
         "Failed to resend verification email. Please try again later.",
     );
   } finally {
-    loading.value = false;
+    loading.value = false; // End loading state
   }
 };
 </script>
