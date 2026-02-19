@@ -65,11 +65,6 @@
 </template>
 
 <script setup>
-import { setupValidationRules } from "@/validators/registerRules";
-
-// Set up validation rules
-setupValidationRules();
-
 // Reactive variables for state management
 const error = ref("");
 const success = ref("");

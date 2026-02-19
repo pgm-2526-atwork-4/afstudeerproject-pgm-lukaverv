@@ -8,33 +8,39 @@
         Enter your credentials to continue
       </p>
 
-      <form class="space-y-4" @submit.prevent="handleLogin">
+      <VForm class="space-y-4" @submit="handleLogin">
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700"
             >Email</label
           >
-          <input
+          <VField
             id="email"
-            v-model="email"
+            name="email"
             type="email"
+            as="input"
             placeholder="e.g username@gmail.com"
             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
+            rules="required|email"
             autocomplete="email"
           />
+          <VErrorMessage name="email" class="text-red-500 text-sm mt-1" />
         </div>
 
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700"
             >Password</label
           >
-          <input
+          <VField
             id="password"
-            v-model="password"
+            name="password"
             type="password"
+            as="input"
             placeholder="Enter your password"
             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
+            rules="required|min:8"
             autocomplete="current-password"
           />
+          <VErrorMessage name="password" class="text-red-500 text-sm mt-1" />
           <div class="text-right mt-1">
             <NuxtLink
               to="/auth/forgot-password"
@@ -54,7 +60,7 @@
           <span v-if="loading">Signing In...</span>
           <span v-else>Sign In</span>
         </button>
-      </form>
+      </VForm>
 
       <div class="text-center mt-4 text-sm text-gray-600">
         New here?
@@ -70,22 +76,21 @@
 
 <script setup>
 // Reactive variables for form inputs and state management
-const email = ref("");
-const password = ref("");
 const error = ref("");
 const loading = ref(false);
 
 // Function to handle user login
-const handleLogin = async () => {
+const handleLogin = async (values) => {
   try {
     loading.value = true; // Indicate that the login process is ongoing
+    error.value = ""; // Clear previous errors
 
     // Send login credentials to the backend
     const response = await $fetch("/api/login", {
       method: "POST",
       body: {
-        email: email.value,
-        password: password.value,
+        email: values.email,
+        password: values.password,
       },
     });
 
@@ -97,9 +102,14 @@ const handleLogin = async () => {
       error.value = "Invalid email or password. Please try again.";
     }
   } catch (err) {
-    error.value = "An error occurred during login. Please try again.";
+    // Check if the error is due to invalid credentials
+    if (err.data?.message === "Invalid credentials") {
+      error.value = "Invalid email or password. Please try again.";
+    } else {
+      error.value = "An error occurred during login. Please try again.";
+    }
   } finally {
-    loading.value = false; // Reset loading state
+    loading.value = false; // End loading state
   }
 };
 </script>

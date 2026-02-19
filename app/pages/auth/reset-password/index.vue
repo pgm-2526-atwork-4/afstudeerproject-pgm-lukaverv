@@ -8,19 +8,21 @@
         Enter your new password below
       </p>
 
-      <form class="space-y-4" @submit.prevent="handleSubmit">
+      <VForm class="space-y-4" @submit="handleSubmit">
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700"
             >New Password</label
           >
-          <input
+          <VField
             id="password"
-            v-model="password"
+            name="password"
             type="password"
+            as="input"
             placeholder="Enter your new password"
             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
-            required
+            rules="required|min:8|max:128"
           />
+          <VErrorMessage name="password" class="text-red-500 text-sm mt-1" />
         </div>
 
         <div>
@@ -29,13 +31,18 @@
             class="block text-sm font-medium text-gray-700"
             >Confirm Password</label
           >
-          <input
+          <VField
             id="confirmPassword"
-            v-model="confirmPassword"
+            name="confirmPassword"
             type="password"
+            as="input"
             placeholder="Confirm your new password"
             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
-            required
+            rules="required|min:8|max:128"
+          />
+          <VErrorMessage
+            name="confirmPassword"
+            class="text-red-500 text-sm mt-1"
           />
         </div>
 
@@ -50,7 +57,7 @@
           <span v-if="loading">Resetting...</span>
           <span v-else>Reset Password</span>
         </button>
-      </form>
+      </VForm>
 
       <div class="text-center mt-4 text-sm text-gray-600">
         Remember your password?
@@ -65,21 +72,23 @@
 <script setup>
 // Reactive variables for form inputs and state management
 const route = useRoute();
-const password = ref("");
-const confirmPassword = ref("");
 const message = ref("");
 const error = ref("");
 const loading = ref(false);
 
 // Function to handle the password reset form submission
-const handleSubmit = async () => {
+const handleSubmit = async (values) => {
   try {
-    loading.value = true; // Start loading state
+    error.value = ""; // Clear previous errors
+    message.value = ""; // Clear previous messages
 
-    // Validate inputs
-    if (password.value !== confirmPassword.value) {
-      throw new Error("Passwords do not match.");
+    // Check if passwords match
+    if (values.password !== values.confirmPassword) {
+      error.value = "Passwords do not match.";
+      return;
     }
+
+    loading.value = true; // Start loading state
 
     // Extract token from query parameters and send request to reset password
     const token = route.query.token;
@@ -89,7 +98,7 @@ const handleSubmit = async () => {
 
     await $fetch("/api/reset-password", {
       method: "POST",
-      body: { token, password: password.value },
+      body: { token, password: values.password },
     });
 
     // Success message

@@ -8,19 +8,21 @@
         Enter your email to receive a password reset link
       </p>
 
-      <form class="space-y-4" @submit.prevent="handleSubmit">
+      <VForm class="space-y-4" @submit="handleSubmit">
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700"
             >Email</label
           >
-          <input
+          <VField
             id="email"
-            v-model="email"
+            name="email"
             type="email"
+            as="input"
             placeholder="e.g username@gmail.com"
             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
-            required
+            rules="required|email"
           />
+          <VErrorMessage name="email" class="text-red-500 text-sm mt-1" />
         </div>
 
         <p v-if="message" class="text-green-500 text-sm">{{ message }}</p>
@@ -34,7 +36,7 @@
           <span v-if="loading">Sending...</span>
           <span v-else>Send Reset Link</span>
         </button>
-      </form>
+      </VForm>
 
       <div class="text-center mt-4 text-sm text-gray-600">
         Remember your password?
@@ -48,13 +50,12 @@
 
 <script setup>
 // Reactive variables for form inputs and state management
-const email = ref("");
 const message = ref("");
 const error = ref("");
 const loading = ref(false);
 
 // Function to handle the forgot password form submission
-const handleSubmit = async () => {
+const handleSubmit = async (values) => {
   try {
     loading.value = true; // Start loading state
     message.value = ""; // Clear previous messages
@@ -66,7 +67,7 @@ const handleSubmit = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ email: email.value }),
+      body: JSON.stringify({ email: values.email }),
     });
 
     // Success message
