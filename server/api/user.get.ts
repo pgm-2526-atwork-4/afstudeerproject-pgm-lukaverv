@@ -1,14 +1,12 @@
 import jwt from "jsonwebtoken";
 
 export default defineEventHandler(async (event) => {
-  // Get the token from the Authorization header
-  const authHeader = getHeader(event, "authorization");
+  // Get the token from the cookie
+  const token = getCookie(event, "auth_token");
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!token) {
     throw createError({ statusCode: 401, message: "Unauthorized" });
   }
-
-  const token = authHeader.replace("Bearer ", "");
 
   try {
     // Verify the JWT token

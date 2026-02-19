@@ -37,9 +37,8 @@
 <script setup>
 const router = useRouter();
 
-// Clear any existing token and navigate to discover page
+// Navigate to discover page as guest
 const continueAsGuest = () => {
-  localStorage.removeItem("token");
   router.push("/discover");
 };
 </script>

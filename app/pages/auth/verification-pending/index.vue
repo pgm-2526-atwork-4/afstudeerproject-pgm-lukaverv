@@ -1,23 +1,30 @@
 <template>
-  <div class="flex items-center justify-center min-h-screen bg-gray-100">
-    <div class="bg-white p-8 rounded-lg shadow-md text-center max-w-md w-full">
-      <h1 class="text-2xl font-semibold mb-4">Verify Your Email</h1>
-      <p class="text-gray-600 mb-4">
+  <div
+    class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
+  >
+    <AuthLogo />
+
+    <!-- Verification Pending Card -->
+    <div
+      class="w-full max-w-md p-8 bg-[#161b33] rounded-2xl border border-gray-800 shadow-2xl text-center"
+    >
+      <h2 class="text-3xl font-bold text-white mb-4">Verify Your Email</h2>
+      <p class="text-gray-400 mb-6">
         Please verify your email to continue. Check your inbox for the
         verification email.
       </p>
       <button
         @click="resendVerificationEmail"
         :disabled="loading"
-        class="bg-gray-800 text-white px-4 py-2 rounded-md hover:bg-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
+        class="w-full px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg shadow-blue-600/20 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <span v-if="loading">Sending...</span>
         <span v-else>Resend Verification Email</span>
       </button>
-      <div class="mt-4">
+      <div class="mt-6">
         <button
           @click="goBack"
-          class="flex items-center text-gray-500 hover:text-gray-700"
+          class="flex items-center justify-center w-full text-gray-400 hover:text-gray-300 transition"
         >
           <span class="mr-2">←</span> Back
         </button>
@@ -27,11 +34,15 @@
 </template>
 
 <script setup>
+// Import necessary composables for route and navigation handling
 const route = useRoute();
 const { goBack } = useNavigation();
+
+// Reactive variables for managing state
 const loading = ref(false);
 const userEmail = route.query.email || "";
 
+// Function to resend the verification email
 const resendVerificationEmail = async () => {
   if (!userEmail) {
     alert("No email found. Please register again.");
