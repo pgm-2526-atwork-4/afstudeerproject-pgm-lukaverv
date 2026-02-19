@@ -8,32 +8,41 @@
         Create your account to get started
       </p>
 
-      <form class="space-y-4" @submit.prevent="handleRegister">
+      <VForm class="space-y-4" @submit="handleRegister">
         <div>
           <label for="email" class="block text-sm font-medium text-gray-700"
             >Email</label
           >
-          <input
+          <VField
             id="email"
-            v-model="email"
+            name="email"
             type="email"
+            as="input"
             placeholder="e.g username@gmail.com"
             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
+            rules="required|email|max:255"
           />
+          <VErrorMessage name="email" class="text-red-500 text-sm mt-1" />
         </div>
 
         <div>
           <label for="password" class="block text-sm font-medium text-gray-700"
             >Password</label
           >
-          <input
+          <VField
             id="password"
-            v-model="password"
+            name="password"
             type="password"
+            as="input"
             placeholder="Enter your password"
             class="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-gray-400"
+            rules="required|min:8|max:128"
           />
+          <VErrorMessage name="password" class="text-red-500 text-sm mt-1" />
         </div>
+
+        <p v-if="error" class="text-red-500 text-sm">{{ error }}</p>
+        <p v-if="success" class="text-green-500 text-sm">{{ success }}</p>
 
         <button
           type="submit"
@@ -43,7 +52,7 @@
           <span v-if="loading">Registering...</span>
           <span v-else>Register</span>
         </button>
-      </form>
+      </VForm>
 
       <div class="text-center mt-4 text-sm text-gray-600">
         Already have an account?
@@ -56,28 +65,32 @@
 </template>
 
 <script setup>
-// Reactive variables for form inputs and state management
-const email = ref("");
-const password = ref("");
+import { setupValidationRules } from "@/validators/registerRules";
+
+// Set up validation rules
+setupValidationRules();
+
+// Reactive variables for state management
 const error = ref("");
 const success = ref("");
 const loading = ref(false);
 
 // Function to handle user registration
-const handleRegister = async () => {
+const handleRegister = async (values) => {
   try {
     loading.value = true; // Indicate that the registration process is ongoing
+    error.value = ""; // Clear previous errors
 
     // Send registration data to the backend
     await $fetch("/api/register", {
       method: "POST",
-      body: { email: email.value, password: password.value },
+      body: { email: values.email, password: values.password },
     });
 
     // On successful registration, redirect to the verification-pending page with the email
     success.value = "Account created successfully! Please verify your email.";
     navigateTo(
-      `/auth/verification-pending?email=${encodeURIComponent(email.value)}`,
+      `/auth/verification-pending?email=${encodeURIComponent(values.email)}`,
     );
   } catch (err) {
     error.value =
