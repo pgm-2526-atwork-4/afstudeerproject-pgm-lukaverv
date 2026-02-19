@@ -14,7 +14,7 @@
       </p>
 
       <VForm class="space-y-4" @submit="handleLogin">
-        <AuthEmailInput rules="required|email|max:255" />
+        <AuthEmailInput />
 
         <AuthPasswordInput
           name="password"
@@ -94,7 +94,15 @@ const handleLogin = async (values) => {
       error.value = "Invalid email or password. Please try again.";
     }
   } catch (err) {
-    if (err.data?.message === "Invalid credentials") {
+    if (
+      err.statusCode === 403 ||
+      err.data?.message?.includes("verify your email")
+    ) {
+      // User is not verified, redirect to verification pending page
+      await navigateTo(
+        `/auth/verification-pending?email=${encodeURIComponent(values.email)}`,
+      );
+    } else if (err.data?.message === "Invalid credentials") {
       error.value = "Invalid email or password. Please try again.";
     } else {
       error.value = "An error occurred during login. Please try again.";
