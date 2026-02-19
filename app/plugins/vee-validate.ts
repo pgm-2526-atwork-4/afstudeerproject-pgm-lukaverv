@@ -1,6 +1,6 @@
 import { defineNuxtPlugin } from "#app";
 import { defineRule } from "vee-validate";
-import { required, email, min, max } from "@vee-validate/rules";
+import { required, email, min, max, confirmed } from "@vee-validate/rules";
 
 export default defineNuxtPlugin(() => {
   // Define validation rules with custom messages
@@ -28,6 +28,13 @@ export default defineNuxtPlugin(() => {
   defineRule("max", (value: any, [limit]: any) => {
     if (!max(value, [limit])) {
       return `This field must not exceed ${limit} characters`;
+    }
+    return true;
+  });
+
+  defineRule("confirmed", (value: any, [target]: any) => {
+    if (!confirmed(value, [target])) {
+      return "Passwords do not match";
     }
     return true;
   });
