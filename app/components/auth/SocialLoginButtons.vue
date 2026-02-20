@@ -14,6 +14,7 @@
     <div class="grid grid-cols-2 gap-3">
       <button
         type="button"
+        @click="$emit('oauth', 'google')"
         class="flex items-center justify-center gap-2 px-4 py-3 bg-[#0d1230] border border-gray-700 rounded-lg text-white hover:bg-[#1a1f3a] transition"
       >
         <svg class="w-5 h-5" viewBox="0 0 24 24">
@@ -38,6 +39,7 @@
       </button>
       <button
         type="button"
+        @click="$emit('oauth', 'github')"
         class="flex items-center justify-center gap-2 px-4 py-3 bg-[#0d1230] border border-gray-700 rounded-lg text-white hover:bg-[#1a1f3a] transition"
       >
         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
