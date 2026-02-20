@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
     where: { email },
   });
 
-  if (!user) {
+  if (!user || !user.password) {
     throw createError({
       statusCode: 401,
       message: "Invalid credentials",

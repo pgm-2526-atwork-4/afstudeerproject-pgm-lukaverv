@@ -55,7 +55,7 @@ const handleSubmit = async (values) => {
     message.value = "";
     error.value = "";
 
-    await fetch("/api/forgot-password", {
+    await fetch("/api/auth/forgot-password", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

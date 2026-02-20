@@ -51,7 +51,7 @@ const resendVerificationEmail = async () => {
 
   loading.value = true;
   try {
-    await $fetch("/api/resend-verification", {
+    await $fetch("/api/auth/resend-verification", {
       method: "POST",
       body: { email: userEmail },
     });

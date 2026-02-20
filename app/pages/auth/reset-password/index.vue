@@ -74,7 +74,7 @@ const handleSubmit = async (values) => {
       throw new Error("Invalid or missing token.");
     }
 
-    await $fetch("/api/reset-password", {
+    await $fetch("/api/auth/reset-password", {
       method: "POST",
       body: { token, password: values.password },
     });

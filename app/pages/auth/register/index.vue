@@ -93,7 +93,7 @@ const handleRegister = async (values) => {
     loading.value = true;
     error.value = "";
 
-    await $fetch("/api/register", {
+    await $fetch("/api/auth/register", {
       method: "POST",
       body: { email: values.email, password: values.password },
     });
