@@ -4,10 +4,28 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
-  modules: ["@nuxtjs/tailwindcss", "@nuxt/icon", "@vee-validate/nuxt"],
+  modules: [
+    "@nuxtjs/tailwindcss",
+    "@nuxt/icon",
+    "@vee-validate/nuxt",
+    "@sidebase/nuxt-auth",
+  ],
 
   vite: {
     plugins: [[tsconfigPaths()]],
+  },
+
+  runtimeConfig: {
+    authSecret: process.env.NUXT_AUTH_SECRET || "your-nuxt-auth-secret",
+  },
+
+  auth: {
+    provider: {
+      type: "authjs",
+      trustHost: false,
+      defaultProvider: "github",
+      addDefaultCallbackUrl: true,
+    },
   },
 
   veeValidate: {

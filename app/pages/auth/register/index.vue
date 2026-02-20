@@ -63,7 +63,7 @@
         </button>
       </VForm>
 
-      <AuthSocialLoginButtons />
+      <AuthSocialLoginButtons @oauth="handleOAuth" />
 
       <!-- Sign In Link -->
       <div class="text-center mt-6 text-sm text-gray-400">
@@ -85,13 +85,15 @@ const success = ref("");
 const loading = ref(false);
 const agreeToTerms = ref(false);
 
+const { signIn } = useAuth();
+
 // Function to handle user registration
 const handleRegister = async (values) => {
   try {
     loading.value = true;
     error.value = "";
 
-    await $fetch("/api/register", {
+    await $fetch("/api/auth/register", {
       method: "POST",
       body: { email: values.email, password: values.password },
     });
@@ -105,6 +107,16 @@ const handleRegister = async (values) => {
       err.data?.message || "Failed to create account. Please try again.";
   } finally {
     loading.value = false;
+  }
+};
+
+// Function to handle OAuth registration
+const handleOAuth = async (provider) => {
+  try {
+    await signIn(provider, { callbackUrl: "/discover" });
+  } catch (err) {
+    console.error("OAuth registration error:", err);
+    error.value = `Failed to sign up with ${provider}. Please try again.`;
   }
 };
 </script>

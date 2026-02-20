@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || "your-secret-key",
-    ) as { id: number };
+    ) as { id: any };
 
     // Update the user's isVerified field
     await prisma.user.update({

@@ -52,7 +52,7 @@
         </button>
       </VForm>
 
-      <AuthSocialLoginButtons />
+      <AuthSocialLoginButtons @oauth="handleOAuth" />
 
       <!-- Sign Up Link -->
       <div class="text-center mt-6 text-sm text-gray-400">
@@ -73,13 +73,15 @@ const error = ref("");
 const loading = ref(false);
 const rememberMe = ref(false);
 
+const { signIn } = useAuth();
+
 // Function to handle user login
 const handleLogin = async (values) => {
   try {
     loading.value = true;
     error.value = "";
 
-    const response = await $fetch("/api/login", {
+    const response = await $fetch("/api/auth/login", {
       method: "POST",
       body: {
         email: values.email,
@@ -109,6 +111,16 @@ const handleLogin = async (values) => {
     }
   } finally {
     loading.value = false;
+  }
+};
+
+// Function to handle OAuth login
+const handleOAuth = async (provider) => {
+  try {
+    await signIn(provider, { callbackUrl: "/discover" });
+  } catch (err) {
+    console.error("OAuth login error:", err);
+    error.value = `Failed to sign in with ${provider}. Please try again.`;
   }
 };
 </script>

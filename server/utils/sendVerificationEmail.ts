@@ -61,12 +61,12 @@ export const sendVerificationEmail = async (user: User) => {
                       <table role="presentation" style="border-collapse: collapse;">
                         <tr>
                           <td style="border-radius: 8px; background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);">
-                            <a href="http://localhost:3000/api/verify?token=${token}" style="display: inline-block; padding: 14px 32px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">Verify Email Address</a>
+                            <a href="http://localhost:3000/api/auth/verify?token=${token}" style="display: inline-block; padding: 14px 32px; font-size: 16px; font-weight: 600; color: #ffffff; text-decoration: none; border-radius: 8px;">Verify Email Address</a>
                           </td>
                         </tr>
                       </table>
                       <p style="margin: 24px 0 0 0; font-size: 14px; color: #6b7280;">Or copy and paste this link into your browser:</p>
-                      <p style="margin: 8px 0 0 0; font-size: 13px; color: #3b82f6; word-break: break-all;">http://localhost:3000/api/verify?token=${token}</p>
+                      <p style="margin: 8px 0 0 0; font-size: 13px; color: #3b82f6; word-break: break-all;">http://localhost:3000/api/auth/verify?token=${token}</p>
                     </td>
                   </tr>
                   
