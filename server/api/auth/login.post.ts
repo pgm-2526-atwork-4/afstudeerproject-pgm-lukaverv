@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 export default defineEventHandler(async (event) => {
   const body = await readBody(event);
 
-  const { email, password } = body;
+  const { email, password, rememberMe } = body;
 
   if (!email || !password) {
     throw createError({
@@ -42,20 +42,22 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Generate a JWT token
+  // Generate a JWT token with appropriate expiration
+  const tokenExpiry = rememberMe ? "30d" : "1h";
   const token = jwt.sign(
     { id: user.id, email: user.email },
     process.env.JWT_SECRET || "your-secret-key",
-    { expiresIn: "1h" },
+    { expiresIn: tokenExpiry },
   );
 
   // Set the token as an httpOnly cookie
+  const cookieMaxAge = rememberMe ? 60 * 60 * 24 * 30 : 60 * 60; // 30 days or 1 hour
   setCookie(event, "auth_token", token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "strict",
     path: "/",
-    maxAge: 60 * 60, // 1 hour
+    maxAge: cookieMaxAge,
   });
 
   return {

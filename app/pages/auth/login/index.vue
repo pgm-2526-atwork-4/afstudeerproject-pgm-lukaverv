@@ -86,6 +86,7 @@ const handleLogin = async (values) => {
       body: {
         email: values.email,
         password: values.password,
+        rememberMe: rememberMe.value,
       },
       credentials: "include",
     });
