@@ -6,5 +6,10 @@ export function useNavigation() {
     router.back();
   };
 
-  return { goBack };
+  // Redirect to login page
+  const redirectToLogin = () => {
+    router.push("/auth/login");
+  };
+
+  return { goBack, redirectToLogin };
 }

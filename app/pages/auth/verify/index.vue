@@ -43,7 +43,7 @@
 <script setup>
 const route = useRoute();
 
-const { redirectToLogin } = useRedirectToLogin();
+const { redirectToLogin } = useNavigation();
 
 // Read the status from the query parameter (passed from /api/verify)
 const status = computed(() => route.query.status || "error");

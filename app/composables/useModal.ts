@@ -1,6 +1,4 @@
-export const useModalClose = (
-  emit: (event: string, ...args: any[]) => void,
-) => {
+export const useModal = (emit: (event: string, ...args: any[]) => void) => {
   const close = () => {
     emit("update:modelValue", false);
   };

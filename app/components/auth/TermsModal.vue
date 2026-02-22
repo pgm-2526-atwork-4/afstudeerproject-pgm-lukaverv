@@ -119,5 +119,5 @@ defineProps({
 });
 
 const emit = defineEmits(["update:modelValue"]);
-const { close } = useModalClose(emit);
+const { close } = useModal(emit);
 </script>
