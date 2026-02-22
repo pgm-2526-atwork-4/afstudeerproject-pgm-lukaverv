@@ -1,5 +1,6 @@
 import { NuxtAuthHandler } from "#auth";
 import GithubProvider from "next-auth/providers/github";
+import GoogleProvider from "next-auth/providers/google";
 
 export default NuxtAuthHandler({
   secret: useRuntimeConfig().authSecret,
@@ -8,6 +9,11 @@ export default NuxtAuthHandler({
     GithubProvider.default({
       clientId: process.env.GITHUB_CLIENT_ID || "your-client-id",
       clientSecret: process.env.GITHUB_CLIENT_SECRET || "your-client-secret",
+    }),
+    // @ts-expect-error Use .default here for it to work during SSR.
+    GoogleProvider.default({
+      clientId: process.env.GOOGLE_CLIENT_ID || "your-client-id",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "your-client-secret",
     }),
   ],
   callbacks: {

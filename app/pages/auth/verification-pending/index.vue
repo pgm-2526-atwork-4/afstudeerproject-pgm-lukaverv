@@ -2,7 +2,7 @@
   <div
     class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
-    <AuthLogo />
+    <Logo />
 
     <!-- Verification Pending Card -->
     <div

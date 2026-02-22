@@ -2,7 +2,7 @@
   <div
     class="register-page flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
-    <AuthLogo />
+    <Logo />
 
     <!-- Register Card -->
     <div
@@ -12,9 +12,9 @@
       <p class="text-gray-400 text-sm mb-6">Sign up to continue</p>
 
       <VForm class="space-y-4" @submit="handleRegister">
-        <AuthEmailInput rules="required|email|max:255" />
+        <EmailInput rules="required|email|max:255" />
 
-        <AuthPasswordInput
+        <PasswordInput
           name="password"
           label="Password"
           placeholder="Enter your password"
@@ -22,7 +22,7 @@
           autocomplete="new-password"
         />
 
-        <AuthPasswordInput
+        <PasswordInput
           name="confirmPassword"
           label="Confirm Password"
           placeholder="Confirm your password"
@@ -39,11 +39,17 @@
             />
             <span class="text-sm text-gray-400">
               I agree to the
-              <a href="#" class="text-blue-500 hover:text-blue-400 transition"
+              <a
+                @click.prevent="showTermsModal = true"
+                href="#"
+                class="text-blue-500 hover:text-blue-400 transition"
                 >Terms of Service</a
               >
               and
-              <a href="#" class="text-blue-500 hover:text-blue-400 transition"
+              <a
+                @click.prevent="showPrivacyModal = true"
+                href="#"
+                class="text-blue-500 hover:text-blue-400 transition"
                 >Privacy Policy</a
               >
             </span>
@@ -56,14 +62,14 @@
         <button
           type="submit"
           class="w-full px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg shadow-blue-600/20"
-          :disabled="loading || !agreeToTerms"
+          :disabled="loading"
         >
           <span v-if="loading">Signing Up...</span>
           <span v-else>Sign Up</span>
         </button>
       </VForm>
 
-      <AuthSocialLoginButtons @oauth="handleOAuth" />
+      <SocialLoginButtons @oauth="handleOAuth" />
 
       <!-- Sign In Link -->
       <div class="text-center mt-6 text-sm text-gray-400">
@@ -76,6 +82,9 @@
       </div>
     </div>
   </div>
+
+  <TermsModal v-model="showTermsModal" />
+  <PrivacyModal v-model="showPrivacyModal" />
 </template>
 
 <script setup>
@@ -84,11 +93,19 @@ const error = ref("");
 const success = ref("");
 const loading = ref(false);
 const agreeToTerms = ref(false);
+const showTermsModal = ref(false);
+const showPrivacyModal = ref(false);
 
 const { signIn } = useAuth();
 
 // Function to handle user registration
 const handleRegister = async (values) => {
+  if (!agreeToTerms.value) {
+    error.value =
+      "Please agree to the Terms of Service and Privacy Policy before continuing.";
+    return;
+  }
+
   try {
     loading.value = true;
     error.value = "";

@@ -2,7 +2,7 @@
   <div
     class="forgot-password-page flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
-    <AuthLogo />
+    <Logo />
 
     <!-- Forgot Password Card -->
     <div
@@ -14,7 +14,7 @@
       </p>
 
       <VForm class="space-y-4" @submit="handleSubmit">
-        <AuthEmailInput />
+        <EmailInput />
 
         <p v-if="message" class="text-green-400 text-sm">{{ message }}</p>
         <p v-if="error" class="text-red-400 text-sm">{{ error }}</p>

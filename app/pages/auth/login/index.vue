@@ -2,7 +2,7 @@
   <div
     class="login-page flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
-    <AuthLogo />
+    <Logo />
 
     <!-- Login Card -->
     <div
@@ -14,9 +14,9 @@
       </p>
 
       <VForm class="space-y-4" @submit="handleLogin">
-        <AuthEmailInput />
+        <EmailInput />
 
-        <AuthPasswordInput
+        <PasswordInput
           name="password"
           label="Password"
           placeholder="Enter your password"
@@ -52,7 +52,7 @@
         </button>
       </VForm>
 
-      <AuthSocialLoginButtons @oauth="handleOAuth" />
+      <SocialLoginButtons @oauth="handleOAuth" />
 
       <!-- Sign Up Link -->
       <div class="text-center mt-6 text-sm text-gray-400">
@@ -86,6 +86,7 @@ const handleLogin = async (values) => {
       body: {
         email: values.email,
         password: values.password,
+        rememberMe: rememberMe.value,
       },
       credentials: "include",
     });

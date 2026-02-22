@@ -2,7 +2,7 @@
   <div
     class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
-    <AuthLogo />
+    <Logo />
 
     <!-- Verification Status Card -->
     <div
@@ -43,7 +43,7 @@
 <script setup>
 const route = useRoute();
 
-const { redirectToLogin } = useRedirectToLogin();
+const { redirectToLogin } = useNavigation();
 
 // Read the status from the query parameter (passed from /api/verify)
 const status = computed(() => route.query.status || "error");

@@ -6,7 +6,7 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
 
   // Verify user status by fetching user info (cookie is sent automatically)
   try {
-    const user = await $fetch("/api/user", {
+    const user: any = await $fetch("/api/user", {
       credentials: "include",
     });
 

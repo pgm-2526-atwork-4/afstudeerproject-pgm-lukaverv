@@ -13,7 +13,7 @@ export default defineEventHandler(async (event) => {
     const decoded = jwt.verify(
       token,
       process.env.JWT_SECRET || "your-secret-key",
-    ) as { id: number; email: string };
+    ) as { id: any; email: string };
 
     // Fetch user info from the database
     const user = await prisma.user.findUnique({

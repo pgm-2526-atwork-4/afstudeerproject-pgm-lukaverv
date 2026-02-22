@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 interface ResetTokenPayload {
-  id: number;
+  id: string;
   email: string;
 }
 

@@ -19,6 +19,13 @@ export default defineNuxtConfig({
     authSecret: process.env.NUXT_AUTH_SECRET || "your-nuxt-auth-secret",
   },
 
+  components: [
+    {
+      path: "~/components",
+      pathPrefix: false,
+    },
+  ],
+
   auth: {
     provider: {
       type: "authjs",
