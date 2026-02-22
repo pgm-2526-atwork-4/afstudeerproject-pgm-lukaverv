@@ -2,7 +2,7 @@
   <div
     class="reset-password-page flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
-    <AuthLogo />
+    <Logo />
 
     <!-- Reset Password Card -->
     <div
@@ -12,7 +12,7 @@
       <p class="text-gray-400 text-sm mb-6">Enter your new password below</p>
 
       <VForm class="space-y-4" @submit="handleSubmit">
-        <AuthPasswordInput
+        <PasswordInput
           name="password"
           label="New Password"
           placeholder="Enter your new password"
@@ -20,7 +20,7 @@
           autocomplete="new-password"
         />
 
-        <AuthPasswordInput
+        <PasswordInput
           name="confirmPassword"
           label="Confirm Password"
           placeholder="Confirm your new password"

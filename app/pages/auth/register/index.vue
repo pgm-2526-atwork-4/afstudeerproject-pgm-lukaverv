@@ -2,7 +2,7 @@
   <div
     class="register-page flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
-    <AuthLogo />
+    <Logo />
 
     <!-- Register Card -->
     <div
@@ -12,9 +12,9 @@
       <p class="text-gray-400 text-sm mb-6">Sign up to continue</p>
 
       <VForm class="space-y-4" @submit="handleRegister">
-        <AuthEmailInput rules="required|email|max:255" />
+        <EmailInput rules="required|email|max:255" />
 
-        <AuthPasswordInput
+        <PasswordInput
           name="password"
           label="Password"
           placeholder="Enter your password"
@@ -22,7 +22,7 @@
           autocomplete="new-password"
         />
 
-        <AuthPasswordInput
+        <PasswordInput
           name="confirmPassword"
           label="Confirm Password"
           placeholder="Confirm your password"
@@ -69,7 +69,7 @@
         </button>
       </VForm>
 
-      <AuthSocialLoginButtons @oauth="handleOAuth" />
+      <SocialLoginButtons @oauth="handleOAuth" />
 
       <!-- Sign In Link -->
       <div class="text-center mt-6 text-sm text-gray-400">
@@ -83,8 +83,8 @@
     </div>
   </div>
 
-  <AuthTermsModal v-model="showTermsModal" />
-  <AuthPrivacyModal v-model="showPrivacyModal" />
+  <TermsModal v-model="showTermsModal" />
+  <PrivacyModal v-model="showPrivacyModal" />
 </template>
 
 <script setup>
