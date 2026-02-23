@@ -16,6 +16,7 @@ export default defineEventHandler(async (event) => {
   // Find the user in the database
   const user = await prisma.user.findUnique({
     where: { email },
+    include: { profile: true },
   });
 
   if (!user || !user.password) {
@@ -65,6 +66,7 @@ export default defineEventHandler(async (event) => {
     user: {
       id: user.id,
       email: user.email,
+      hasProfile: !!user.profile, // ensure this is a boolean indicating if the user has a profile or not 
     },
   };
 });

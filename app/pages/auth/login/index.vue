@@ -92,7 +92,11 @@ const handleLogin = async (values) => {
     });
 
     if (response && response.user) {
-      await navigateTo("/discover");
+      if (!response.user.hasProfile) {
+        await navigateTo("/profile/create");
+      } else {
+        await navigateTo("/discover");
+      }
     } else {
       error.value = "Invalid email or password. Please try again.";
     }

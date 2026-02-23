@@ -116,7 +116,7 @@ const handleRegister = async (values) => {
     });
 
     success.value = "Account created successfully! Please verify your email.";
-    navigateTo(
+    await navigateTo(
       `/auth/verification-pending?email=${encodeURIComponent(values.email)}`,
     );
   } catch (err) {
