@@ -17,6 +17,12 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     authSecret: process.env.NUXT_AUTH_SECRET || "your-nuxt-auth-secret",
+    public: {
+      cloudinary: {
+        cloudName: process.env.NUXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+        uploadPreset: process.env.NUXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET,
+      },
+    },
   },
 
   components: [
