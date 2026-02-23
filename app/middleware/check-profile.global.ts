@@ -6,8 +6,12 @@ export default defineNuxtRouteMiddleware(async (to) => {
     return;
   }
 
-  // Don't check on auth pages or profile creation page
-  if (to.path.startsWith("/auth") || to.path === "/profile/create") {
+  // Don't check on auth pages, index page, or profile creation page
+  if (
+    to.path.startsWith("/auth") ||
+    to.path === "/profile/create" ||
+    to.path === "/"
+  ) {
     return;
   }
 
