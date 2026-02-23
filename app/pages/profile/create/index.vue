@@ -208,17 +208,20 @@
                     </div>
                   </div>
                   <p class="text-xs text-gray-500 mt-2 text-center">
-                    Upload functionality coming soon
+                    Upload your profile picture below
                   </p>
                 </div>
 
-                <input
-                  id="profilePicture"
-                  v-model="form.profilePicture"
-                  type="url"
-                  class="w-full px-4 py-3 bg-[#0d1230] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition"
-                  placeholder="Or paste image URL"
-                />
+                <!-- Cloudinary Upload Button -->
+                <button
+                  type="button"
+                  class="w-full px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg shadow-blue-600/20"
+                  @click="handleUploadClick"
+                >
+                  {{
+                    form.profilePicture ? "Change Picture" : "Upload Picture"
+                  }}
+                </button>
               </div>
 
               <div>
@@ -363,7 +366,18 @@
 </template>
 
 <script setup lang="ts">
+// Load Cloudinary upload widget script
+useHead({
+  script: [
+    {
+      src: "https://upload-widget.cloudinary.com/global/all.js",
+      defer: true,
+    },
+  ],
+});
+
 const { data: session } = useAuth();
+const config = useRuntimeConfig();
 const loading = ref(false);
 const error = ref("");
 const currentStep = ref(1);
@@ -462,6 +476,48 @@ const handleSubmit = async () => {
       err.data?.message || "Failed to create profile. Please try again.";
   } finally {
     loading.value = false;
+  }
+};
+
+const handleUploadClick = () => {
+  const cloudName = (config.public.cloudinary as any).cloudName;
+  const uploadPreset = (config.public.cloudinary as any).uploadPreset;
+
+  if (!cloudName || !uploadPreset) {
+    error.value = "Upload configuration missing";
+    return;
+  }
+
+  // @ts-ignore
+  if (typeof window !== "undefined" && window.cloudinary) {
+    // @ts-ignore
+    const widget = window.cloudinary.createUploadWidget(
+      {
+        cloudName,
+        uploadPreset,
+        sources: ["local"],
+        multiple: false,
+        maxFiles: 1,
+        clientAllowedFormats: ["jpg", "jpeg", "png", "gif", "webp"],
+        maxFileSize: 5000000,
+        folder: "profiles",
+        cropping: true,
+        showSkipCropButton: false,
+        croppingAspectRatio: 1,
+        croppingDefaultSelectionRatio: 0.8,
+        croppingShowDimensions: true,
+        croppingCoordinatesMode: "custom",
+      },
+      (err: any, result: any) => {
+        if (!err && result?.event === "success") {
+          // Use eager transformation if available, otherwise use original
+          const url =
+            result.info.eager?.[0]?.secure_url || result.info.secure_url;
+          form.value.profilePicture = url;
+        }
+      },
+    );
+    widget.open();
   }
 };
 </script>
