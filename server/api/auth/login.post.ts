@@ -18,6 +18,10 @@ export default defineEventHandler(async (event) => {
     where: { email },
   });
 
+  const hasProfile = await prisma.profile.findUnique({
+    where: { userId: user?.id },
+  });
+
   if (!user || !user.password) {
     throw createError({
       statusCode: 401,
@@ -65,6 +69,7 @@ export default defineEventHandler(async (event) => {
     user: {
       id: user.id,
       email: user.email,
+      hasProfile,
     },
   };
 });
