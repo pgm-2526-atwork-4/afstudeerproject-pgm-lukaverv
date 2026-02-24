@@ -8,13 +8,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const { username, profilePicture } = await readBody(event);
+  const { username, profilePicture, bio, socialLinks } = await readBody(event);
 
   // Validate at least one field is provided
-  if (!username && !profilePicture) {
+  if (!username && !profilePicture && bio === undefined && !socialLinks) {
     throw createError({
       statusCode: 400,
-      message: "At least one field (username or profilePicture) is required",
+      message: "At least one field is required for update",
     });
   }
 
@@ -51,6 +51,8 @@ export default defineEventHandler(async (event) => {
       data: {
         ...(username && { username }),
         ...(profilePicture && { profilePicture }),
+        ...(bio !== undefined && { bio }),
+        ...(socialLinks && { socialLinks }),
         updatedAt: new Date(),
       },
       select: {
@@ -65,6 +67,11 @@ export default defineEventHandler(async (event) => {
         socialLinks: true,
         createdAt: true,
         updatedAt: true,
+        user: {
+          select: {
+            email: true,
+          },
+        },
       },
     });
 
