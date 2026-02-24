@@ -63,31 +63,33 @@
             <div class="w-10 h-10 rounded-full bg-gray-700 animate-pulse"></div>
           </template>
 
-          <!-- User Info (Loaded) -->
+          <!-- Guest User (Not Logged In) -->
+          <template v-else-if="!session?.user">
+            <div class="flex items-center gap-2">
+              <NuxtLink
+                to="/auth/login"
+                class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-white transition-colors duration-200"
+              >
+                Sign In
+              </NuxtLink>
+              <NuxtLink
+                to="/auth/register"
+                class="px-4 py-2 text-sm font-medium bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors duration-200"
+              >
+                Sign Up
+              </NuxtLink>
+            </div>
+          </template>
+
+          <!-- Authenticated User -->
           <template v-else>
             <!-- Username -->
             <span class="text-gray-300 font-medium hidden sm:block">
               {{ username }}
             </span>
 
-            <!-- Profile Picture -->
-            <NuxtLink
-              to="/settings"
-              class="w-10 h-10 rounded-full bg-gray-700 hover:bg-gray-600 hover:ring-2 hover:ring-blue-500 transition-all duration-200 flex items-center justify-center overflow-hidden"
-              aria-label="Profile Settings"
-            >
-              <img
-                v-if="userProfile?.profilePicture"
-                :src="userProfile.profilePicture"
-                :alt="username"
-                class="w-full h-full object-cover"
-              />
-              <Icon
-                v-else
-                name="mdi:account-circle"
-                class="w-8 h-8 text-gray-300"
-              />
-            </NuxtLink>
+            <!-- User Dropdown Menu -->
+            <UserDropdown :userProfile="userProfile" :username="username" />
           </template>
         </div>
       </div>
@@ -118,6 +120,9 @@ watch(
       loading.value = false;
     } else if (userProfile.value) {
       // Profile already cached - stop loading immediately
+      loading.value = false;
+    } else if (!userId && session.value !== undefined) {
+      // No user ID and session loaded - user is a guest
       loading.value = false;
     }
   },
