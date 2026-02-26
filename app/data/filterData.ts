@@ -44,14 +44,3 @@ export const musicalKeys = [
   "A#m",
   "Bm",
 ];
-
-export const moods = [
-  { name: "Dark", icon: "ph:moon" },
-  { name: "Melodic", icon: "ph:music-notes" },
-  { name: "Aggressive", icon: "ph:lightning" },
-  { name: "Chill", icon: "ph:cloud" },
-  { name: "Energetic", icon: "ph:fire" },
-  { name: "Emotional", icon: "ph:heart" },
-  { name: "Happy", icon: "ph:smiley" },
-  { name: "Sad", icon: "ph:drop" },
-];
