@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@vee-validate/nuxt",
     "@sidebase/nuxt-auth",
+    "@vueuse/motion/nuxt",
   ],
 
   vite: {

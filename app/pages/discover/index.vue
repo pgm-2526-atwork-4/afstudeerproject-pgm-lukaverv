@@ -8,18 +8,43 @@
         <!-- Large Header -->
         <div class="text-center mb-12">
           <h1
+            v-motion
+            :initial="{ opacity: 0, y: 20 }"
+            :enter="{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 700, delay: 0 },
+            }"
             class="text-6xl md:text-7xl lg:text-8xl font-black text-white mb-6 tracking-tight"
           >
             DISCOVER BEATS
           </h1>
-          <p class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto">
+          <p
+            v-motion
+            :initial="{ opacity: 0, y: 20 }"
+            :enter="{
+              opacity: 1,
+              y: 0,
+              transition: { duration: 700, delay: 100 },
+            }"
+            class="text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto"
+          >
             Discover premium quality beats for your next hit. Search, filter,
             and find the perfect sound.
           </p>
         </div>
 
         <!-- Search Bar -->
-        <div class="max-w-4xl mx-auto mb-8">
+        <div
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{
+            opacity: 1,
+            y: 0,
+            transition: { duration: 700, delay: 200 },
+          }"
+          class="max-w-4xl mx-auto mb-8"
+        >
           <div class="relative">
             <Icon
               name="ph:magnifying-glass"
@@ -39,7 +64,16 @@
         </div>
 
         <!-- Filter Buttons -->
-        <div class="max-w-5xl mx-auto">
+        <div
+          v-motion
+          :initial="{ opacity: 0, y: 20 }"
+          :enter="{
+            opacity: 1,
+            y: 0,
+            transition: { duration: 700, delay: 300 },
+          }"
+          class="max-w-5xl mx-auto"
+        >
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 relative">
             <!-- Genre Filter -->
             <div class="relative">
@@ -326,6 +360,13 @@
         <div
           v-for="beat in beats"
           :key="beat.id"
+          v-motion
+          :initial="{ opacity: 0, y: 30 }"
+          :visible-once="{
+            opacity: 1,
+            y: 0,
+            transition: { duration: 500, ease: 'easeOut' },
+          }"
           @click="togglePlay(beat.id)"
           :class="
             playingBeatId === beat.id ? 'bg-blue-600/5' : 'hover:bg-[#1a1f35]'
@@ -429,7 +470,16 @@
       </div>
 
       <!-- Pagination -->
-      <div class="mt-10 flex items-center justify-between px-4">
+      <div
+        v-motion
+        :initial="{ opacity: 0, y: 30 }"
+        :visible-once="{
+          opacity: 1,
+          y: 0,
+          transition: { duration: 500, ease: 'easeOut' },
+        }"
+        class="mt-10 flex items-center justify-between px-4"
+      >
         <!-- Showing results -->
         <p class="text-sm text-gray-400">
           Showing <span class="text-white font-medium">1–12</span> of
