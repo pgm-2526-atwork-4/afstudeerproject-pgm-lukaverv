@@ -1,0 +1,57 @@
+export const genres = [
+  "Hip-Hop",
+  "Trap",
+  "R&B",
+  "Drill",
+  "Pop",
+  "Lo-Fi",
+  "Boom Bap",
+  "Afrobeat",
+  "UK Drill",
+  "Latin Trap",
+];
+
+export const bpmRanges = [
+  { label: "Slow (60-90 BPM)", min: 60, max: 90 },
+  { label: "Medium (90-120 BPM)", min: 90, max: 120 },
+  { label: "Fast (120-150 BPM)", min: 120, max: 150 },
+  { label: "Very Fast (150+ BPM)", min: 150, max: 999 },
+];
+
+export const musicalKeys = [
+  "C",
+  "C#",
+  "D",
+  "D#",
+  "E",
+  "F",
+  "F#",
+  "G",
+  "G#",
+  "A",
+  "A#",
+  "B",
+  "Cm",
+  "C#m",
+  "Dm",
+  "D#m",
+  "Em",
+  "Fm",
+  "F#m",
+  "Gm",
+  "G#m",
+  "Am",
+  "A#m",
+  "Bm",
+];
+
+export const moods = [
+  { name: "Dark", icon: "ph:moon" },
+  { name: "Melodic", icon: "ph:music-notes" },
+  { name: "Aggressive", icon: "ph:lightning" },
+  { name: "Chill", icon: "ph:cloud" },
+  { name: "Energetic", icon: "ph:fire" },
+  { name: "Emotional", icon: "ph:heart" },
+  { name: "Happy", icon: "ph:smiley" },
+  { name: "Sad", icon: "ph:drop" },
+];
