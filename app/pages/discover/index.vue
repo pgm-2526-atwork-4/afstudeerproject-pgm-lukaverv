@@ -298,195 +298,213 @@
     </Transition>
 
     <!-- Results Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="mb-6 flex justify-between items-center">
-        <h2 class="text-2xl font-bold text-white">Results for "All Tracks"</h2>
-        <div class="flex gap-2">
-          <button
-            class="px-4 py-2 rounded-lg transition bg-blue-600 text-white"
-          >
-            Table
-          </button>
-          <button
-            class="px-4 py-2 rounded-lg transition bg-[#161b33] border border-gray-700/50 text-gray-400"
-          >
-            Grid
-          </button>
+    <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="mb-8">
+        <h2 class="text-3xl font-bold text-white mb-2">Browse Beats</h2>
+        <p class="text-gray-400">{{ beats.length }} tracks available</p>
+      </div>
+
+      <!-- Column Headers -->
+      <div
+        class="grid grid-cols-[2.5fr_1fr_1fr_2fr_180px] gap-6 px-4 pb-3 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+      >
+        <div class="flex items-center gap-4">
+          <div class="w-14 flex-shrink-0"></div>
+          <div>Title</div>
+        </div>
+        <div>Time</div>
+        <div>BPM</div>
+        <div>Tags</div>
+        <div class="flex items-center gap-3">
+          <div class="w-5"></div>
+          <div>Price</div>
         </div>
       </div>
 
-      <!-- Table View -->
-      <div
-        class="bg-[#161b33] border border-gray-700/50 rounded-2xl shadow-xl overflow-hidden"
-      >
-        <table class="min-w-full divide-y divide-gray-700/50">
-          <thead class="bg-[#0d1230]">
-            <tr>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
+      <!-- Beats List -->
+      <div class="space-y-0">
+        <div
+          v-for="beat in beats"
+          :key="beat.id"
+          @click="togglePlay(beat.id)"
+          :class="
+            playingBeatId === beat.id ? 'bg-blue-600/5' : 'hover:bg-[#1a1f35]'
+          "
+          class="grid grid-cols-[2.5fr_1fr_1fr_2fr_180px] gap-6 items-center px-4 py-4 transition-all duration-150 cursor-pointer group"
+        >
+          <!-- Title Column -->
+          <div class="flex items-center gap-4 min-w-0">
+            <div class="flex-shrink-0 relative">
+              <img
+                :src="beat.coverImage"
+                :alt="beat.title"
+                class="h-14 w-14 rounded object-cover"
+              />
+              <!-- Play/Pause Overlay -->
+              <div
+                v-if="playingBeatId === beat.id"
+                class="absolute inset-0 flex items-center justify-center bg-black/50 rounded backdrop-blur-sm"
               >
-                Producer
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-              >
-                Track Name
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-              >
-                BPM
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-              >
-                Key
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-              >
-                Genre
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-              >
-                Tags
-              </th>
-              <th
-                class="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider"
-              >
-                Price
-              </th>
-            </tr>
-          </thead>
-          <tbody class="divide-y divide-gray-700/50">
-            <tr
-              v-for="beat in beats"
-              :key="beat.id"
-              @click="togglePlay(beat.id)"
-              :class="
-                playingBeatId === beat.id
-                  ? 'bg-blue-600/10 border-l-4 border-l-blue-500'
-                  : 'hover:bg-[#1a2040]'
-              "
-              class="transition cursor-pointer group"
-            >
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center">
-                  <div class="h-10 w-10 flex-shrink-0 relative">
-                    <!-- Cover Image -->
-                    <img
-                      class="h-10 w-10 rounded-full ring-2 ring-gray-700/50 transition-all group-hover:ring-blue-500/50"
-                      :src="beat.producerImage"
-                      :alt="beat.producer"
-                    />
-                    <!-- Play/Pause Overlay on Hover or Playing -->
-                    <div
-                      v-if="playingBeatId === beat.id"
-                      class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full"
-                    >
-                      <!-- Animated Equalizer Bars When Playing -->
-                      <div class="flex items-center gap-0.5 h-4">
-                        <div
-                          class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-1"
-                        ></div>
-                        <div
-                          class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-2"
-                        ></div>
-                        <div
-                          class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-3"
-                        ></div>
-                      </div>
-                    </div>
-                    <div
-                      v-else
-                      class="absolute inset-0 flex items-center justify-center bg-black/40 rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                    >
-                      <Icon name="ph:play-fill" class="text-white text-lg" />
-                    </div>
-                  </div>
-                  <div class="ml-4">
-                    <NuxtLink
-                      :to="`/producer/${beat.id}`"
-                      @click.stop
-                      class="text-sm font-medium text-gray-300 hover:text-blue-400 transition-colors duration-150 underline-offset-2 hover:underline decoration-blue-400"
-                    >
-                      {{ beat.producer }}
-                    </NuxtLink>
-                  </div>
+                <!-- Animated Equalizer Bars When Playing -->
+                <div class="flex items-center gap-0.5 h-5">
+                  <div
+                    class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-1"
+                  ></div>
+                  <div
+                    class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-2"
+                  ></div>
+                  <div
+                    class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-3"
+                  ></div>
                 </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap">
-                <div class="flex items-center gap-3">
-                  <!-- Title with visual indicator when playing -->
-                  <div>
-                    <NuxtLink :to="`/beat/${beat.id}`" @click.stop>
-                      <div
-                        :class="
-                          playingBeatId === beat.id
-                            ? 'text-blue-400 font-semibold'
-                            : 'text-white hover:text-blue-400'
-                        "
-                        class="text-sm font-medium transition-colors duration-150 underline-offset-2 hover:underline decoration-blue-400"
-                      >
-                        {{ beat.title }}
-                      </div>
-                    </NuxtLink>
-                    <div class="text-xs text-gray-400">{{ beat.duration }}</div>
-                  </div>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                {{ beat.bpm }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                {{ beat.key }}
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
-                {{ beat.genre }}
-              </td>
-              <td class="px-6 py-4">
-                <div class="flex flex-wrap gap-1">
-                  <span
-                    v-for="tag in beat.tags"
-                    :key="tag"
-                    class="px-2 py-1 text-xs font-medium bg-[#0d1230] text-gray-300 rounded border border-gray-700/50"
-                  >
-                    #{{ tag }}
-                  </span>
-                </div>
-              </td>
-              <td class="px-6 py-4 whitespace-nowrap text-sm">
-                <button
-                  @click.stop
-                  class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2"
+              </div>
+              <div
+                v-else
+                class="absolute inset-0 flex items-center justify-center bg-black/50 rounded opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
+              >
+                <Icon name="ph:play-fill" class="text-white text-xl" />
+              </div>
+            </div>
+            <div class="min-w-0">
+              <NuxtLink :to="`/beat/${beat.id}`" @click.stop>
+                <h3
+                  :class="
+                    playingBeatId === beat.id
+                      ? 'text-blue-400'
+                      : 'text-white hover:text-blue-400'
+                  "
+                  class="text-base font-bold transition-colors duration-150 truncate"
                 >
-                  <Icon name="ph:shopping-cart" size="16" />
-                  ${{ beat.price }}
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+                  {{ beat.title }}
+                </h3>
+              </NuxtLink>
+              <NuxtLink
+                :to="`/producer/${beat.id}`"
+                @click.stop
+                class="text-sm text-gray-400 hover:text-blue-400 transition-colors duration-150 truncate block"
+              >
+                {{ beat.producer }}
+              </NuxtLink>
+            </div>
+          </div>
+
+          <!-- Time Column -->
+          <div class="text-gray-300 text-sm">
+            {{ beat.duration }}
+          </div>
+
+          <!-- BPM Column -->
+          <div class="text-gray-300 text-sm">
+            {{ beat.bpm }}
+          </div>
+
+          <!-- Tags Column -->
+          <div class="flex flex-wrap gap-2">
+            <span
+              v-for="tag in beat.tags.slice(0, 2)"
+              :key="tag"
+              class="px-2.5 py-1 text-xs font-medium bg-gray-800/50 text-gray-300 rounded-md"
+            >
+              {{ tag }}
+            </span>
+          </div>
+
+          <!-- Action Column -->
+          <div class="flex items-center gap-3">
+            <button
+              @click.stop
+              class="text-gray-400 hover:text-white transition-colors"
+            >
+              <Icon name="ph:share-network" size="20" />
+            </button>
+            <button
+              @click.stop
+              class="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition flex items-center gap-2 font-semibold whitespace-nowrap"
+            >
+              <Icon name="ph:shopping-cart" size="18" />
+              ${{ beat.price }}
+            </button>
+          </div>
+        </div>
       </div>
 
       <!-- Pagination -->
-      <div class="mt-8 flex justify-center">
-        <nav class="flex gap-2">
+      <div class="mt-10 flex items-center justify-between px-4">
+        <!-- Showing results -->
+        <p class="text-sm text-gray-400">
+          Showing <span class="text-white font-medium">1–12</span> of
+          <span class="text-white font-medium">248</span> beats
+        </p>
+
+        <!-- Page buttons -->
+        <nav class="flex items-center gap-1">
+          <!-- Prev -->
           <button
-            class="px-4 py-2 rounded-lg transition bg-blue-600 text-white"
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-[#1a1f35] transition-colors"
+          >
+            <Icon name="ph:caret-left" size="16" />
+            Prev
+          </button>
+
+          <button
+            class="w-9 h-9 rounded-lg text-sm font-medium bg-blue-600 text-white"
           >
             1
           </button>
           <button
-            class="px-4 py-2 rounded-lg transition bg-[#161b33] border border-gray-700/50 text-gray-400 hover:bg-[#1a2040]"
+            class="w-9 h-9 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1f35] transition-colors"
           >
             2
           </button>
+          <button
+            class="w-9 h-9 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1f35] transition-colors"
+          >
+            3
+          </button>
+          <span class="w-9 h-9 flex items-center justify-center text-gray-600"
+            >…</span
+          >
+          <button
+            class="w-9 h-9 rounded-lg text-sm font-medium text-gray-400 hover:text-white hover:bg-[#1a1f35] transition-colors"
+          >
+            21
+          </button>
+
+          <!-- Next -->
+          <button
+            class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm text-gray-400 hover:text-white hover:bg-[#1a1f35] transition-colors"
+          >
+            Next
+            <Icon name="ph:caret-right" size="16" />
+          </button>
         </nav>
+
+        <!-- Per page -->
+        <div class="flex items-center gap-2 text-sm text-gray-400">
+          <span>Show</span>
+          <select
+            class="bg-[#1a1f35] border border-gray-700/50 text-white rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500"
+          >
+            <option>12</option>
+            <option>24</option>
+            <option>48</option>
+          </select>
+          <span>per page</span>
+        </div>
       </div>
     </div>
   </div>
+
+  <!-- Back to Top -->
+  <Transition name="fade-up">
+    <button
+      v-if="showBackToTop"
+      @click="scrollToTop"
+      class="fixed bottom-8 right-8 z-50 w-11 h-11 flex items-center justify-center rounded-full bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/30 transition-colors"
+    >
+      <Icon name="ph:arrow-up-bold" size="18" />
+    </button>
+  </Transition>
 </template>
 
 <script setup>
@@ -502,6 +520,7 @@ const beats = sampleBeats;
 // Filter state
 const openFilter = ref(null);
 const showStickyHeader = ref(false);
+const showBackToTop = ref(false);
 
 // Playing state
 const playingBeatId = ref(null);
@@ -542,9 +561,14 @@ const toggleSelection = (filterType, value) => {
   }
 };
 
-// Handle scroll for sticky header
+// Handle scroll for sticky header + back to top
 const handleScroll = () => {
   showStickyHeader.value = window.scrollY > 400;
+  showBackToTop.value = window.scrollY > 600;
+};
+
+const scrollToTop = () => {
+  window.scrollTo({ top: 0, behavior: "smooth" });
 };
 
 // Close filters when clicking outside
@@ -564,6 +588,19 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+/* Fade up transition for back to top button */
+.fade-up-enter-active,
+.fade-up-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+.fade-up-enter-from,
+.fade-up-leave-to {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
 /* Slide fade transition */
 .slide-fade-enter-active {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
