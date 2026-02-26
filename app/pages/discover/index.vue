@@ -389,7 +389,11 @@
               </div>
             </div>
             <div class="min-w-0 flex-1">
-              <NuxtLink :to="`/beat/${beat.id}`" @click.stop>
+              <NuxtLink
+                :to="`/beat/${beat.id}`"
+                @click.stop
+                class="w-fit max-w-full block"
+              >
                 <h3
                   :class="
                     playingBeatId === beat.id
@@ -404,7 +408,7 @@
               <NuxtLink
                 :to="`/producer/${beat.id}`"
                 @click.stop
-                class="text-xs md:text-sm text-gray-400 hover:text-blue-400 transition-colors duration-150 truncate block"
+                class="text-xs md:text-sm text-gray-400 hover:text-blue-400 transition-colors duration-150 truncate w-fit max-w-full block"
               >
                 {{ beat.producer }}
               </NuxtLink>
