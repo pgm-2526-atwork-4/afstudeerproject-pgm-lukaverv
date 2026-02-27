@@ -94,181 +94,205 @@
 
     <!-- Results Section -->
     <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-      <div class="mb-6 md:mb-8">
-        <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">
-          Browse Beats
-        </h2>
-        <p class="text-sm md:text-base text-gray-400">
-          {{ beats.length }} tracks available
+      <!-- Loading State -->
+      <div v-if="pending" class="text-center py-12">
+        <p class="text-gray-400 text-lg">Loading beats...</p>
+      </div>
+
+      <!-- Error State -->
+      <div v-else-if="error" class="text-center py-12">
+        <p class="text-red-400 text-lg">
+          Failed to load beats. Please try again.
         </p>
       </div>
 
-      <!-- Column Headers Desktop -->
-      <div
-        class="hidden md:grid grid-cols-[2.5fr_1fr_1fr_2fr_180px] gap-6 px-4 pb-3 text-xs font-semibold text-gray-400 uppercase tracking-wider"
-      >
-        <div class="flex items-center gap-4">
-          <div class="w-14 flex-shrink-0"></div>
-          <div>Title</div>
+      <!-- Content -->
+      <div v-else-if="beats && beats.length > 0">
+        <div class="mb-6 md:mb-8">
+          <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">
+            Browse Beats
+          </h2>
+          <p class="text-sm md:text-base text-gray-400">
+            {{ beats.length }} tracks available
+          </p>
         </div>
-        <div>Time</div>
-        <div>BPM</div>
-        <div>Tags</div>
-        <div class="flex items-center gap-3">
-          <div class="w-5"></div>
+
+        <!-- Column Headers Desktop -->
+        <div
+          class="hidden md:grid grid-cols-[2.5fr_1fr_1fr_2fr_180px] gap-6 px-4 pb-3 text-xs font-semibold text-gray-400 uppercase tracking-wider"
+        >
+          <div class="flex items-center gap-4">
+            <div class="w-14 flex-shrink-0"></div>
+            <div>Title</div>
+          </div>
+          <div>Time</div>
+          <div>BPM</div>
+          <div>Tags</div>
+          <div class="flex items-center gap-3">
+            <div class="w-5"></div>
+            <div>Price</div>
+          </div>
+        </div>
+
+        <!-- Column Headers Mobile -->
+        <div
+          class="md:hidden flex justify-between items-center px-3 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-700/30 mb-1"
+        >
+          <div>Track</div>
           <div>Price</div>
         </div>
-      </div>
 
-      <!-- Column Headers Mobile -->
-      <div
-        class="md:hidden flex justify-between items-center px-3 pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wider border-b border-gray-700/30 mb-1"
-      >
-        <div>Track</div>
-        <div>Price</div>
-      </div>
-
-      <!-- Beats List -->
-      <div class="space-y-0">
-        <div
-          v-for="beat in beats"
-          :key="beat.id"
-          @click="togglePlay(beat.id)"
-          :class="
-            playingBeatId === beat.id ? 'bg-blue-600/5' : 'hover:bg-[#1a1f35]'
-          "
-          class="grid md:grid-cols-[2.5fr_1fr_1fr_2fr_180px] gap-3 md:gap-6 items-start md:items-center px-3 md:px-4 py-3 md:py-4 rounded-lg md:rounded-none transition-all duration-150 cursor-pointer group"
-        >
-          <!-- Title Column -->
+        <!-- Beats List -->
+        <div class="space-y-0">
           <div
-            class="flex items-center gap-3 md:gap-4 min-w-0 col-span-full md:col-span-1"
+            v-for="beat in beats"
+            :key="beat.id"
+            @click="togglePlay(beat.id)"
+            :class="
+              playingBeatId === beat.id ? 'bg-blue-600/5' : 'hover:bg-[#1a1f35]'
+            "
+            class="grid md:grid-cols-[2.5fr_1fr_1fr_2fr_180px] gap-3 md:gap-6 items-start md:items-center px-3 md:px-4 py-3 md:py-4 rounded-lg md:rounded-none transition-all duration-150 cursor-pointer group"
           >
-            <div class="flex-shrink-0 relative">
-              <img
-                :src="beat.coverImage"
-                :alt="beat.title"
-                class="h-12 w-12 md:h-14 md:w-14 rounded object-cover"
-              />
-              <!-- Play/Pause Overlay -->
-              <div
-                v-if="playingBeatId === beat.id"
-                class="absolute inset-0 flex items-center justify-center bg-black/50 rounded backdrop-blur-sm"
-              >
-                <!-- Animated Equalizer Bars When Playing -->
-                <div class="flex items-center gap-0.5 h-5">
-                  <div
-                    class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-1"
-                  ></div>
-                  <div
-                    class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-2"
-                  ></div>
-                  <div
-                    class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-3"
-                  ></div>
+            <!-- Title Column -->
+            <div
+              class="flex items-center gap-3 md:gap-4 min-w-0 col-span-full md:col-span-1"
+            >
+              <div class="flex-shrink-0 relative">
+                <img
+                  :src="beat.coverImage"
+                  :alt="beat.title"
+                  class="h-12 w-12 md:h-14 md:w-14 rounded object-cover"
+                />
+                <!-- Play/Pause Overlay -->
+                <div
+                  v-if="playingBeatId === beat.id"
+                  class="absolute inset-0 flex items-center justify-center bg-black/50 rounded backdrop-blur-sm"
+                >
+                  <!-- Animated Equalizer Bars When Playing -->
+                  <div class="flex items-center gap-0.5 h-5">
+                    <div
+                      class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-1"
+                    ></div>
+                    <div
+                      class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-2"
+                    ></div>
+                    <div
+                      class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-3"
+                    ></div>
+                  </div>
+                </div>
+                <div
+                  v-else
+                  class="absolute inset-0 flex items-center justify-center bg-black/50 rounded opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
+                >
+                  <Icon name="ph:play-fill" class="text-white text-xl" />
                 </div>
               </div>
-              <div
-                v-else
-                class="absolute inset-0 flex items-center justify-center bg-black/50 rounded opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
-              >
-                <Icon name="ph:play-fill" class="text-white text-xl" />
-              </div>
-            </div>
-            <div class="min-w-0 flex-1">
-              <NuxtLink
-                :to="`/beat/${beat.id}`"
-                @click.stop
-                class="w-fit max-w-full block"
-              >
-                <h3
-                  :class="
-                    playingBeatId === beat.id
-                      ? 'text-blue-400'
-                      : 'text-white hover:text-blue-400'
-                  "
-                  class="text-sm md:text-base font-bold transition-colors duration-150 truncate"
+              <div class="min-w-0 flex-1">
+                <NuxtLink
+                  :to="`/beat/${beat.id}`"
+                  @click.stop
+                  class="w-fit max-w-full block"
                 >
-                  {{ beat.title }}
-                </h3>
-              </NuxtLink>
-              <NuxtLink
-                :to="`/producer/${beat.id}`"
-                @click.stop
-                class="text-xs md:text-sm text-gray-400 hover:text-blue-400 transition-colors duration-150 truncate w-fit max-w-full block"
-              >
-                {{ beat.producer }}
-              </NuxtLink>
-              <!-- Mobile meta info -->
-              <div
-                class="md:hidden flex items-center gap-3 mt-1 text-xs text-gray-400"
-              >
-                <span>{{ beat.duration }}</span>
-                <span>•</span>
-                <span>{{ beat.bpm }} BPM</span>
+                  <h3
+                    :class="
+                      playingBeatId === beat.id
+                        ? 'text-blue-400'
+                        : 'text-white hover:text-blue-400'
+                    "
+                    class="text-sm md:text-base font-bold transition-colors duration-150 truncate"
+                  >
+                    {{ beat.title }}
+                  </h3>
+                </NuxtLink>
+                <NuxtLink
+                  :to="`/producer/${beat.id}`"
+                  @click.stop
+                  class="text-xs md:text-sm text-gray-400 hover:text-blue-400 transition-colors duration-150 truncate w-fit max-w-full block"
+                >
+                  {{ beat.producer }}
+                </NuxtLink>
+                <!-- Mobile meta info -->
+                <div
+                  class="md:hidden flex items-center gap-3 mt-1 text-xs text-gray-400"
+                >
+                  <span>{{ beat.duration }}</span>
+                  <span>•</span>
+                  <span>{{ beat.bpm }} BPM</span>
+                </div>
               </div>
             </div>
-          </div>
 
-          <!-- Time Column -->
-          <div class="hidden md:block text-gray-300 text-sm">
-            {{ beat.duration }}
-          </div>
+            <!-- Time Column -->
+            <div class="hidden md:block text-gray-300 text-sm">
+              {{ beat.duration }}
+            </div>
 
-          <!-- BPM Column -->
-          <div class="hidden md:block text-gray-300 text-sm">
-            {{ beat.bpm }}
-          </div>
+            <!-- BPM Column -->
+            <div class="hidden md:block text-gray-300 text-sm">
+              {{ beat.bpm }}
+            </div>
 
-          <!-- Tags Column -->
-          <div class="hidden md:flex flex-wrap gap-2">
-            <span
-              v-for="tag in beat.tags.slice(0, 2)"
-              :key="tag"
-              class="px-2.5 py-1 text-xs font-medium bg-gray-800/50 text-gray-300 rounded-md"
-            >
-              {{ tag }}
-            </span>
-          </div>
-
-          <!-- Action Column -->
-          <div
-            class="flex items-center gap-2 md:gap-3 col-span-full md:col-span-1 mt-2 md:mt-0"
-          >
-            <!-- Mobile tags -->
-            <div class="md:hidden flex flex-wrap gap-1.5 flex-1">
+            <!-- Tags Column -->
+            <div class="hidden md:flex flex-wrap gap-2">
               <span
                 v-for="tag in beat.tags.slice(0, 2)"
                 :key="tag"
-                class="px-2 py-0.5 text-xs font-medium bg-gray-800/50 text-gray-300 rounded"
+                class="px-2.5 py-1 text-xs font-medium bg-gray-800/50 text-gray-300 rounded-md"
               >
                 {{ tag }}
               </span>
             </div>
-            <button
-              @click.stop
-              class="hidden md:block text-gray-400 hover:text-white transition-colors"
+
+            <!-- Action Column -->
+            <div
+              class="flex items-center gap-2 md:gap-3 col-span-full md:col-span-1 mt-2 md:mt-0"
             >
-              <Icon name="ph:share-network" size="20" />
-            </button>
-            <button
-              @click.stop
-              class="bg-gray-800 hover:bg-gray-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition flex items-center gap-1.5 md:gap-2 font-semibold whitespace-nowrap text-sm"
-            >
-              <Icon name="ph:shopping-cart" size="16" class="md:hidden" />
-              <Icon name="ph:shopping-cart" size="18" class="hidden md:block" />
-              ${{ beat.price }}
-            </button>
+              <!-- Mobile tags -->
+              <div class="md:hidden flex flex-wrap gap-1.5 flex-1">
+                <span
+                  v-for="tag in beat.tags.slice(0, 2)"
+                  :key="tag"
+                  class="px-2 py-0.5 text-xs font-medium bg-gray-800/50 text-gray-300 rounded"
+                >
+                  {{ tag }}
+                </span>
+              </div>
+              <button
+                @click.stop
+                class="hidden md:block text-gray-400 hover:text-white transition-colors"
+              >
+                <Icon name="ph:share-network" size="20" />
+              </button>
+              <button
+                @click.stop
+                class="bg-gray-800 hover:bg-gray-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition flex items-center gap-1.5 md:gap-2 font-semibold whitespace-nowrap text-sm"
+              >
+                <Icon name="ph:shopping-cart" size="16" class="md:hidden" />
+                <Icon
+                  name="ph:shopping-cart"
+                  size="18"
+                  class="hidden md:block"
+                />
+                ${{ beat.price }}
+              </button>
+            </div>
           </div>
         </div>
+
+        <Pagination
+          :current-page="1"
+          :total-pages="21"
+          :total-items="248"
+          :per-page="12"
+          item-label="beats"
+        />
       </div>
 
-      <Pagination
-        :current-page="1"
-        :total-pages="21"
-        :total-items="248"
-        :per-page="12"
-        item-label="beats"
-      />
+      <!-- Empty State -->
+      <div v-else class="text-center py-12">
+        <p class="text-gray-400 text-lg">No beats available at the moment.</p>
+      </div>
     </div>
 
     <BackToTop />
@@ -276,14 +300,14 @@
 </template>
 
 <script setup>
-import { sampleBeats } from "~/data/sampleBeats";
 import { genres, bpmRanges, musicalKeys } from "~/data/filterData";
 
 definePageMeta({
   middleware: "require-verification",
 });
 
-const beats = sampleBeats;
+// Fetch beats from API
+const { data: beats, pending, error } = await useFetch("/api/beats");
 
 // Beat player state
 const { playingBeatId, togglePlay } = useBeatPlayer();
