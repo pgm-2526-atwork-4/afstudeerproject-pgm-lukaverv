@@ -19,31 +19,7 @@
         </div>
 
         <!-- Search Bar -->
-        <div class="max-w-4xl mx-auto mb-8">
-          <div class="relative mb-4 md:mb-0">
-            <Icon
-              name="ph:magnifying-glass"
-              class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-gray-400 text-lg md:text-xl"
-            />
-            <input
-              type="text"
-              placeholder="What type of track are you looking for?"
-              class="w-full pl-12 md:pl-14 pr-4 md:pr-32 py-4 md:py-5 rounded-xl text-base md:text-lg bg-[#161b33] border border-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-lg"
-            />
-            <!-- Desktop button (inside input) -->
-            <button
-              class="hidden md:block absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg transition font-semibold shadow-lg"
-            >
-              SEARCH
-            </button>
-          </div>
-          <!-- Mobile button (below input) -->
-          <button
-            class="md:hidden w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl transition font-semibold shadow-lg text-base"
-          >
-            SEARCH
-          </button>
-        </div>
+        <HeaderSearchInput v-model="searchQuery" />
 
         <!-- Filter Buttons -->
         <div class="max-w-5xl mx-auto">
@@ -94,27 +70,51 @@
 
     <!-- Results Section -->
     <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
-      <!-- Loading State -->
-      <div v-if="pending" class="text-center py-12">
-        <p class="text-gray-400 text-lg">Loading beats...</p>
-      </div>
-
       <!-- Error State -->
-      <div v-else-if="error" class="text-center py-12">
+      <div v-if="error" class="text-center py-12">
         <p class="text-red-400 text-lg">
           Failed to load beats. Please try again.
         </p>
       </div>
 
-      <!-- Content -->
-      <div v-else-if="beats && beats.length > 0">
-        <div class="mb-6 md:mb-8">
-          <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">
-            Browse Beats
-          </h2>
-          <p class="text-sm md:text-base text-gray-400">
-            {{ beats.length }} tracks available
-          </p>
+      <!-- Content or Loading -->
+      <div v-else>
+        <!-- Header -->
+        <div
+          class="mb-6 md:mb-8 flex items-start md:items-center justify-between flex-col md:flex-row gap-3 md:gap-4"
+        >
+          <div>
+            <h2 class="text-2xl md:text-3xl font-bold text-white mb-2">
+              Browse Beats
+            </h2>
+            <p class="text-sm md:text-base text-gray-400">
+              <template v-if="!pending">
+                {{ filteredBeats.length }}
+                {{ filteredBeats.length === 1 ? "track" : "tracks" }}
+                {{ searchQuery ? "found" : "available" }}
+              </template>
+              <template v-else> Loading beats... </template>
+            </p>
+          </div>
+
+          <!-- Refresh Button -->
+          <button
+            @click="refreshBeats"
+            :disabled="pending"
+            class="flex items-center gap-2 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed group"
+            title="Refresh beats"
+          >
+            <Icon
+              name="ph:arrows-clockwise"
+              size="18"
+              :class="
+                pending
+                  ? 'animate-spin'
+                  : 'group-hover:rotate-180 transition-transform duration-500'
+              "
+            />
+            <span class="text-sm font-medium">Refresh</span>
+          </button>
         </div>
 
         <!-- Column Headers Desktop -->
@@ -142,10 +142,14 @@
           <div>Price</div>
         </div>
 
-        <!-- Pagination with Beats List -->
+        <!-- Loading State - Skeleton Beats -->
+        <SkeletonBeats v-if="pending" :count="12" />
+
+        <!-- Actual Beats List -->
         <Pagination
+          v-if="!pending && beats && beats.length > 0"
           v-model:page="currentPage"
-          :items="beats"
+          :items="filteredBeats"
           :items-per-page="12"
           item-label="beats"
         >
@@ -290,11 +294,39 @@
             </div>
           </template>
         </Pagination>
-      </div>
 
-      <!-- Empty State -->
-      <div v-else class="text-center py-12">
-        <p class="text-gray-400 text-lg">No beats available at the moment.</p>
+        <!-- Empty State - No Results -->
+        <div
+          v-if="
+            !pending && beats && beats.length > 0 && filteredBeats.length === 0
+          "
+          class="text-center py-12"
+        >
+          <Icon
+            name="ph:magnifying-glass"
+            class="text-gray-600 text-6xl mx-auto mb-4"
+          />
+          <p class="text-gray-400 text-lg mb-2">
+            No beats found matching "{{ searchQuery }}"
+          </p>
+          <p class="text-gray-500 text-sm mb-4">
+            Try adjusting your search terms
+          </p>
+          <button
+            @click="searchQuery = ''"
+            class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition font-semibold"
+          >
+            Clear Search
+          </button>
+        </div>
+
+        <!-- Empty State - No Beats -->
+        <div
+          v-if="!pending && (!beats || beats.length === 0)"
+          class="text-center py-12"
+        >
+          <p class="text-gray-400 text-lg">No beats available at the moment.</p>
+        </div>
       </div>
     </div>
 
@@ -317,8 +349,13 @@ definePageMeta({
   middleware: "require-verification",
 });
 
-// Fetch beats from API
-const { data: beats, pending, error } = await useFetch("/api/beats");
+// Fetch beats from API (with delay for testing loading state)
+const {
+  data: beats,
+  pending,
+  error,
+  refresh: refreshBeats,
+} = await useFetch("/api/beats");
 
 // Beat player state
 const { playingBeatId, togglePlay } = useBeatPlayer();
@@ -340,6 +377,9 @@ const closeLicenseModal = () => {
 // Pagination
 const currentPage = ref(1);
 
+// Search query
+const searchQuery = ref("");
+
 // Filter state
 const openFilter = ref(null);
 
@@ -348,6 +388,37 @@ const selectedFilters = ref({
   genre: [],
   bpm: [],
   key: [],
+});
+
+// Filtered beats based on search query
+const filteredBeats = computed(() => {
+  if (!beats.value) return [];
+
+  let result = beats.value;
+
+  // Apply search filter
+  if (searchQuery.value.trim()) {
+    const query = searchQuery.value.toLowerCase().trim();
+    result = result.filter((beat) => {
+      // Search in title
+      const matchesTitle = beat.title.toLowerCase().includes(query);
+
+      // Search in producer
+      const matchesProducer = beat.producer.toLowerCase().includes(query);
+
+      // Search in genre
+      const matchesGenre = beat.genre.toLowerCase().includes(query);
+
+      // Search in tags
+      const matchesTags = beat.tags.some((tag) =>
+        tag.toLowerCase().includes(query),
+      );
+
+      return matchesTitle || matchesProducer || matchesGenre || matchesTags;
+    });
+  }
+
+  return result;
 });
 
 // Toggle filter dropdown
@@ -368,6 +439,11 @@ const toggleSelection = (filterType, value) => {
     selectedFilters.value[filterType].push(value);
   }
 };
+
+// Reset to page 1 when search query changes
+watch(searchQuery, () => {
+  currentPage.value = 1;
+});
 
 // Close filters when clicking outside
 onMounted(() => {
