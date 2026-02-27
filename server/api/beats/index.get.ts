@@ -34,6 +34,9 @@ export default defineEventHandler(async (event) => {
         genre: beat.genre,
         tags: beat.tags,
         price: beat.priceBasic,
+        priceBasic: beat.priceBasic,
+        pricePremium: beat.pricePremium,
+        priceExclusive: beat.priceExclusive,
         duration: formattedDuration,
         coverImage: beat.coverImage,
       };

@@ -206,7 +206,7 @@
                   </h3>
                 </NuxtLink>
                 <NuxtLink
-                  :to="`/producer/${beat.id}`"
+                  :to="`/producer/${beat.producerId}`"
                   @click.stop
                   class="text-xs md:text-sm text-gray-400 hover:text-blue-400 transition-colors duration-150 truncate w-fit max-w-full block"
                 >
@@ -265,7 +265,7 @@
                 <Icon name="ph:share-network" size="20" />
               </button>
               <button
-                @click.stop
+                @click.stop="openLicenseModal(beat)"
                 class="bg-gray-800 hover:bg-gray-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition flex items-center gap-1.5 md:gap-2 font-semibold whitespace-nowrap text-sm"
               >
                 <Icon name="ph:shopping-cart" size="16" class="md:hidden" />
@@ -296,6 +296,14 @@
     </div>
 
     <BackToTop />
+
+    <!-- License Modal -->
+    <BeatLicenseModal
+      v-if="selectedBeat"
+      :is-open="isModalOpen"
+      :beat="selectedBeat"
+      @close="closeLicenseModal"
+    />
   </div>
 </template>
 
@@ -311,6 +319,20 @@ const { data: beats, pending, error } = await useFetch("/api/beats");
 
 // Beat player state
 const { playingBeatId, togglePlay } = useBeatPlayer();
+
+// Modal state
+const isModalOpen = ref(false);
+const selectedBeat = ref(null);
+
+const openLicenseModal = (beat) => {
+  selectedBeat.value = beat;
+  isModalOpen.value = true;
+};
+
+const closeLicenseModal = () => {
+  isModalOpen.value = false;
+  selectedBeat.value = null;
+};
 
 // Filter state
 const openFilter = ref(null);
