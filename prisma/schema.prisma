@@ -32,6 +32,42 @@ model Profile {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   user          User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  beats         Beat[]   // Relation to beats uploaded by this producer
+}
+
+model Beat {
+  id              String     @id @default(cuid())
+  title           String
+  producerId      String     // ID of the producer (Profile)
+  genre           String     // e.g., "Hip-Hop", "Trap", "R&B"
+  bpm             Int        // Beats per minute
+  key             String?    // Musical key, e.g., "C", "Am", "D#"
+  duration        Int        // Duration in seconds
+  tags            String[]   // Array of tags, e.g., ["Dark", "Melodic", "808"]
+  
+  // License pricing
+  priceBasic      Float      // MP3 tagged
+  pricePremium    Float      // WAV untagged + MP3 tagged
+  priceExclusive  Float      // Full rights, removes from store
+  isExclusiveSold Boolean    @default(false)
+  exclusiveBuyer  String?    // User ID who bought exclusive rights
+  
+  coverImage      String     // URL to cover image
+  audioFile       String     // URL to audio file (mp3/wav)
+  description     String?    @db.VarChar(1000)
+  isPublished     Boolean    @default(false)
+  playCount       Int        @default(0)
+  downloadCount   Int        @default(0)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  producer        Profile    @relation(fields: [producerId], references: [id], onDelete: Cascade)
+  
+  @@index([genre])
+  @@index([bpm])
+  @@index([key])
+  @@index([isPublished])
+  @@index([isExclusiveSold])
+  @@index([createdAt])
 }
 
 enum Role {
