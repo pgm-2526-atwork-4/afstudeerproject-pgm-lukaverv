@@ -6,24 +6,36 @@
       <div class="flex items-center justify-between h-16">
         <!-- Left: Logo + Navigation -->
         <div class="flex items-center gap-8">
-          <!-- Logo -->
-          <NuxtLink
-            to="/discover"
-            class="flex items-center gap-3 group transition-transform hover:scale-105"
-          >
-            <div
-              class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:shadow-blue-600/50 transition-shadow"
+          <!-- Logo with Hamburger -->
+          <div class="flex items-center gap-3">
+            <!-- Hamburger Menu Button (Mobile only) -->
+            <button
+              @click="toggleMobileMenu"
+              class="md:hidden p-2 -ml-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
+              aria-label="Menu"
             >
-              <Icon name="mdi:music-note" class="w-6 h-6 text-white" />
-            </div>
-            <span class="text-xl font-bold">
-              <span class="text-white">Beat</span>
-              <span class="text-blue-500">Stack</span>
-            </span>
-          </NuxtLink>
+              <Icon name="ph:list" class="w-7 h-7" />
+            </button>
 
-          <!-- Navigation Links -->
-          <nav class="flex items-center gap-6">
+            <!-- Logo -->
+            <NuxtLink
+              to="/discover"
+              class="flex items-center gap-3 group transition-transform hover:scale-105"
+            >
+              <div
+                class="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-500 rounded-xl flex items-center justify-center shadow-lg shadow-blue-600/30 group-hover:shadow-blue-600/50 transition-shadow"
+              >
+                <Icon name="mdi:music-note" class="w-6 h-6 text-white" />
+              </div>
+              <span class="text-xl font-bold hidden sm:block">
+                <span class="text-white">Beat</span>
+                <span class="text-blue-500">Stack</span>
+              </span>
+            </NuxtLink>
+          </div>
+
+          <!-- Navigation Links (Desktop only) -->
+          <nav class="hidden md:flex items-center gap-6">
             <NuxtLink
               to="/discover"
               class="text-gray-300 hover:text-white transition-colors duration-200 font-medium"
@@ -46,8 +58,9 @@
 
         <!-- User Actions -->
         <div class="flex items-center gap-4">
-          <!-- Shopping Cart -->
+          <!-- Shopping Cart (Only for authenticated users) -->
           <button
+            v-if="session?.user"
             class="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
             aria-label="Shopping Cart"
           >
@@ -96,6 +109,15 @@
         </div>
       </div>
     </div>
+
+    <!-- Mobile Menu Component -->
+    <MobileMenu
+      :is-open="isMobileMenuOpen"
+      :session="session"
+      :user-profile="userProfile"
+      :username="username"
+      @close="closeMobileMenu"
+    />
   </nav>
 </template>
 
@@ -108,6 +130,27 @@ const { data: session } = useAuth();
 const userProfile = useState("userProfile", () => null);
 const username = useState("username", () => "User");
 const loading = useState("navbarLoading", () => true);
+
+// Mobile menu state
+const isMobileMenuOpen = ref(false);
+
+// Toggle mobile menu
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+// Close mobile menu
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false;
+};
+
+// Close mobile menu when route changes
+watch(
+  () => useRoute().path,
+  () => {
+    closeMobileMenu();
+  },
+);
 
 // Fetch user profile when user ID is available
 watch(
