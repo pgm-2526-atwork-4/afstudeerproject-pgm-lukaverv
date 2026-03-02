@@ -60,7 +60,7 @@
         <div class="flex items-center gap-4">
           <!-- Shopping Cart (Only for authenticated users) -->
           <button
-            v-if="session?.user"
+            v-if="currentUser"
             class="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
             aria-label="Shopping Cart"
           >
@@ -79,7 +79,7 @@
           </template>
 
           <!-- Guest User (Not Logged In) -->
-          <template v-else-if="!session?.user">
+          <template v-else-if="!currentUser">
             <div class="flex items-center gap-2">
               <NuxtLink
                 to="/auth/login"
@@ -113,7 +113,7 @@
     <!-- Mobile Menu Component -->
     <MobileMenu
       :is-open="isMobileMenuOpen"
-      :session="session"
+      :current-user="currentUser"
       :user-profile="userProfile"
       :username="username"
       @close="closeMobileMenu"
@@ -122,24 +122,27 @@
 </template>
 
 <script setup>
-// Session data from authentication (contains user info from cookies)
-const { data: session } = useAuth();
+// Fetch user data - handles both OAuth and JWT via cookies
+const { data: currentUser, pending: loading } = await useFetch(
+  "/api/auth/user",
+  {
+    credentials: "include",
+    lazy: true,
+    server: false,
+  },
+);
 
-// Global state - persists across page navigation and component remounts
-// Using useState ensures data and loading state are cached together
+// User profile data
 const userProfile = useState("userProfile", () => null);
 const username = useState("username", () => "User");
-const loading = useState("navbarLoading", () => true);
 
 // Mobile menu state
 const isMobileMenuOpen = ref(false);
 
-// Toggle mobile menu
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
 };
 
-// Close mobile menu
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
 };
@@ -152,23 +155,18 @@ watch(
   },
 );
 
-// Fetch user profile when user ID is available
+// Fetch user profile when user is available
 watch(
-  () => session.value?.user?.id,
+  () => currentUser.value?.id,
   async (userId) => {
     if (userId && !userProfile.value) {
-      // User logged in but profile not cached - fetch from API
-      loading.value = true;
-      const profile = await $fetch(`/api/profile/${userId}`);
-      userProfile.value = profile;
-      username.value = profile.username;
-      loading.value = false;
-    } else if (userProfile.value) {
-      // Profile already cached - stop loading immediately
-      loading.value = false;
-    } else if (!userId && session.value !== undefined) {
-      // No user ID and session loaded - user is a guest
-      loading.value = false;
+      try {
+        const profile = await $fetch(`/api/profile/${userId}`);
+        userProfile.value = profile;
+        username.value = profile.username;
+      } catch (error) {
+        console.error("Failed to fetch profile:", error);
+      }
     }
   },
   { immediate: true },

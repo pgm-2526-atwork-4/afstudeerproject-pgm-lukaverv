@@ -56,7 +56,7 @@
       <div class="p-6">
         <!-- User Info Section (if logged in) -->
         <div
-          v-if="session?.user && userProfile"
+          v-if="currentUser && userProfile"
           class="mb-6 pb-6 border-b border-gray-700"
         >
           <div class="flex items-center gap-3 mb-4">
@@ -109,10 +109,7 @@
         </nav>
 
         <!-- User Actions (if logged in) -->
-        <div
-          v-if="session?.user"
-          class="space-y-2 pt-6 border-t border-gray-700"
-        >
+        <div v-if="currentUser" class="space-y-2 pt-6 border-t border-gray-700">
           <NuxtLink
             to="/settings"
             @click="$emit('close')"
@@ -120,15 +117,6 @@
           >
             <Icon name="mdi:cog" class="w-5 h-5" />
             <span class="font-medium">Settings</span>
-          </NuxtLink>
-
-          <NuxtLink
-            to="/profile/edit"
-            @click="$emit('close')"
-            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-          >
-            <Icon name="mdi:account-edit" class="w-5 h-5" />
-            <span class="font-medium">Edit Profile</span>
           </NuxtLink>
 
           <button
@@ -168,7 +156,7 @@ const props = defineProps({
     type: Boolean,
     required: true,
   },
-  session: {
+  currentUser: {
     type: Object,
     default: null,
   },

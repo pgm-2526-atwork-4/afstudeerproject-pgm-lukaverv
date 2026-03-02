@@ -38,6 +38,16 @@
 
         <!-- Menu Items -->
         <div class="py-1">
+          <!-- Profile -->
+          <NuxtLink
+            to="/profile"
+            @click="closeDropdown"
+            class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+          >
+            <Icon name="mdi:account" class="w-5 h-5" />
+            <span>Profile</span>
+          </NuxtLink>
+
           <!-- Settings -->
           <NuxtLink
             to="/settings"
@@ -57,16 +67,6 @@
           >
             <Icon name="mdi:view-dashboard" class="w-5 h-5" />
             <span>Dashboard</span>
-          </NuxtLink>
-
-          <!-- Profile/Edit -->
-          <NuxtLink
-            to="/profile/edit"
-            @click="closeDropdown"
-            class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
-          >
-            <Icon name="mdi:account-edit" class="w-5 h-5" />
-            <span>Edit Profile</span>
           </NuxtLink>
 
           <!-- Logout -->
