@@ -92,10 +92,11 @@ const handleLogin = async (values) => {
     });
 
     if (response && response.user) {
+      // Reload the page to ensure the auth cookie is properly recognized
       if (!response.user.hasProfile) {
-        await navigateTo("/profile/create");
+        window.location.href = "/profile/create";
       } else {
-        await navigateTo("/discover");
+        window.location.href = "/discover";
       }
     } else {
       error.value = "Invalid email or password. Please try again.";

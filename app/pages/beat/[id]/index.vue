@@ -92,7 +92,7 @@
               {{ beat.title }}
             </h1>
             <NuxtLink
-              :to="`/producer/${beat.producerId}`"
+              :to="`/profile/${beat.producerUserId}`"
               class="text-gray-400 hover:text-blue-400 transition-colors text-lg"
             >
               {{ beat.producer }}

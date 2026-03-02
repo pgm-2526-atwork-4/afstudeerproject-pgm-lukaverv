@@ -102,7 +102,7 @@
                 </NuxtLink>
                 <NuxtLink
                   v-if="showProducer"
-                  :to="`/producer/${beat.producerId}`"
+                  :to="`/profile/${beat.producerUserId}`"
                   @click.stop
                   class="text-xs md:text-sm text-gray-400 hover:text-blue-400 transition-colors duration-150 truncate w-fit max-w-full block"
                 >
