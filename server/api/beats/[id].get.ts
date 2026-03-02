@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
         producer: {
           select: {
             id: true,
+            userId: true,
             username: true,
           },
         },
@@ -40,6 +41,7 @@ export default defineEventHandler(async (event) => {
       title: beat.title,
       producer: beat.producer.username,
       producerId: beat.producer.id,
+      producerUserId: beat.producer.userId,
       bpm: beat.bpm,
       key: beat.key,
       genre: beat.genre,

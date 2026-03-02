@@ -1,21 +1,32 @@
 import jwt from "jsonwebtoken";
+import { getToken } from "#auth";
 
 export default defineEventHandler(async (event) => {
-  // Get the token from the cookie
-  const token = getCookie(event, "auth_token");
+  // Try OAuth session first (GitHub/Google login)
+  const token = await getToken({ event });
 
-  if (!token) {
-    throw createError({ statusCode: 401, message: "Unauthorized" });
+  if (token?.email) {
+    const oauthUser = await prisma.user.findUnique({
+      where: { email: token.email as string },
+      select: {
+        id: true,
+        email: true,
+        isVerified: true,
+      },
+    });
+    if (oauthUser) return oauthUser;
   }
 
-  try {
-    // Verify the JWT token
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || "your-secret-key",
-    ) as { id: any; email: string };
+  // Fallback to JWT token (manual email/password login)
+  const authToken = getCookie(event, "auth_token");
+  if (!authToken) return null;
 
-    // Fetch user info from the database
+  try {
+    const decoded = jwt.verify(
+      authToken,
+      process.env.JWT_SECRET || "your-secret-key",
+    ) as { id: string; email: string };
+
     const user = await prisma.user.findUnique({
       where: { id: decoded.id },
       select: {
@@ -25,12 +36,8 @@ export default defineEventHandler(async (event) => {
       },
     });
 
-    if (!user) {
-      throw createError({ statusCode: 404, message: "User not found" });
-    }
-
     return user;
   } catch (error) {
-    throw createError({ statusCode: 401, message: "Invalid or expired token" });
+    return null;
   }
 });
