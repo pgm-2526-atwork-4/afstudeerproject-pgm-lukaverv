@@ -5,12 +5,16 @@
       v-if="!route.path.startsWith('/auth') && route.path !== '/profile/create'"
     />
 
-    <main>
+    <main :class="audioStore.currentTrack ? 'pb-24' : ''">
       <slot />
     </main>
+
+    <!-- Audio Player -->
+    <AudioPlayer />
   </div>
 </template>
 
 <script setup>
 const route = useRoute();
+const audioStore = useAudioStore();
 </script>

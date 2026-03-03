@@ -387,7 +387,7 @@
                     class="w-full aspect-square rounded-lg object-cover"
                   />
                   <div
-                    @click.stop="togglePlay(producerBeat.id)"
+                    @click.stop="togglePlay(producerBeat)"
                     class="absolute inset-0 bg-black/50 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                   >
                     <div
@@ -395,13 +395,18 @@
                     >
                       <Icon
                         :name="
-                          playingBeatId === producerBeat.id
+                          playingBeatId === String(producerBeat.id) && isPlaying
                             ? 'ph:pause-fill'
                             : 'ph:play-fill'
                         "
                         class="text-white text-xl"
                         :class="
-                          playingBeatId !== producerBeat.id ? 'ml-0.5' : ''
+                          !(
+                            playingBeatId === String(producerBeat.id) &&
+                            isPlaying
+                          )
+                            ? 'ml-0.5'
+                            : ''
                         "
                       />
                     </div>
@@ -446,7 +451,7 @@ const producerBeats = computed(() => {
     .slice(0, 5);
 });
 
-const { playingBeatId, togglePlay } = useBeatPlayer();
+const { playingBeatId, isPlaying, togglePlay } = useBeatPlayer();
 const { getLicenseLabel, getUsageTerms } = useLicenseData();
 
 // License selection

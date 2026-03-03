@@ -42,7 +42,7 @@
           <div
             v-for="beat in items"
             :key="beat.id"
-            @click="togglePlay(beat.id)"
+            @click="togglePlay(beat)"
             :class="
               playingBeatId === beat.id ? 'bg-blue-600/5' : 'hover:bg-[#1a1f35]'
             "
@@ -59,12 +59,12 @@
                   class="h-12 w-12 md:h-14 md:w-14 rounded object-cover"
                 />
                 <!-- Play/Pause Overlay -->
+                <!-- Waveform animation while playing -->
                 <div
-                  v-if="playingBeatId === beat.id"
+                  v-if="playingBeatId === String(beat.id) && isPlaying"
                   class="absolute inset-0 flex items-center justify-center bg-black/50 rounded backdrop-blur-sm"
                 >
-                  <!-- Animated Equalizer Bars When Playing -->
-                  <div class="flex items-center gap-0.5 h-5">
+                  <div class="flex items-end gap-0.5 h-5">
                     <div
                       class="w-0.5 bg-blue-400 rounded-full animate-eq-bar-1"
                     ></div>
@@ -76,6 +76,14 @@
                     ></div>
                   </div>
                 </div>
+                <!-- Pause icon when the track is loaded but paused -->
+                <div
+                  v-else-if="playingBeatId === String(beat.id) && !isPlaying"
+                  class="absolute inset-0 flex items-center justify-center bg-black/50 rounded backdrop-blur-sm"
+                >
+                  <Icon name="ph:pause-fill" class="text-white text-xl" />
+                </div>
+                <!-- Play icon on hover for unselected beats -->
                 <div
                   v-else
                   class="absolute inset-0 flex items-center justify-center bg-black/50 rounded opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-sm"
@@ -91,7 +99,7 @@
                 >
                   <h3
                     :class="
-                      playingBeatId === beat.id
+                      playingBeatId === String(beat.id)
                         ? 'text-blue-400'
                         : 'text-white hover:text-blue-400'
                     "
