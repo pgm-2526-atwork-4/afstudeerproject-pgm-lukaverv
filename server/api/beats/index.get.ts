@@ -40,7 +40,9 @@ export default defineEventHandler(async (event) => {
         pricePremium: beat.pricePremium,
         priceExclusive: beat.priceExclusive,
         duration: formattedDuration,
+        durationSeconds: beat.duration,
         coverImage: beat.coverImage,
+        audioUrl: beat.audioFile,
       };
     });
 

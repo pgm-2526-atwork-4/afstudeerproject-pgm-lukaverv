@@ -9,6 +9,7 @@ export default defineNuxtConfig({
     "@nuxt/icon",
     "@vee-validate/nuxt",
     "@sidebase/nuxt-auth",
+    "@pinia/nuxt",
   ],
 
   vite: {
