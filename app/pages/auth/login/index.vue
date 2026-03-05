@@ -63,6 +63,17 @@
           >Sign up for free</NuxtLink
         >
       </div>
+
+      <!-- Continue as Guest -->
+      <div class="text-center mt-4">
+        <NuxtLink
+          to="/discover"
+          class="text-sm text-gray-400 hover:text-gray-300 transition inline-flex items-center gap-1"
+        >
+          <Icon name="ph:arrow-right" class="w-4 h-4" />
+          Continue as guest
+        </NuxtLink>
+      </div>
     </div>
   </div>
 </template>

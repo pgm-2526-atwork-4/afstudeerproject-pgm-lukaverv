@@ -279,8 +279,28 @@
                     :alt="track.title"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   />
+                  <!-- Waveform animation when playing -->
+                  <div
+                    v-if="playingBeatId === String(track.id) && isPlaying"
+                    @click.stop="togglePlay(track)"
+                    class="absolute inset-0 bg-black/50 flex items-center justify-center cursor-pointer"
+                  >
+                    <div class="flex items-end gap-1 h-10">
+                      <div
+                        class="w-1 bg-blue-400 rounded-full animate-eq-bar-1"
+                      ></div>
+                      <div
+                        class="w-1 bg-blue-400 rounded-full animate-eq-bar-2"
+                      ></div>
+                      <div
+                        class="w-1 bg-blue-400 rounded-full animate-eq-bar-3"
+                      ></div>
+                    </div>
+                  </div>
                   <!-- Play Overlay -->
                   <div
+                    v-else
+                    @click.stop="togglePlay(track)"
                     class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center"
                   >
                     <div
@@ -293,9 +313,13 @@
                     </div>
                   </div>
                 </div>
-                <p class="text-sm font-semibold text-white truncate mb-1">
-                  {{ track.title }}
-                </p>
+                <NuxtLink :to="`/beat/${track.id}`">
+                  <p
+                    class="text-sm font-semibold text-white truncate mb-1 hover:text-blue-400 transition-colors"
+                  >
+                    {{ track.title }}
+                  </p>
+                </NuxtLink>
                 <p class="text-xs text-gray-400 truncate">
                   {{ track.genre }}
                 </p>
@@ -387,6 +411,9 @@
 const route = useRoute();
 const profileId = route.params.id;
 
+// Beat player state
+const { playingBeatId, isPlaying, togglePlay } = useBeatPlayer();
+
 // Fetch logged-in user to check if viewing own profile
 const { data: currentUser } = await useFetch("/api/auth/user", {
   credentials: "include",
@@ -457,3 +484,50 @@ const formatMemberSince = (date) => {
   return `${day} ${month}, ${year}`;
 };
 </script>
+
+<style scoped>
+/* Animated Equalizer Bars */
+@keyframes eq-bar-1 {
+  0%,
+  100% {
+    height: 16px;
+  }
+  50% {
+    height: 40px;
+  }
+}
+
+@keyframes eq-bar-2 {
+  0%,
+  100% {
+    height: 24px;
+  }
+  50% {
+    height: 52px;
+  }
+}
+
+@keyframes eq-bar-3 {
+  0%,
+  100% {
+    height: 20px;
+  }
+  50% {
+    height: 48px;
+  }
+}
+
+.animate-eq-bar-1 {
+  animation: eq-bar-1 0.6s ease-in-out infinite;
+}
+
+.animate-eq-bar-2 {
+  animation: eq-bar-2 0.8s ease-in-out infinite;
+  animation-delay: 0.1s;
+}
+
+.animate-eq-bar-3 {
+  animation: eq-bar-3 0.7s ease-in-out infinite;
+  animation-delay: 0.2s;
+}
+</style>

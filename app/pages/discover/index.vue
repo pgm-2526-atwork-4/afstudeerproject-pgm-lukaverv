@@ -145,13 +145,11 @@
 </template>
 
 <script setup>
-import { genres, bpmRanges, musicalKeys } from "~/data/filterData";
-
 definePageMeta({
   middleware: "require-verification",
 });
 
-// Fetch beats from API (with delay for testing loading state)
+// Fetch beats from API
 const {
   data: beats,
   pending,

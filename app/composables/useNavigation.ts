@@ -11,5 +11,9 @@ export function useNavigation() {
     router.push("/auth/login");
   };
 
-  return { goBack, redirectToLogin };
+  const navigateToBeat = (beatId: any) => {
+    router.push(`/beat/${beatId}`);
+  };
+
+  return { goBack, redirectToLogin, navigateToBeat };
 }

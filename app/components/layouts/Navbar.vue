@@ -103,8 +103,10 @@
               {{ username }}
             </span>
 
-            <!-- User Dropdown Menu -->
-            <UserDropdown :userProfile="userProfile" :username="username" />
+            <!-- User Dropdown Menu (Hidden on mobile) -->
+            <div class="hidden md:block">
+              <UserDropdown :userProfile="userProfile" :username="username" />
+            </div>
           </template>
         </div>
       </div>

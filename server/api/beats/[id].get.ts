@@ -51,8 +51,9 @@ export default defineEventHandler(async (event) => {
       pricePremium: beat.pricePremium,
       priceExclusive: beat.priceExclusive,
       duration: formattedDuration,
+      durationSeconds: beat.duration,
       coverImage: beat.coverImage,
-      audioFile: beat.audioFile,
+      audioUrl: beat.audioFile,
       isPublished: beat.isPublished,
       isExclusiveSold: beat.isExclusiveSold,
     };

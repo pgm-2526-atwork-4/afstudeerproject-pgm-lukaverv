@@ -22,9 +22,9 @@ export function useBeatPlayer() {
       title: beat.title,
       producer: beat.producer,
       producerId: beat.producerUserId,
-      audioUrl: beat.audioUrl,
+      audioUrl: beat.audioUrl ?? beat.audioFile,
       coverImage: beat.coverImage,
-      duration: beat.durationSeconds || 0,
+      duration: beat.durationSeconds ?? 0,
     };
 
     audioStore.playTrack(track);
