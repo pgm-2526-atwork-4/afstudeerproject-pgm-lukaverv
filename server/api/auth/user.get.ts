@@ -12,9 +12,19 @@ export default defineEventHandler(async (event) => {
         id: true,
         email: true,
         isVerified: true,
+        profile: {
+          select: {
+            role: true,
+          },
+        },
       },
     });
-    if (oauthUser) return oauthUser;
+    if (oauthUser) {
+      return {
+        ...oauthUser,
+        role: oauthUser.profile?.role || null,
+      };
+    }
   }
 
   // Fallback to JWT token (manual email/password login)
@@ -33,8 +43,20 @@ export default defineEventHandler(async (event) => {
         id: true,
         email: true,
         isVerified: true,
+        profile: {
+          select: {
+            role: true,
+          },
+        },
       },
     });
+
+    if (user) {
+      return {
+        ...user,
+        role: user.profile?.role || null,
+      };
+    }
 
     return user;
   } catch (error) {
