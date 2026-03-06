@@ -13,7 +13,7 @@
               :alt="audioStore.currentTrack.title"
               class="w-11 h-11 rounded-lg object-cover flex-shrink-0"
             />
-            <div class="min-w-0">
+            <div class="min-w-0 flex-1">
               <NuxtLink
                 :to="`/beat/${audioStore.currentTrack.id}`"
                 class="text-white text-sm font-semibold truncate block hover:underline"
@@ -27,6 +27,15 @@
                 {{ audioStore.currentTrack.producer }}
               </NuxtLink>
             </div>
+            <!-- Like/Heart Button -->
+            <button
+              @click="toggleLike"
+              class="text-gray-400 hover:text-red-400 transition flex-shrink-0"
+              :class="{ 'text-red-500': isLiked }"
+              title="Like"
+            >
+              <Icon :name="isLiked ? 'ph:heart-fill' : 'ph:heart'" size="20" />
+            </button>
           </div>
 
           <!-- CENTER — Controls + Seekbar -->
@@ -174,6 +183,7 @@ const hoverPercent = ref<number | null>(null);
 const sound = ref<Howl | null>(null);
 const waveformHeights = ref<number[]>([]);
 const waveformRef = ref<HTMLElement | null>(null);
+const isLiked = ref(false); // Like/heart button state
 let rafId: number | null = null;
 let soundId: number | null = null;
 
@@ -387,6 +397,12 @@ function closePlayer() {
   sound.value?.stop();
   sound.value?.unload();
   audioStore.stop();
+}
+
+function toggleLike() {
+  // TODO: Implement like functionality (save to favorites, API call, etc.)
+  isLiked.value = !isLiked.value;
+  console.log("Like toggled:", isLiked.value);
 }
 
 function formatTime(s: number): string {
