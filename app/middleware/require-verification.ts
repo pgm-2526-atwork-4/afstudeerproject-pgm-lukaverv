@@ -27,26 +27,13 @@ export default defineNuxtRouteMiddleware(async (to, from) => {
   }
 
   // For manual login users, verify JWT token
-  try {
-    const user: any = await $fetch("/api/auth/user", {
-      credentials: "include",
-    });
+  const user = await useCurrentUser();
 
-    // If user is null, they're not logged in
-    if (!user) {
-      return navigateTo("/auth/login");
-    }
+  if (!user) return navigateTo("/auth/login");
 
-    // User not verified - redirect to verification pending with email
-    if (!user.isVerified) {
-      return navigateTo(
-        `/auth/verification-pending?email=${encodeURIComponent(user.email)}`,
-      );
-    }
-
-    // User is verified - allow access (no redirect)
-  } catch (error) {
-    // Error fetching user - redirect to login
-    return navigateTo("/auth/login");
+  if (!user.isVerified) {
+    return navigateTo(
+      `/auth/verification-pending?email=${encodeURIComponent(user.email)}`,
+    );
   }
 });
