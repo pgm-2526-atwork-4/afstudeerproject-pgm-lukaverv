@@ -242,6 +242,9 @@ watch(searchQuery, () => {
   currentPage.value = 1;
 });
 
+// Sync filtered beats to audio player playlist
+usePlaylistSync(filteredBeats);
+
 // Close filters when clicking outside
 onMounted(() => {
   document.addEventListener("click", (e) => {

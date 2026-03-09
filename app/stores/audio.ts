@@ -16,6 +16,7 @@ export const useAudioStore = defineStore("audio", {
   state: () => ({
     currentTrack: null as Track | null, // The track currently loaded
     isPlaying: false, // Whether audio is currently playing
+    playlist: [] as any[], // Current context playlist (beats from current page)
   }),
 
   actions: {
@@ -34,6 +35,11 @@ export const useAudioStore = defineStore("audio", {
     stop() {
       this.currentTrack = null;
       this.isPlaying = false;
+    },
+
+    // Set the current playlist from the active page
+    setPlaylist(beats: any[]) {
+      this.playlist = beats || [];
     },
   },
 });

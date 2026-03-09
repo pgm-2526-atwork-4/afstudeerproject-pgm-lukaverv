@@ -1,5 +1,3 @@
-import { useAudioStore, type Track } from "@/stores/audio";
-
 export function useBeatPlayer() {
   const audioStore = useAudioStore();
 
@@ -31,4 +29,22 @@ export function useBeatPlayer() {
   }
 
   return { playingBeatId, isPlaying, togglePlay };
+}
+
+/**
+ * Syncs a reactive beats array to the audio player's playlist
+ * @param beats - Computed or ref containing the beats to sync
+ */
+export function usePlaylistSync(beats: Ref<any[]> | ComputedRef<any[]>) {
+  const audioStore = useAudioStore();
+
+  watch(
+    beats,
+    (beatsList) => {
+      if (beatsList && beatsList.length > 0) {
+        audioStore.setPlaylist(beatsList);
+      }
+    },
+    { immediate: true },
+  );
 }

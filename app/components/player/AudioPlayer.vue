@@ -187,21 +187,18 @@ const isLiked = ref(false); // Like/heart button state
 let rafId: number | null = null;
 let soundId: number | null = null;
 
-// Fetch all beats for next/previous functionality
-const { data: allBeats } = await useFetch("/api/beats");
-
 const currentBeatIndex = computed(() => {
-  if (!allBeats.value || !audioStore.currentTrack) return -1;
-  return allBeats.value.findIndex(
+  if (!audioStore.playlist.length || !audioStore.currentTrack) return -1;
+  return audioStore.playlist.findIndex(
     (b) => String(b.id) === audioStore.currentTrack?.id,
   );
 });
 
 const hasNext = computed(() => {
-  if (!allBeats.value) return false;
+  if (!audioStore.playlist.length) return false;
   return (
     currentBeatIndex.value >= 0 &&
-    currentBeatIndex.value < allBeats.value.length - 1
+    currentBeatIndex.value < audioStore.playlist.length - 1
   );
 });
 
@@ -333,8 +330,8 @@ function onHover(e: MouseEvent) {
 }
 
 function playNext() {
-  if (!hasNext.value || !allBeats.value) return;
-  const nextBeat = allBeats.value[currentBeatIndex.value + 1];
+  if (!hasNext.value || !audioStore.playlist.length) return;
+  const nextBeat = audioStore.playlist[currentBeatIndex.value + 1];
   if (nextBeat) {
     const track: Track = {
       id: String(nextBeat.id),
@@ -350,8 +347,8 @@ function playNext() {
 }
 
 function playPrevious() {
-  if (!hasPrevious.value || !allBeats.value) return;
-  const prevBeat = allBeats.value[currentBeatIndex.value - 1];
+  if (!hasPrevious.value || !audioStore.playlist.length) return;
+  const prevBeat = audioStore.playlist[currentBeatIndex.value - 1];
   if (prevBeat) {
     const track: Track = {
       id: String(prevBeat.id),

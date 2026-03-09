@@ -192,4 +192,7 @@ const filteredBeats = computed(() => {
 watch(searchQuery, () => {
   currentPage.value = 1;
 });
+
+// Sync filtered beats to audio player playlist
+usePlaylistSync(filteredBeats);
 </script>

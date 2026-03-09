@@ -480,6 +480,9 @@ const producerBeats = computed(() => {
     .slice(0, 5);
 });
 
+// Sync producer beats to audio player playlist
+usePlaylistSync(producerBeats);
+
 const { playingBeatId, isPlaying, togglePlay } = useBeatPlayer();
 const { getLicenseLabel, getUsageTerms } = useLicenseData();
 

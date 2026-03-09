@@ -461,6 +461,9 @@ const popularTracks = computed(() => {
   return beatsData.value.beats.slice(0, 5);
 });
 
+// Sync popular tracks to audio player playlist
+usePlaylistSync(popularTracks);
+
 // Playlists - temporarily use beats (will implement playlists later)
 const playlists = computed(() => {
   if (!beatsData.value?.beats) return [];
