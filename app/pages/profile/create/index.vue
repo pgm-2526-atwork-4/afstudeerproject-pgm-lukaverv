@@ -158,17 +158,20 @@
                 class="block text-sm font-medium text-gray-300 mb-2"
                 >Biography (Optional)</label
               >
-              <textarea
-                id="bio"
-                v-model="form.bio"
-                rows="7"
-                maxlength="500"
-                class="flex-1 px-4 py-3 bg-[#0d1230] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
-                placeholder="Tell us about yourself..."
-              />
-              <p class="mt-1 text-xs text-gray-500">
-                {{ form.bio?.length || 0 }}/500 characters
-              </p>
+              <InputCharCount
+                :current="form.bio?.length || 0"
+                :max="500"
+                position="bottom"
+              >
+                <textarea
+                  id="bio"
+                  v-model="form.bio"
+                  rows="7"
+                  maxlength="500"
+                  class="w-full px-4 py-3 pb-7 bg-[#0d1230] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
+                  placeholder="Tell us about yourself..."
+                />
+              </InputCharCount>
             </div>
 
             <!-- Right Column: Profile Picture & Social Links -->
