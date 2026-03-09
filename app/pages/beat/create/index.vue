@@ -12,7 +12,7 @@
         </p>
       </div>
 
-      <form>
+      <form @submit.prevent="handleSubmit">
         <div class="flex gap-8 items-start">
           <!-- Left: scrollable -->
           <div class="flex-1 min-w-0 space-y-6">
@@ -93,6 +93,7 @@
                     >Key</label
                   >
                   <select
+                    v-model="selectedKey"
                     class="w-full bg-[#0d1230] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
                   >
                     <option value="">Select key</option>
@@ -106,6 +107,7 @@
                     >BPM</label
                   >
                   <input
+                    v-model.number="bpm"
                     type="number"
                     placeholder="140"
                     min="40"
@@ -119,6 +121,7 @@
                   >Genre</label
                 >
                 <select
+                  v-model="selectedGenre"
                   class="w-full bg-[#0d1230] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
                 >
                   <option value="">Select genre</option>
@@ -187,6 +190,7 @@
                       >€</span
                     >
                     <input
+                      v-model.number="priceBasic"
                       type="number"
                       placeholder="29.99"
                       min="0"
@@ -203,6 +207,7 @@
                       >€</span
                     >
                     <input
+                      v-model.number="pricePremium"
                       type="number"
                       placeholder="59.99"
                       min="0"
@@ -219,6 +224,7 @@
                       >€</span
                     >
                     <input
+                      v-model.number="priceExclusive"
                       type="number"
                       placeholder="299.99"
                       min="0"
@@ -298,10 +304,11 @@
             >
               <h2 class="text-sm font-bold text-white mb-3">Visibility</h2>
               <select
+                v-model="isPublished"
                 class="w-full bg-[#0d1230] border border-gray-700 rounded-xl px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
               >
-                <option value="false">Private</option>
-                <option value="true">Public</option>
+                <option :value="false">Private</option>
+                <option :value="true">Public</option>
               </select>
               <p class="text-xs text-gray-500 mt-2">
                 Private beats are only visible to you.
@@ -311,9 +318,10 @@
             <!-- Publish -->
             <button
               type="submit"
-              class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-colors"
+              :disabled="loading"
+              class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Publish Beat
+              {{ loading ? "Publishing..." : "Publish Beat" }}
             </button>
           </div>
         </div>
@@ -344,6 +352,18 @@ const { openUploadWidget } = useCloudinaryUpload();
 const beatCoverUrl = ref("");
 const wavUrl = ref("");
 const mp3Url = ref("");
+const title = ref("");
+const description = ref("");
+const selectedKey = ref("");
+const bpm = ref<number | null>(null);
+const selectedGenre = ref("");
+const tagInput = ref("");
+const tags = ref<string[]>([]);
+const priceBasic = ref<number | null>(null);
+const pricePremium = ref<number | null>(null);
+const priceExclusive = ref<number | null>(null);
+const isPublished = ref(true);
+const loading = ref(false);
 
 const handleBeatCoverUpload = () => {
   openUploadWidget(
@@ -388,11 +408,6 @@ const handleMp3Upload = () => {
   );
 };
 
-const title = ref("");
-const description = ref("");
-const tagInput = ref("");
-const tags = ref<string[]>([]);
-
 function addTag() {
   const val = tagInput.value.trim().toLowerCase();
   if (!val || tags.value.length >= 3 || tags.value.includes(val)) return;
@@ -402,5 +417,73 @@ function addTag() {
 
 function removeTag(index: number) {
   tags.value.splice(index, 1);
+}
+
+async function handleSubmit() {
+  loading.value = true;
+
+  try {
+    const currentUser = await useCurrentUser();
+    const userProfile = useState<any>("userProfile");
+    const producerId = userProfile.value?.id;
+
+    if (!producerId) {
+      alert("Profile not found. Please create a profile first.");
+      return;
+    }
+
+    // Validate required fields
+    if (
+      !title.value ||
+      !selectedGenre.value ||
+      !bpm.value ||
+      !beatCoverUrl.value
+    ) {
+      alert(
+        "Please fill in all required fields: title, genre, BPM, and beat cover.",
+      );
+      return;
+    }
+
+    if (!mp3Url.value && !wavUrl.value) {
+      alert("Please upload at least one audio file (WAV or MP3).");
+      return;
+    }
+
+    if (
+      priceBasic.value == null ||
+      pricePremium.value == null ||
+      priceExclusive.value == null
+    ) {
+      alert("Please set all pricing tiers.");
+      return;
+    }
+
+    await $fetch("/api/beats/create", {
+      method: "POST",
+      body: {
+        title: title.value,
+        description: description.value || null,
+        producerId,
+        genre: selectedGenre.value,
+        bpm: bpm.value,
+        key: selectedKey.value || null,
+        tags: tags.value,
+        priceBasic: priceBasic.value,
+        pricePremium: pricePremium.value,
+        priceExclusive: priceExclusive.value,
+        coverImage: beatCoverUrl.value,
+        audioFile: mp3Url.value || wavUrl.value,
+        isPublished: isPublished.value,
+      },
+    });
+
+    navigateTo("/discover");
+  } catch (error: any) {
+    console.error("Failed to create beat:", error);
+    alert(error.data?.message || "Failed to publish beat. Please try again.");
+  } finally {
+    loading.value = false;
+  }
 }
 </script>
