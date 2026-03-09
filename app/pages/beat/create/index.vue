@@ -22,16 +22,25 @@
             >
               <h2 class="text-lg font-bold text-white mb-5">Basic Info</h2>
               <div class="flex gap-5 items-stretch">
-                <!-- Artwork -->
+                <!-- Beat Cover -->
                 <div class="flex-shrink-0 flex flex-col">
                   <p class="text-xs font-medium text-gray-400 mb-2">
-                    Artwork image
+                    Beat cover
                   </p>
                   <div
-                    class="flex-1 w-36 rounded-xl border-2 border-dashed border-gray-600 bg-[#0d1230] flex flex-col items-center justify-center gap-2 text-gray-500 cursor-pointer hover:border-blue-500 transition-colors min-h-[8rem]"
+                    class="flex-1 w-48 rounded-xl border-2 border-dashed border-gray-600 bg-[#0d1230] flex flex-col items-center justify-center gap-2 text-gray-500 cursor-pointer hover:border-blue-500 transition-colors min-h-[8rem] overflow-hidden"
+                    @click="handleBeatCoverUpload"
                   >
-                    <Icon name="ph:image" class="w-8 h-8" />
-                    <p class="text-xs">Click to upload</p>
+                    <img
+                      v-if="beatCoverUrl"
+                      :src="beatCoverUrl"
+                      alt="Beat cover"
+                      class="w-full h-full object-cover"
+                    />
+                    <template v-else>
+                      <Icon name="ph:image" class="w-8 h-8" />
+                      <p class="text-xs">Click to upload</p>
+                    </template>
                   </div>
                 </div>
 
@@ -306,9 +315,28 @@
 <script setup lang="ts">
 import { musicalKeys, genres } from "~/data/filterData";
 
+useHead({
+  script: [
+    {
+      src: "https://upload-widget.cloudinary.com/global/all.js",
+      defer: true,
+    },
+  ],
+});
+
 definePageMeta({
   middleware: "producer-only",
 });
+
+const { openUploadWidget } = useCloudinaryUpload();
+
+const beatCoverUrl = ref("");
+
+const handleBeatCoverUpload = () => {
+  openUploadWidget((url: string) => {
+    beatCoverUrl.value = url;
+  });
+};
 
 const title = ref("");
 const description = ref("");
