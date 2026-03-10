@@ -1,5 +1,22 @@
 import { prisma } from "../../server/utils/db";
 import bcrypt from "bcrypt";
+import * as mm from "music-metadata";
+
+async function getAudioDuration(url: string): Promise<number> {
+  try {
+    const response = await fetch(url);
+    if (!response.ok || !response.body) return 0;
+    const metadata = await mm.parseWebStream(
+      response.body,
+      { mimeType: "audio/mpeg" },
+      { duration: true },
+    );
+    return Math.round(metadata.format.duration ?? 0);
+  } catch {
+    console.warn(`Could not fetch duration for ${url}, defaulting to 0`);
+    return 0;
+  }
+}
 
 export async function seedBeats() {
   // Create test producer profiles
@@ -46,7 +63,7 @@ export async function seedBeats() {
   });
 
   // Create beats
-  const beats = [
+  const beatDefinitions = [
     {
       title: "Midnight Thoughts",
       producerId: producer1.profile!.id,
@@ -470,16 +487,26 @@ export async function seedBeats() {
     },
   ];
 
-  for (const beatData of beats) {
+  // Deduplicate audio URLs and fetch all durations in parallel
+  const uniqueUrls = [...new Set(beatDefinitions.map((b) => b.audioFile))];
+  console.log(
+    `Fetching durations for ${uniqueUrls.length} unique audio files...`,
+  );
+  const durationMap = Object.fromEntries(
+    await Promise.all(
+      uniqueUrls.map(async (url) => [url, await getAudioDuration(url)]),
+    ),
+  );
+
+  for (const beatData of beatDefinitions) {
+    const duration = durationMap[beatData.audioFile] || beatData.duration;
+    const { duration: _ignored, ...beatWithoutDuration } = beatData;
+    const beatId = `beat-${beatData.title.toLowerCase().replace(/\s+/g, "-")}`;
+
     await prisma.beat.upsert({
-      where: {
-        id: `beat-${beatData.title.toLowerCase().replace(/\s+/g, "-")}`,
-      },
-      update: beatData,
-      create: {
-        id: `beat-${beatData.title.toLowerCase().replace(/\s+/g, "-")}`,
-        ...beatData,
-      },
+      where: { id: beatId },
+      update: { ...beatWithoutDuration, duration },
+      create: { id: beatId, ...beatWithoutDuration, duration },
     });
   }
 }

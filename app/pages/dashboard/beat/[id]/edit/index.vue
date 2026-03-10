@@ -1,17 +1,46 @@
 <template>
+  <DeleteConfirmModal
+    v-model="showDeleteModal"
+    item-name="beat"
+    @confirm="confirmDelete"
+  />
+
   <div
     class="min-h-screen pt-16 bg-gradient-to-br from-[#0a0e27] via-[#0d1230] to-[#0a0e27]"
   >
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-6 py-6 md:py-8">
       <!-- Header -->
       <div class="mb-6 md:mb-8">
-        <BackButton label="Back" class="mb-4" />
-        <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
-          Upload a Beat
-        </h1>
-        <p class="text-sm md:text-base text-gray-400">
-          Fill in the details and upload your beat to the marketplace
-        </p>
+        <BackButton />
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-3xl md:text-4xl font-bold text-white mb-2">
+              Edit Beat
+            </h1>
+            <p class="text-sm md:text-base text-gray-400">
+              Update your beat details and files
+            </p>
+          </div>
+          <button
+            @click="showDeleteModal = true"
+            class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-sm font-medium transition-colors flex items-center gap-2"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+              />
+            </svg>
+            Delete Beat
+          </button>
+        </div>
       </div>
 
       <form @submit.prevent="handleSubmit">
@@ -341,13 +370,13 @@
               </p>
             </div>
 
-            <!-- Publish -->
+            <!-- Save Changes -->
             <button
               type="submit"
               :disabled="loading"
               class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
             >
-              {{ loading ? "Publishing..." : "Publish Beat" }}
+              {{ loading ? "Saving..." : "Save Changes" }}
             </button>
           </div>
         </div>
@@ -372,22 +401,40 @@ definePageMeta({
   middleware: "producer-only",
 });
 
-const beatCoverUrl = ref("");
-const wavUrl = ref("");
-const mp3Url = ref("");
-const audioDuration = ref(0);
-const title = ref("");
-const description = ref("");
-const selectedKey = ref("");
-const bpm = ref<number | null>(null);
-const selectedGenre = ref("");
+const route = useRoute();
+const router = useRouter();
+
+const beatId = route.params.id;
+
+// Fetch real beat data
+const { data: beatData, error } = await useFetch(`/api/beats/${beatId}`, {
+  headers: useRequestHeaders(["cookie"]),
+});
+
+if (error.value || !beatData.value) {
+  navigateTo("/dashboard");
+}
+
+const beat = beatData.value as any;
+
+// Pre-fill form with real beat data
+const beatCoverUrl = ref(beat?.coverImage || "");
+const wavUrl = ref(beat?.audioUrl || "");
+const mp3Url = ref(beat?.audioUrl || "");
+const title = ref(beat?.title || "");
+const description = ref(beat?.description || "");
+const selectedKey = ref(beat?.key || "");
+const bpm = ref<number | null>(beat?.bpm || null);
+const selectedGenre = ref(beat?.genre || "");
+const tags = ref<string[]>(beat?.tags || []);
 const tagInput = ref("");
-const tags = ref<string[]>([]);
-const priceBasic = ref<number | null>(null);
-const pricePremium = ref<number | null>(null);
-const priceExclusive = ref<number | null>(null);
-const isPublished = ref(true);
+const priceBasic = ref<number | null>(beat?.priceBasic || null);
+const pricePremium = ref<number | null>(beat?.pricePremium || null);
+const priceExclusive = ref<number | null>(beat?.priceExclusive || null);
+const isPublished = ref(beat?.isPublished ?? true);
 const loading = ref(false);
+const showDeleteModal = ref(false);
+const audioDuration = ref(0);
 
 const {
   handleBeatCoverUpload,
@@ -397,71 +444,56 @@ const {
   removeTag,
 } = useBeatForm(beatCoverUrl, wavUrl, mp3Url, tags, tagInput, audioDuration);
 
-async function handleSubmit() {
+const handleSubmit = async () => {
   loading.value = true;
 
   try {
-    const userProfile = useState<any>("userProfile");
-    const producerId = userProfile.value?.id;
-
-    if (!producerId) {
-      alert("Profile not found. Please create a profile first.");
-      return;
-    }
-
-    // Validate required fields
-    if (
-      !title.value ||
-      !selectedGenre.value ||
-      !bpm.value ||
-      !beatCoverUrl.value
-    ) {
-      alert(
-        "Please fill in all required fields: title, genre, BPM, and beat cover.",
-      );
-      return;
-    }
-
-    if (!mp3Url.value && !wavUrl.value) {
-      alert("Please upload at least one audio file (WAV or MP3).");
-      return;
-    }
-
-    if (
-      priceBasic.value == null ||
-      pricePremium.value == null ||
-      priceExclusive.value == null
-    ) {
-      alert("Please set all pricing tiers.");
-      return;
-    }
-
-    await $fetch("/api/beats/create", {
-      method: "POST",
+    await $fetch(`/api/beats/${beatId}`, {
+      method: "PUT",
+      headers: useRequestHeaders(["cookie"]),
       body: {
         title: title.value,
-        description: description.value || null,
-        producerId,
-        genre: selectedGenre.value,
+        description: description.value,
+        key: selectedKey.value,
         bpm: bpm.value,
-        key: selectedKey.value || null,
+        genre: selectedGenre.value,
         tags: tags.value,
         priceBasic: priceBasic.value,
         pricePremium: pricePremium.value,
         priceExclusive: priceExclusive.value,
+        isPublished: isPublished.value,
         coverImage: beatCoverUrl.value,
         audioFile: mp3Url.value || wavUrl.value,
         duration: audioDuration.value || null,
-        isPublished: isPublished.value,
       },
     });
 
-    navigateTo("/discover");
-  } catch (error: any) {
-    console.error("Failed to create beat:", error);
-    alert(error.data?.message || "Failed to publish beat. Please try again.");
+    router.push(`/dashboard/beat/${beatId}`);
+  } catch (err: any) {
+    console.error("Failed to update beat:", err);
+    alert(err?.data?.message || "Failed to save changes. Please try again.");
   } finally {
     loading.value = false;
   }
-}
+};
+
+const confirmDelete = async () => {
+  loading.value = true;
+
+  try {
+    await $fetch(`/api/beats/${beatId}`, {
+      method: "DELETE",
+      headers: useRequestHeaders(["cookie"]),
+    });
+
+    showDeleteModal.value = false;
+    router.push("/dashboard?tab=tracks");
+  } catch (err: any) {
+    console.error("Failed to delete beat:", err);
+    alert(err?.data?.message || "Failed to delete beat. Please try again.");
+  } finally {
+    loading.value = false;
+    showDeleteModal.value = false;
+  }
+};
 </script>

@@ -15,6 +15,7 @@ export default defineEventHandler(async (event) => {
     coverImage,
     audioFile,
     isPublished,
+    duration,
   } = body;
 
   // Validate required fields
@@ -51,7 +52,7 @@ export default defineEventHandler(async (event) => {
         coverImage,
         audioFile,
         isPublished: isPublished === true || isPublished === "true",
-        duration: 180, // Default 3 minutes (will need to calculate from audio later)
+        duration: duration ? parseInt(duration) : 0,
       },
     });
 

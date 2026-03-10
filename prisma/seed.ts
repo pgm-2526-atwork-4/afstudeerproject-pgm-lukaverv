@@ -1,5 +1,4 @@
 import "dotenv/config";
-import { prisma } from "../server/utils/db";
 import { seedBeats } from "./seeds/beat.seed";
 
 async function main() {
