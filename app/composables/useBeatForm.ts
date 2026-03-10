@@ -1,14 +1,17 @@
 import type { Ref } from "vue";
 
-export const useBeatUpload = (
+export const useBeatForm = (
   beatCoverUrl: Ref<string>,
   wavUrl: Ref<string>,
   mp3Url: Ref<string>,
+  tags: Ref<string[]>,
+  tagInput: Ref<string>,
   audioDuration?: Ref<number>,
 ) => {
   const config = useRuntimeConfig();
   const { openUploadWidget } = useCloudinaryUpload();
 
+  // Upload handlers
   const handleBeatCoverUpload = () => {
     openUploadWidget(
       (url: string) => {
@@ -57,9 +60,28 @@ export const useBeatUpload = (
     );
   };
 
+  // Tag management
+  const addTag = () => {
+    const trimmedTag = tagInput.value.trim().toLowerCase();
+    if (
+      trimmedTag &&
+      tags.value.length < 3 &&
+      !tags.value.includes(trimmedTag)
+    ) {
+      tags.value.push(trimmedTag);
+      tagInput.value = "";
+    }
+  };
+
+  const removeTag = (index: number) => {
+    tags.value.splice(index, 1);
+  };
+
   return {
     handleBeatCoverUpload,
     handleWavUpload,
     handleMp3Upload,
+    addTag,
+    removeTag,
   };
 };

@@ -389,19 +389,13 @@ const priceExclusive = ref<number | null>(null);
 const isPublished = ref(true);
 const loading = ref(false);
 
-const { handleBeatCoverUpload, handleWavUpload, handleMp3Upload } =
-  useBeatUpload(beatCoverUrl, wavUrl, mp3Url, audioDuration);
-
-function addTag() {
-  const val = tagInput.value.trim().toLowerCase();
-  if (!val || tags.value.length >= 3 || tags.value.includes(val)) return;
-  tags.value.push(val);
-  tagInput.value = "";
-}
-
-function removeTag(index: number) {
-  tags.value.splice(index, 1);
-}
+const {
+  handleBeatCoverUpload,
+  handleWavUpload,
+  handleMp3Upload,
+  addTag,
+  removeTag,
+} = useBeatForm(beatCoverUrl, wavUrl, mp3Url, tags, tagInput, audioDuration);
 
 async function handleSubmit() {
   loading.value = true;

@@ -436,20 +436,13 @@ const loading = ref(false);
 const showDeleteModal = ref(false);
 const audioDuration = ref(0);
 
-const { handleBeatCoverUpload, handleWavUpload, handleMp3Upload } =
-  useBeatUpload(beatCoverUrl, wavUrl, mp3Url, audioDuration);
-
-const addTag = () => {
-  const trimmedTag = tagInput.value.trim().toLowerCase();
-  if (trimmedTag && tags.value.length < 3 && !tags.value.includes(trimmedTag)) {
-    tags.value.push(trimmedTag);
-    tagInput.value = "";
-  }
-};
-
-const removeTag = (index: number) => {
-  tags.value.splice(index, 1);
-};
+const {
+  handleBeatCoverUpload,
+  handleWavUpload,
+  handleMp3Upload,
+  addTag,
+  removeTag,
+} = useBeatForm(beatCoverUrl, wavUrl, mp3Url, tags, tagInput, audioDuration);
 
 const handleSubmit = async () => {
   loading.value = true;
@@ -502,9 +495,5 @@ const confirmDelete = async () => {
     loading.value = false;
     showDeleteModal.value = false;
   }
-};
-
-const handleDelete = async () => {
-  showDeleteModal.value = true;
 };
 </script>
