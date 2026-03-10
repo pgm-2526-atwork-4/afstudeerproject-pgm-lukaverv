@@ -1,71 +1,55 @@
 <template>
-  <div class="bg-dark-800 rounded-xl p-8 shadow-2xl">
+  <div>
     <!-- Header -->
-    <div class="flex items-center justify-between mb-2">
-      <h2 class="text-xl font-bold text-white flex items-center gap-2">
-        <svg
-          class="w-5 h-5 text-primary-500"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-          />
-        </svg>
+    <div
+      class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4 mb-4"
+    >
+      <h2
+        class="text-base md:text-lg font-bold text-white flex items-center gap-2"
+      >
+        <Icon name="ph:chart-bar" class="w-4 h-4 md:w-5 md:h-5 text-blue-500" />
         Audience Retention
       </h2>
-      <div class="flex items-center gap-6">
-        <div class="flex items-center gap-2">
-          <svg
-            class="w-4 h-4 text-purple-500"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <span class="text-sm text-gray-400">Avg. Duration:</span>
-          <span class="text-sm text-white font-semibold">{{
-            avgViewDuration
-          }}</span>
+      <div
+        class="flex flex-wrap items-center gap-3 sm:gap-6 text-xs sm:text-sm"
+      >
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <Icon name="ph:clock" class="w-3 h-3 sm:w-4 sm:h-4 text-purple-500" />
+          <span class="text-gray-400">Avg. Duration:</span>
+          <span class="text-white font-semibold">{{ avgViewDuration }}</span>
         </div>
-        <div class="flex items-center gap-2">
-          <span class="text-sm text-gray-400">Retention:</span>
-          <span class="text-sm text-white font-semibold"
+        <div class="flex items-center gap-1.5 sm:gap-2">
+          <span class="text-gray-400">Retention:</span>
+          <span class="text-white font-semibold"
             >{{ avgPercentageViewed }}%</span
           >
         </div>
       </div>
     </div>
-    <div class="h-px bg-dark-700 mb-5"></div>
+    <div class="h-px bg-gray-700/30 mb-4 md:mb-5"></div>
 
     <!-- Legend -->
-    <div class="flex items-center gap-5 mb-4 text-xs text-gray-400">
+    <div
+      class="flex items-center gap-3 sm:gap-5 mb-3 sm:mb-4 text-xs text-gray-400"
+    >
       <div class="flex items-center gap-1.5">
-        <div class="w-6 h-0.5 bg-primary-500 rounded-full"></div>
+        <div class="w-4 sm:w-6 h-0.5 bg-blue-500 rounded-full"></div>
         <span>This beat</span>
       </div>
       <div class="flex items-center gap-1.5">
-        <div class="w-6 h-0.5 bg-gray-500 rounded-full opacity-60"></div>
+        <div class="w-4 sm:w-6 h-0.5 bg-gray-500 rounded-full opacity-60"></div>
         <span>Typical retention</span>
       </div>
     </div>
 
     <!-- Chart -->
-    <div class="h-44">
+    <div class="h-48 sm:h-56 md:h-64">
       <ClientOnly>
         <Line :data="chartData" :options="chartOptions" />
         <template #fallback>
-          <div class="h-44 bg-dark-900/30 rounded-lg animate-pulse"></div>
+          <div
+            class="h-48 sm:h-56 md:h-64 bg-[#0d1230]/30 rounded-lg animate-pulse"
+          ></div>
         </template>
       </ClientOnly>
     </div>

@@ -1,11 +1,13 @@
 <template>
   <div class="bg-dark-800 rounded-xl shadow-2xl">
     <!-- Header -->
-    <div class="p-8 border-b border-dark-700/50">
-      <div class="flex items-center justify-between">
+    <div class="p-4 sm:p-6 md:p-8 border-b border-dark-700/50">
+      <div
+        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+      >
         <div>
-          <h2 class="text-xl font-bold text-white">My Beats</h2>
-          <p class="text-sm text-gray-400 mt-1">
+          <h2 class="text-lg sm:text-xl font-bold text-white">My Beats</h2>
+          <p class="text-xs sm:text-sm text-gray-400 mt-1">
             {{ total ?? beats?.length ?? 0 }} total beats
           </p>
         </div>
@@ -14,7 +16,7 @@
             type="text"
             v-model="searchQuery"
             placeholder="Search beats..."
-            class="bg-dark-700 text-white border border-dark-600 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-64"
+            class="bg-dark-700 text-black border border-dark-600 rounded-lg px-3 sm:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full sm:w-64"
           />
         </div>
       </div>
@@ -34,29 +36,35 @@
         v-for="beat in filteredBeats"
         :key="beat._id"
         :to="`/dashboard/beat/${beat._id}`"
-        class="p-4 hover:bg-dark-750 transition-colors group block"
+        class="p-3 sm:p-4 hover:bg-dark-750 transition-colors group block"
       >
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 sm:gap-4">
           <!-- Artwork -->
           <div class="flex-shrink-0">
             <img
               :src="beat.artworkUrl"
               :alt="beat.title"
-              class="w-16 h-16 rounded object-cover bg-dark-700"
+              class="w-12 h-12 sm:w-16 sm:h-16 rounded object-cover bg-dark-700"
             />
           </div>
 
           <!-- Beat Info -->
           <div class="flex-1 min-w-0">
             <h3
-              class="text-white font-medium truncate group-hover:text-primary-400 transition-colors"
+              class="text-sm sm:text-base text-white font-medium truncate group-hover:text-primary-400 transition-colors"
             >
               {{ beat.title }}
             </h3>
-            <div class="flex items-center gap-4 mt-1">
-              <span class="text-sm text-gray-400">{{ beat.bpm }} BPM</span>
-              <span class="text-sm text-gray-400">{{ beat.key }}</span>
-              <span class="text-sm text-gray-400">{{ beat.genre }}</span>
+            <div class="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
+              <span class="text-xs sm:text-sm text-gray-400"
+                >{{ beat.bpm }} BPM</span
+              >
+              <span class="text-xs sm:text-sm text-gray-400">{{
+                beat.key
+              }}</span>
+              <span class="text-xs sm:text-sm text-gray-400 hidden sm:inline">{{
+                beat.genre
+              }}</span>
             </div>
             <div class="flex items-center gap-4 mt-1">
               <span class="text-xs text-gray-500">{{
@@ -67,19 +75,10 @@
 
           <!-- Arrow Icon -->
           <div class="flex-shrink-0">
-            <svg
+            <Icon
+              name="ph:caret-right"
               class="w-5 h-5 text-gray-400 group-hover:text-primary-400 transition-colors"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            />
           </div>
         </div>
       </NuxtLink>
