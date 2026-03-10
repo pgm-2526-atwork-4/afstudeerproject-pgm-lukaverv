@@ -372,12 +372,10 @@ definePageMeta({
   middleware: "producer-only",
 });
 
-const config = useRuntimeConfig();
-const { openUploadWidget } = useCloudinaryUpload();
-
 const beatCoverUrl = ref("");
 const wavUrl = ref("");
 const mp3Url = ref("");
+const audioDuration = ref(0);
 const title = ref("");
 const description = ref("");
 const selectedKey = ref("");
@@ -391,48 +389,8 @@ const priceExclusive = ref<number | null>(null);
 const isPublished = ref(true);
 const loading = ref(false);
 
-const handleBeatCoverUpload = () => {
-  openUploadWidget(
-    (url: string) => {
-      beatCoverUrl.value = url;
-    },
-    {
-      folder: "beatstack-beat-covers",
-      cropping: true,
-      croppingAspectRatio: 1,
-    },
-  );
-};
-
-const handleWavUpload = () => {
-  openUploadWidget(
-    (url: string) => {
-      wavUrl.value = url;
-    },
-    {
-      uploadPreset: (config.public.cloudinary as any).audioPreset,
-      folder: "beatstack-audio-files/wav",
-      clientAllowedFormats: ["wav"],
-      maxFileSize: 100 * 1024 * 1024, // 100 MB
-      cropping: false,
-    },
-  );
-};
-
-const handleMp3Upload = () => {
-  openUploadWidget(
-    (url: string) => {
-      mp3Url.value = url;
-    },
-    {
-      uploadPreset: (config.public.cloudinary as any).audioPreset,
-      folder: "beatstack-audio-files/mp3",
-      clientAllowedFormats: ["mp3"],
-      maxFileSize: 50 * 1024 * 1024, // 50 MB
-      cropping: false,
-    },
-  );
-};
+const { handleBeatCoverUpload, handleWavUpload, handleMp3Upload } =
+  useBeatUpload(beatCoverUrl, wavUrl, mp3Url, audioDuration);
 
 function addTag() {
   const val = tagInput.value.trim().toLowerCase();
@@ -449,7 +407,6 @@ async function handleSubmit() {
   loading.value = true;
 
   try {
-    const currentUser = await useCurrentUser();
     const userProfile = useState<any>("userProfile");
     const producerId = userProfile.value?.id;
 
@@ -500,6 +457,7 @@ async function handleSubmit() {
         priceExclusive: priceExclusive.value,
         coverImage: beatCoverUrl.value,
         audioFile: mp3Url.value || wavUrl.value,
+        duration: audioDuration.value || null,
         isPublished: isPublished.value,
       },
     });

@@ -11,7 +11,7 @@ export const useCloudinaryUpload = () => {
   };
 
   const openUploadWidget = (
-    onSuccess: (url: string) => void,
+    onSuccess: (url: string, info?: any) => void,
     options: UploadOptions = {},
   ) => {
     const cloudName = (config.public.cloudinary as any).cloudName;
@@ -54,7 +54,7 @@ export const useCloudinaryUpload = () => {
             // Use eager transformation if available, otherwise use original
             const url =
               result.info.eager?.[0]?.secure_url || result.info.secure_url;
-            onSuccess(url);
+            onSuccess(url, result.info);
           }
         },
       );
