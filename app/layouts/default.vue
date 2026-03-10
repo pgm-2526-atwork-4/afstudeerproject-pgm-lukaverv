@@ -11,6 +11,9 @@
 
     <!-- Audio Player -->
     <AudioPlayer />
+
+    <!-- Back to Top Button -->
+    <BackToTop />
   </div>
 </template>
 

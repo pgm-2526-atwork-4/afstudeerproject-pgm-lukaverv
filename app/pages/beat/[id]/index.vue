@@ -455,8 +455,6 @@
         </div>
       </div>
     </div>
-
-    <BackToTop />
   </div>
 </template>
 

@@ -119,8 +119,6 @@
       </div>
     </div>
 
-    <BackToTop />
-
     <!-- License Modal -->
     <BeatLicenseModal
       v-if="selectedBeat"
