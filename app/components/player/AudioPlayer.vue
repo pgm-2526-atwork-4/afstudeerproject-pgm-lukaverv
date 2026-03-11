@@ -27,8 +27,9 @@
                 {{ audioStore.currentTrack.producer }}
               </NuxtLink>
             </div>
-            <!-- Like/Heart Button -->
+            <!-- Like/Heart Button (only for authenticated users) -->
             <button
+              v-if="userProfile"
               @click="toggleLike"
               class="text-gray-400 hover:text-red-400 transition flex-shrink-0"
               :class="{ 'text-red-500': isLiked }"
