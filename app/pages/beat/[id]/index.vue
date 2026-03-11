@@ -569,66 +569,29 @@ const selectedLicenseLabel = computed(() =>
 );
 const usageTerms = computed(() => getUsageTerms(selectedLicense.value));
 
-// Likes state
+// Likes — shared state with the AudioPlayer via useLikes keyed by beatId
 const userProfile = useState("userProfile");
-const isLiked = ref(false);
-const likeCount = ref(0);
+const {
+  isLiked,
+  likeCount,
+  initCount,
+  fetchLikeStatus,
+  toggleLike: handleLikeToggle,
+} = useLikes(beatId);
+const { formatNumber } = useFormatters();
 
-// Initialize likes from beat data
+// Seed like count from initial beat data (avoids an extra API call)
 watch(
   beat,
   (newBeat) => {
-    if (newBeat?.likesCount !== undefined) {
-      likeCount.value = newBeat.likesCount;
-    }
+    if (newBeat?.likesCount !== undefined) initCount(newBeat.likesCount);
   },
   { immediate: true },
 );
 
-// Fetch like status
-const fetchLikeStatus = async () => {
-  if (!userProfile.value?.id || !beatId) return;
-
-  try {
-    const status = await $fetch("/api/interactions/likes/check", {
-      params: { beatId: beatId, profileId: userProfile.value.id },
-    });
-    isLiked.value = status.liked;
-  } catch (error) {
-    console.error("Failed to fetch like status:", error);
-  }
-};
-
-// Toggle like
-const handleLikeToggle = async () => {
-  if (!userProfile.value?.id) return;
-
-  try {
-    const response = await $fetch("/api/interactions/likes/toggle", {
-      method: "POST",
-      body: { beatId: beatId, profileId: userProfile.value.id },
-    });
-
-    isLiked.value = response.liked;
-    likeCount.value += response.liked ? 1 : -1;
-  } catch (error) {
-    console.error("Failed to toggle like:", error);
-  }
-};
-
-// Fetch like status on mount
 onMounted(() => {
-  if (userProfile.value?.id) {
-    fetchLikeStatus();
-  }
+  fetchLikeStatus();
 });
-
-// Number formatting
-const formatNumber = (num) => {
-  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
-  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
-  return num.toString();
-};
 
 // Comment state
 const newComment = ref("");

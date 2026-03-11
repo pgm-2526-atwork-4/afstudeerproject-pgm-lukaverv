@@ -186,9 +186,10 @@ const waveformRef = ref<HTMLElement | null>(null);
 let rafId: number | null = null;
 let soundId: number | null = null;
 
-// Likes state
+// Likes state — shared reactive store across AudioPlayer and beat detail page
 const userProfile = useState<any>("userProfile");
-const isLiked = ref(false);
+const currentBeatId = computed(() => audioStore.currentTrack?.id || "");
+const { isLiked, toggleLike, fetchLikeStatus } = useLikes(currentBeatId);
 
 const currentBeatIndex = computed(() => {
   if (!audioStore.playlist.length || !audioStore.currentTrack) return -1;
@@ -402,42 +403,6 @@ function closePlayer() {
   sound.value?.stop();
   sound.value?.unload();
   audioStore.stop();
-}
-
-// Fetch like status
-const fetchLikeStatus = async () => {
-  if (!userProfile.value?.id || !audioStore.currentTrack?.id) return;
-
-  try {
-    const status: any = await $fetch("/api/interactions/likes/check", {
-      params: {
-        beatId: audioStore.currentTrack.id,
-        profileId: userProfile.value.id,
-      },
-    });
-    isLiked.value = status.liked;
-  } catch (error) {
-    console.error("Failed to fetch like status:", error);
-  }
-};
-
-// Toggle like
-async function toggleLike() {
-  if (!userProfile.value?.id || !audioStore.currentTrack?.id) return;
-
-  try {
-    const response: any = await $fetch("/api/interactions/likes/toggle", {
-      method: "POST",
-      body: {
-        beatId: audioStore.currentTrack.id,
-        profileId: userProfile.value.id,
-      },
-    });
-
-    isLiked.value = response.liked;
-  } catch (error) {
-    console.error("Failed to toggle like:", error);
-  }
 }
 
 function formatTime(s: number): string {
