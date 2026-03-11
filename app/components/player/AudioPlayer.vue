@@ -183,9 +183,12 @@ const hoverPercent = ref<number | null>(null);
 const sound = ref<Howl | null>(null);
 const waveformHeights = ref<number[]>([]);
 const waveformRef = ref<HTMLElement | null>(null);
-const isLiked = ref(false); // Like/heart button state
 let rafId: number | null = null;
 let soundId: number | null = null;
+
+// Likes state
+const userProfile = useState<any>("userProfile");
+const isLiked = ref(false);
 
 const currentBeatIndex = computed(() => {
   if (!audioStore.playlist.length || !audioStore.currentTrack) return -1;
@@ -221,7 +224,7 @@ let trackJustLoaded = false;
 
 watch(
   () => audioStore.currentTrack,
-  (track: Track | null) => {
+  async (track: Track | null) => {
     if (!track) {
       sound.value?.unload();
       sound.value = null;
@@ -230,6 +233,11 @@ watch(
     }
     trackJustLoaded = true;
     loadTrack(track);
+
+    // Fetch like status for the new track
+    if (userProfile.value?.id) {
+      fetchLikeStatus();
+    }
   },
 );
 
@@ -396,10 +404,40 @@ function closePlayer() {
   audioStore.stop();
 }
 
-function toggleLike() {
-  // TODO: Implement like functionality (save to favorites, API call, etc.)
-  isLiked.value = !isLiked.value;
-  console.log("Like toggled:", isLiked.value);
+// Fetch like status
+const fetchLikeStatus = async () => {
+  if (!userProfile.value?.id || !audioStore.currentTrack?.id) return;
+
+  try {
+    const status: any = await $fetch("/api/interactions/likes/check", {
+      params: {
+        beatId: audioStore.currentTrack.id,
+        profileId: userProfile.value.id,
+      },
+    });
+    isLiked.value = status.liked;
+  } catch (error) {
+    console.error("Failed to fetch like status:", error);
+  }
+};
+
+// Toggle like
+async function toggleLike() {
+  if (!userProfile.value?.id || !audioStore.currentTrack?.id) return;
+
+  try {
+    const response: any = await $fetch("/api/interactions/likes/toggle", {
+      method: "POST",
+      body: {
+        beatId: audioStore.currentTrack.id,
+        profileId: userProfile.value.id,
+      },
+    });
+
+    isLiked.value = response.liked;
+  } catch (error) {
+    console.error("Failed to toggle like:", error);
+  }
 }
 
 function formatTime(s: number): string {

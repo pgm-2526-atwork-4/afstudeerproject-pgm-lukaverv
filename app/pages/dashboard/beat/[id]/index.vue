@@ -113,7 +113,7 @@
             <span class="text-xs md:text-sm text-gray-400">Total Plays</span>
           </div>
           <p class="text-2xl md:text-3xl font-bold text-white">
-            {{ stats.plays.toLocaleString() }}
+            {{ formatNumber(stats.plays) }}
           </p>
         </div>
 
@@ -126,7 +126,7 @@
             <span class="text-xs md:text-sm text-gray-400">Likes</span>
           </div>
           <p class="text-2xl md:text-3xl font-bold text-white">
-            {{ stats.likes.toLocaleString() }}
+            {{ formatNumber(stats.likes) }}
           </p>
         </div>
 
@@ -141,7 +141,7 @@
             <span class="text-xs md:text-sm text-gray-400">Comments</span>
           </div>
           <p class="text-2xl md:text-3xl font-bold text-white">
-            {{ stats.comments.toLocaleString() }}
+            {{ formatNumber(stats.comments) }}
           </p>
         </div>
       </div>
@@ -278,12 +278,19 @@ if (error.value || !beatData.value) {
 
 const beat = beatData.value as any;
 
-// Hardcoded stats (will be made dynamic later)
-const stats = ref({
-  plays: 1247,
-  likes: 89,
-  comments: 23,
-});
+// Use real stats from the beat data
+const stats = computed(() => ({
+  plays: beat?.playCount || 0,
+  likes: beat?.likesCount || 0,
+  comments: beat?.commentsCount || 0,
+}));
+
+// Number formatting
+const formatNumber = (num: number): string => {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+  return num.toString();
+};
 
 // Retention graph data (also hardcoded for now)
 const avgViewDuration = "1:45";

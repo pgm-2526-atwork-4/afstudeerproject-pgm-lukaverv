@@ -121,7 +121,7 @@
           <!-- Interaction Buttons -->
           <div class="flex gap-4">
             <button
-              @click="isLiked = !isLiked"
+              @click="handleLikeToggle"
               :class="
                 isLiked ? 'text-red-400' : 'text-gray-400 hover:text-red-400'
               "
@@ -131,7 +131,9 @@
                 :name="isLiked ? 'ph:heart-fill' : 'ph:heart'"
                 class="text-2xl"
               />
-              <span class="text-sm font-semibold">{{ likeCount }}</span>
+              <span class="text-sm font-semibold">{{
+                formatNumber(likeCount)
+              }}</span>
             </button>
 
             <button
@@ -567,9 +569,68 @@ const selectedLicenseLabel = computed(() =>
 );
 const usageTerms = computed(() => getUsageTerms(selectedLicense.value));
 
-// Like and comment state
+// Likes state
+const userProfile = useState("userProfile");
 const isLiked = ref(false);
 const likeCount = ref(0);
+
+// Initialize likes from beat data
+watch(
+  beat,
+  (newBeat) => {
+    if (newBeat?.likesCount !== undefined) {
+      likeCount.value = newBeat.likesCount;
+    }
+  },
+  { immediate: true },
+);
+
+// Fetch like status
+const fetchLikeStatus = async () => {
+  if (!userProfile.value?.id || !beatId) return;
+
+  try {
+    const status = await $fetch("/api/interactions/likes/check", {
+      params: { beatId: beatId, profileId: userProfile.value.id },
+    });
+    isLiked.value = status.liked;
+  } catch (error) {
+    console.error("Failed to fetch like status:", error);
+  }
+};
+
+// Toggle like
+const handleLikeToggle = async () => {
+  if (!userProfile.value?.id) return;
+
+  try {
+    const response = await $fetch("/api/interactions/likes/toggle", {
+      method: "POST",
+      body: { beatId: beatId, profileId: userProfile.value.id },
+    });
+
+    isLiked.value = response.liked;
+    likeCount.value += response.liked ? 1 : -1;
+  } catch (error) {
+    console.error("Failed to toggle like:", error);
+  }
+};
+
+// Fetch like status on mount
+onMounted(() => {
+  if (userProfile.value?.id) {
+    fetchLikeStatus();
+  }
+});
+
+// Number formatting
+const formatNumber = (num) => {
+  if (num >= 1000000) return (num / 1000000).toFixed(1) + "M";
+  if (num >= 1000) return (num / 1000).toFixed(1) + "K";
+  return num.toString();
+};
+
+// Comment state
 const newComment = ref("");
 const comments = ref([
   {

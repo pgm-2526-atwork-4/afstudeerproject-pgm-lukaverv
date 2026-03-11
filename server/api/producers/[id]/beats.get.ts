@@ -46,6 +46,12 @@ export default defineEventHandler(async (event) => {
             username: true,
           },
         },
+        _count: {
+          select: {
+            likes: true,
+            comments: true,
+          },
+        },
       },
       orderBy: {
         createdAt: "desc",
@@ -76,6 +82,8 @@ export default defineEventHandler(async (event) => {
         durationSeconds: beat.duration,
         coverImage: beat.coverImage,
         audioUrl: beat.audioFile,
+        likesCount: beat._count.likes,
+        commentsCount: beat._count.comments,
       };
     });
 
