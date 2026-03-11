@@ -23,6 +23,13 @@ export default defineEventHandler(async (event) => {
         socialLinks: true,
         createdAt: true,
         updatedAt: true,
+        _count: {
+          select: {
+            followers: true,
+            following: true,
+            beats: true,
+          },
+        },
       },
     });
 
@@ -63,10 +70,10 @@ export default defineEventHandler(async (event) => {
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
       stats: {
-        followers: 0, // TODO: Implement follower count
-        following: 0, // TODO: Implement following count
+        followers: profile._count.followers,
+        following: profile._count.following,
         plays: 0, // TODO: Implement plays count
-        tracks: 0, // TODO: Implement tracks count
+        tracks: profile._count.beats,
       },
     };
   } catch (error: any) {

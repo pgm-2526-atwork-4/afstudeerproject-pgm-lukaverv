@@ -93,12 +93,23 @@
           </h1>
 
           <!-- Follow Button -->
-          <button
-            v-if="!isOwnProfile"
-            class="mt-6 px-8 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors duration-200"
-          >
-            Follow
-          </button>
+          <div v-if="!isOwnProfile" class="flex justify-center mt-6">
+            <button
+              @click="toggleFollow"
+              :class="
+                isFollowing
+                  ? 'bg-gray-700 hover:bg-red-900/50 text-gray-200 hover:text-red-400 border border-gray-600 hover:border-red-500/50'
+                  : 'bg-blue-600 hover:bg-blue-700 text-white'
+              "
+              class="px-8 py-2.5 font-semibold rounded-lg transition-all duration-200 flex items-center gap-2"
+            >
+              <Icon
+                :name="isFollowing ? 'ph:user-check' : 'ph:user-plus'"
+                size="18"
+              />
+              {{ isFollowing ? "Following" : "Follow" }}
+            </button>
+          </div>
         </div>
 
         <!-- Stats Grid -->
@@ -109,7 +120,7 @@
           <div class="text-center p-4 bg-[#0f1219]/50 rounded-lg">
             <Icon name="ph:users" class="text-gray-400 text-2xl mx-auto mb-2" />
             <div class="text-xl md:text-2xl font-bold text-white mb-1">
-              {{ userData.stats?.followers || 0 }}
+              {{ followerCount }}
             </div>
             <div class="text-xs md:text-sm text-gray-400 font-medium">
               Followers
@@ -406,6 +417,7 @@ const { playingBeatId, isPlaying, togglePlay } = useBeatPlayer();
 
 // Fetch logged-in user to check if viewing own profile
 const currentUser = await useCurrentUser();
+const userProfile = useState("userProfile");
 
 // Fetch profile by user ID
 const {
@@ -416,6 +428,38 @@ const {
 
 // Check if this is the logged-in user's own profile
 const isOwnProfile = computed(() => currentUser?.id === profileId);
+
+// Follow state
+const isFollowing = ref(false);
+const followerCount = ref(userData.value?.stats?.followers ?? 0);
+
+// Fetch follow status once we have the logged-in profile
+if (userProfile.value?.id && userData.value?.id && !isOwnProfile.value) {
+  const status = await $fetch("/api/interactions/followers/check", {
+    params: {
+      followerProfileId: userProfile.value.id,
+      followingProfileId: userData.value.id,
+    },
+  }).catch(() => ({ following: false }));
+  isFollowing.value = status.following;
+}
+
+const toggleFollow = async () => {
+  if (!userProfile.value?.id) return navigateTo("/auth/login");
+  try {
+    const res = await $fetch("/api/interactions/followers/toggle", {
+      method: "POST",
+      body: {
+        followerProfileId: userProfile.value.id,
+        followingProfileId: userData.value.id,
+      },
+    });
+    isFollowing.value = res.following;
+    followerCount.value += res.following ? 1 : -1;
+  } catch (e) {
+    console.error("Failed to toggle follow:", e);
+  }
+};
 
 // Parse social links
 const socialLinks = computed(() => {
