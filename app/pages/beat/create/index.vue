@@ -480,6 +480,33 @@ const serverError = ref("");
 // Track whether user has tried to submit (for file upload error messages)
 const submitAttempted = ref(false);
 
+// Load track preferences on mount
+onMounted(async () => {
+  try {
+    const trackPreferences = await $fetch("/api/track-preferences");
+    if (trackPreferences) {
+      // Apply default description
+      description.value = trackPreferences.description || "";
+
+      // Apply default pricing
+      priceBasic.value = trackPreferences.priceBasic || null;
+      pricePremium.value = trackPreferences.pricePremium || null;
+      priceExclusive.value = trackPreferences.priceExclusive || null;
+
+      // Apply default tags
+      tags.value = trackPreferences.tags || [];
+
+      // Apply default publish status
+      isPublished.value =
+        trackPreferences.isPublished !== undefined
+          ? trackPreferences.isPublished
+          : true;
+    }
+  } catch (error) {
+    console.log("No track preferences found, using defaults");
+  }
+});
+
 const {
   handleBeatCoverUpload,
   handleWavUpload,

@@ -23,6 +23,11 @@ export default defineEventHandler(async (event) => {
         socialLinks: true,
         createdAt: true,
         updatedAt: true,
+        user: {
+          select: {
+            email: true,
+          },
+        },
         _count: {
           select: {
             followers: true,
@@ -62,11 +67,16 @@ export default defineEventHandler(async (event) => {
     return {
       id: profile.id,
       userId: profile.userId,
+      firstName: profile.firstName,
+      lastName: profile.lastName,
       username: profile.username,
       role: profile.role,
       bio: profile.bio,
       profilePicture: profile.profilePicture,
       socialLinks: formattedSocialLinks,
+      user: {
+        email: profile.user.email,
+      },
       createdAt: profile.createdAt,
       updatedAt: profile.updatedAt,
       stats: {
