@@ -105,8 +105,6 @@ const props = defineProps({
   },
 });
 
-const { signOut } = useAuth();
-
 // Dropdown state
 const isDropdownOpen = ref(false);
 const dropdownRef = ref(null);
@@ -117,6 +115,8 @@ const toggleDropdown = () => {
 };
 
 // Close dropdown menu
+const { logout } = useLogout();
+
 const closeDropdown = () => {
   isDropdownOpen.value = false;
 };
@@ -124,18 +124,7 @@ const closeDropdown = () => {
 // Handle logout
 const handleLogout = async () => {
   closeDropdown();
-  // Clear JWT cookie (manual login) and OAuth session
-  await $fetch("/api/auth/logout", { method: "POST" });
-  await signOut({ callbackUrl: "/auth/login" });
-
-  // Clear cached user data
-  const userProfile = useState("userProfile");
-  const username = useState("username");
-  const loading = useState("navbarLoading");
-
-  userProfile.value = null;
-  username.value = "User";
-  loading.value = true;
+  await logout();
 };
 
 // Close dropdown when clicking outside

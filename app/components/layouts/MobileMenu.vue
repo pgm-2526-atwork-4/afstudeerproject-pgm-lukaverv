@@ -192,22 +192,11 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
-const { signOut } = useAuth();
+const { logout } = useLogout();
 
 // Handle logout from mobile menu
 const handleLogout = async () => {
   emit("close");
-  // Clear JWT cookie (manual login) and OAuth session
-  await $fetch("/api/auth/logout", { method: "POST" });
-  await signOut({ callbackUrl: "/auth/login" });
-
-  // Clear cached user data
-  const userProfile = useState("userProfile");
-  const username = useState("username");
-  const loading = useState("navbarLoading");
-
-  userProfile.value = null;
-  username.value = "User";
-  loading.value = true;
+  await logout();
 };
 </script>
