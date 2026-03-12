@@ -14,15 +14,35 @@
           <div class="flex-1 relative">
             <Icon
               name="ph:magnifying-glass"
-              class="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-gray-400 text-sm md:text-base"
+              class="absolute left-3 md:left-4 top-1/2 -translate-y-1/2 text-sm md:text-base"
+              :class="
+                hasActiveFilters && !inputValue
+                  ? 'text-blue-400'
+                  : 'text-gray-400'
+              "
             />
             <input
+              v-model="inputValue"
               type="text"
               :placeholder="placeholder"
-              class="w-full pl-10 md:pl-12 pr-3 md:pr-4 py-2 md:py-3 rounded-lg text-sm bg-[#161b33] border border-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              @keyup.enter="applySearch"
+              class="w-full pl-10 md:pl-12 py-2 md:py-3 rounded-lg text-sm bg-[#161b33] border border-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :class="inputValue ? 'pr-10 md:pr-4' : 'pr-3 md:pr-4'"
             />
+            <!-- Clear input button -->
+            <button
+              v-if="inputValue"
+              @click="clearSearch"
+              type="button"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-400 transition-colors p-1"
+              title="Clear input"
+            >
+              <Icon name="ph:x" size="16" />
+            </button>
           </div>
           <button
+            v-if="showButton"
+            @click="applySearch"
             class="bg-blue-600 hover:bg-blue-700 text-white px-4 md:px-6 py-2 md:py-3 rounded-lg transition font-semibold whitespace-nowrap text-sm md:text-base"
           >
             SEARCH
@@ -35,6 +55,10 @@
 
 <script setup>
 const props = defineProps({
+  modelValue: {
+    type: String,
+    default: "",
+  },
   title: {
     type: String,
     default: "DISCOVER BEATS",
@@ -47,12 +71,45 @@ const props = defineProps({
     type: Number,
     default: 400,
   },
+  hasActiveFilters: {
+    type: Boolean,
+    default: false,
+  },
 });
 
-const showHeader = ref(false);
+const emit = defineEmits(["update:modelValue"]);
+
+const inputValue = ref("");
+const scrolledPastThreshold = ref(false);
+
+const showButton = computed(() => !!inputValue.value || props.hasActiveFilters);
+
+const applySearch = () => {
+  emit("update:modelValue", inputValue.value.trim());
+};
+
+const clearSearch = () => {
+  inputValue.value = "";
+  emit("update:modelValue", "");
+};
+
+// Sync input value with model value when cleared from parent
+watch(
+  () => props.modelValue,
+  (newValue) => {
+    if (newValue === "") {
+      inputValue.value = "";
+    }
+  },
+);
+
+// Show header when scrolled past threshold OR when there's active search query
+const showHeader = computed(() => {
+  return scrolledPastThreshold.value || !!props.modelValue;
+});
 
 const handleScroll = () => {
-  showHeader.value = window.scrollY > props.threshold;
+  scrolledPastThreshold.value = window.scrollY > props.threshold;
 };
 
 onMounted(() => {

@@ -19,7 +19,10 @@
         </div>
 
         <!-- Search Bar -->
-        <SearchInput v-model="searchQuery" />
+        <SearchInput
+          v-model="searchQuery"
+          :has-active-filters="hasActiveFilters"
+        />
 
         <!-- Filter Buttons -->
         <div class="max-w-5xl mx-auto">
@@ -36,16 +39,12 @@
             />
 
             <!-- BPM Filter -->
-            <FilterDropdown
-              label="BPM"
-              :options="bpmRanges"
-              :selected-values="selectedFilters.bpm"
+            <BpmRangeFilter
+              :min-bpm="bpmFilter.min"
+              :max-bpm="bpmFilter.max"
               :is-open="openFilter === 'bpm'"
-              default-icon="ph:metronome"
-              value-key="label"
-              label-key="label"
               @toggle="toggleFilter('bpm')"
-              @select="toggleSelection('bpm', $event)"
+              @update="updateBpmFilter"
             />
 
             <!-- Key Filter -->
@@ -66,7 +65,10 @@
       </div>
     </div>
 
-    <StickySearchHeader />
+    <StickySearchHeader
+      v-model="searchQuery"
+      :has-active-filters="hasActiveFilters"
+    />
 
     <!-- Results Section -->
     <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
@@ -91,7 +93,7 @@
               <template v-if="!pending">
                 {{ filteredBeats.length }}
                 {{ filteredBeats.length === 1 ? "track" : "tracks" }}
-                {{ searchQuery ? "found" : "available" }}
+                {{ searchQuery || hasActiveFilters ? "found" : "available" }}
               </template>
               <template v-else> Loading beats... </template>
             </p>
@@ -143,6 +145,8 @@
 </template>
 
 <script setup>
+import { genres, bpmLimits, musicalKeys } from "~/data/filterData";
+
 definePageMeta({
   middleware: "require-verification",
 });
@@ -185,7 +189,28 @@ const selectedFilters = ref({
   key: [],
 });
 
-// Filtered beats based on search query
+// BPM range filter state
+const bpmFilter = ref({
+  min: null,
+  max: null,
+});
+
+const updateBpmFilter = ({ min, max }) => {
+  bpmFilter.value.min = min;
+  bpmFilter.value.max = max;
+};
+
+// Check if any filters are active
+const hasActiveFilters = computed(() => {
+  return (
+    selectedFilters.value.genre.length > 0 ||
+    bpmFilter.value.min !== null ||
+    bpmFilter.value.max !== null ||
+    selectedFilters.value.key.length > 0
+  );
+});
+
+// Filtered beats based on search query and filters
 const filteredBeats = computed(() => {
   if (!beats.value) return [];
 
@@ -195,22 +220,37 @@ const filteredBeats = computed(() => {
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase().trim();
     result = result.filter((beat) => {
-      // Search in title
       const matchesTitle = beat.title.toLowerCase().includes(query);
-
-      // Search in producer
       const matchesProducer = beat.producer.toLowerCase().includes(query);
-
-      // Search in genre
       const matchesGenre = beat.genre.toLowerCase().includes(query);
-
-      // Search in tags
       const matchesTags = beat.tags.some((tag) =>
         tag.toLowerCase().includes(query),
       );
-
       return matchesTitle || matchesProducer || matchesGenre || matchesTags;
     });
+  }
+
+  // Apply genre filter
+  if (selectedFilters.value.genre.length > 0) {
+    result = result.filter((beat) =>
+      selectedFilters.value.genre.includes(beat.genre),
+    );
+  }
+
+  // Apply BPM filter
+  if (bpmFilter.value.min !== null || bpmFilter.value.max !== null) {
+    result = result.filter((beat) => {
+      const min = bpmFilter.value.min ?? bpmLimits.min;
+      const max = bpmFilter.value.max ?? bpmLimits.max;
+      return beat.bpm >= min && beat.bpm <= max;
+    });
+  }
+
+  // Apply key filter
+  if (selectedFilters.value.key.length > 0) {
+    result = result.filter((beat) =>
+      selectedFilters.value.key.includes(beat.key),
+    );
   }
 
   return result;
@@ -235,10 +275,14 @@ const toggleSelection = (filterType, value) => {
   }
 };
 
-// Reset to page 1 when search query changes
-watch(searchQuery, () => {
-  currentPage.value = 1;
-});
+// Reset to page 1 when search query or filters change
+watch(
+  [searchQuery, selectedFilters, bpmFilter],
+  () => {
+    currentPage.value = 1;
+  },
+  { deep: true },
+);
 
 // Sync filtered beats to audio player playlist
 usePlaylistSync(filteredBeats);
@@ -246,7 +290,8 @@ usePlaylistSync(filteredBeats);
 // Close filters when clicking outside
 onMounted(() => {
   document.addEventListener("click", (e) => {
-    if (!e.target.closest("button")) {
+    // Don't close if clicking on a button or inside a filter dropdown
+    if (!e.target.closest("button") && !e.target.closest(".relative")) {
       openFilter.value = null;
     }
   });

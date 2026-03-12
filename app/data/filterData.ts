@@ -11,12 +11,10 @@ export const genres = [
   "Latin Trap",
 ];
 
-export const bpmRanges = [
-  { label: "Slow (60-90 BPM)", min: 60, max: 90 },
-  { label: "Medium (90-120 BPM)", min: 90, max: 120 },
-  { label: "Fast (120-150 BPM)", min: 120, max: 150 },
-  { label: "Very Fast (150+ BPM)", min: 150, max: 999 },
-];
+export const bpmLimits = {
+  min: 40,
+  max: 300,
+};
 
 export const musicalKeys = [
   "C",

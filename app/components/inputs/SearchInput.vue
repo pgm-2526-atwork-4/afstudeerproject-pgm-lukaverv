@@ -3,7 +3,10 @@
     <div class="relative mb-4 md:mb-0">
       <Icon
         name="ph:magnifying-glass"
-        class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-gray-400 text-lg md:text-xl"
+        class="absolute left-4 md:left-6 top-1/2 -translate-y-1/2 text-lg md:text-xl"
+        :class="
+          hasActiveFilters && !inputValue ? 'text-blue-400' : 'text-gray-400'
+        "
       />
       <input
         v-model="inputValue"
@@ -11,7 +14,7 @@
         placeholder="Search by title, producer, genre, or tags..."
         @keyup.enter="applySearch"
         class="w-full pl-12 md:pl-14 py-4 md:py-5 rounded-xl text-base md:text-lg bg-[#161b33] border border-gray-700/50 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition shadow-lg"
-        :class="inputValue ? 'pr-16 md:pr-40' : 'pr-4 md:pr-32'"
+        :class="showButton ? 'pr-16 md:pr-40' : 'pr-4 md:pr-32'"
       />
       <!-- Clear input button (X icon) -->
       <button
@@ -26,7 +29,7 @@
       </button>
       <!-- Desktop button (inside input) -->
       <button
-        v-if="inputValue"
+        v-if="showButton"
         @click="applySearch"
         class="hidden md:block absolute right-2 top-1/2 -translate-y-1/2 text-white px-8 py-3 rounded-lg transition font-semibold shadow-lg bg-blue-600 hover:bg-blue-700"
       >
@@ -35,7 +38,7 @@
     </div>
     <!-- Mobile button (below input) -->
     <button
-      v-if="inputValue"
+      v-if="showButton"
       @click="applySearch"
       class="md:hidden w-full text-white px-4 py-3 rounded-xl transition font-semibold shadow-lg text-base bg-blue-600 hover:bg-blue-700"
     >
@@ -50,12 +53,19 @@ const props = defineProps({
     type: String,
     default: "",
   },
+  hasActiveFilters: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits(["update:modelValue"]);
 
 // Internal input value
 const inputValue = ref("");
+
+// Show button when there's input OR active filters
+const showButton = computed(() => !!inputValue.value || props.hasActiveFilters);
 
 // Apply search (on Enter or button click)
 const applySearch = () => {
