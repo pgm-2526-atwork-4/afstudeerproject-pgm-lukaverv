@@ -46,7 +46,7 @@
               <!-- Previous Track -->
               <button
                 @click="playPrevious"
-                :disabled="!hasPrevious"
+                :disabled="!hasPrevious || isLoading"
                 class="text-gray-400 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
                 title="Previous track"
               >
@@ -71,7 +71,7 @@
               <!-- Next Track -->
               <button
                 @click="playNext"
-                :disabled="!hasNext"
+                :disabled="!hasNext || isLoading"
                 class="text-gray-400 hover:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
                 title="Next track"
               >
@@ -184,6 +184,7 @@ const hoverPercent = ref<number | null>(null);
 const sound = ref<Howl | null>(null);
 const waveformHeights = ref<number[]>([]);
 const waveformRef = ref<HTMLElement | null>(null);
+const isLoading = ref(false);
 let rafId: number | null = null;
 let soundId: number | null = null;
 
@@ -257,48 +258,58 @@ watch(
 );
 
 async function loadTrack(track: Track) {
-  sound.value?.unload();
-  soundId = null;
-  currentTime.value = 0;
-  actualDuration.value = 0;
+  // Prevent loading multiple tracks simultaneously
+  if (isLoading.value) return;
+  isLoading.value = true;
 
-  // Generate waveform using composable
-  waveformHeights.value = await generateWaveform(track.audioUrl);
+  try {
+    sound.value?.unload();
+    soundId = null;
+    currentTime.value = 0;
+    actualDuration.value = 0;
 
-  sound.value = new Howl({
-    src: [track.audioUrl],
-    html5: true,
-    volume: muted.value ? 0 : volume.value / 100,
-    onload() {
-      // Get actual duration from the loaded audio file
-      if (sound.value) {
-        actualDuration.value = sound.value.duration();
-      }
-    },
-    onplay(id: number) {
-      soundId = id;
-      trackJustLoaded = false; // Reset here, after sound is actually playing
-      audioStore.setIsPlaying(true);
-      tick();
-    },
-    onpause() {
-      audioStore.setIsPlaying(false);
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-    },
-    onend() {
-      audioStore.setIsPlaying(false);
-      currentTime.value = 0;
-      // Auto-play next track
-      if (hasNext.value) {
-        playNext();
-      }
-    },
-  });
+    // Generate waveform using composable
+    waveformHeights.value = await generateWaveform(track.audioUrl);
 
-  sound.value.play();
+    sound.value = new Howl({
+      src: [track.audioUrl],
+      html5: true,
+      volume: muted.value ? 0 : volume.value / 100,
+      onload() {
+        // Get actual duration from the loaded audio file
+        if (sound.value) {
+          actualDuration.value = sound.value.duration();
+        }
+      },
+      onplay(id: number) {
+        soundId = id;
+        trackJustLoaded = false; // Reset here, after sound is actually playing
+        audioStore.setIsPlaying(true);
+        tick();
+      },
+      onpause() {
+        audioStore.setIsPlaying(false);
+        if (rafId !== null) {
+          cancelAnimationFrame(rafId);
+          rafId = null;
+        }
+      },
+      onend() {
+        audioStore.setIsPlaying(false);
+        currentTime.value = 0;
+        // Auto-play next track
+        if (hasNext.value) {
+          playNext();
+        }
+      },
+    });
+
+    sound.value.play();
+  } catch (error) {
+    console.error("Failed to load track:", error);
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 function tick() {
@@ -340,7 +351,7 @@ function onHover(e: MouseEvent) {
 }
 
 function playNext() {
-  if (!hasNext.value || !audioStore.playlist.length) return;
+  if (!hasNext.value || !audioStore.playlist.length || isLoading.value) return;
   const nextBeat = audioStore.playlist[currentBeatIndex.value + 1];
   if (nextBeat) {
     const track: Track = {
@@ -357,7 +368,8 @@ function playNext() {
 }
 
 function playPrevious() {
-  if (!hasPrevious.value || !audioStore.playlist.length) return;
+  if (!hasPrevious.value || !audioStore.playlist.length || isLoading.value)
+    return;
   const prevBeat = audioStore.playlist[currentBeatIndex.value - 1];
   if (prevBeat) {
     const track: Track = {
