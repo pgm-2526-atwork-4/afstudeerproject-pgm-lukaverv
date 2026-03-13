@@ -351,6 +351,7 @@
                 Liked Tracks
               </h2>
               <NuxtLink
+                v-if="isOwnProfile || userData?.likedTracksPublic !== false"
                 :to="`/profile/${profileId}/liked-tracks`"
                 class="flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors font-semibold text-sm md:text-base"
               >
@@ -359,9 +360,23 @@
               </NuxtLink>
             </div>
 
+            <!-- Private message for non-owners -->
+            <div
+              v-if="!isOwnProfile && userData?.likedTracksPublic === false"
+              class="flex items-center gap-3 p-6 bg-[#1a1f35]/40 rounded-xl border border-gray-700/30 text-gray-400"
+            >
+              <Icon
+                name="ph:lock"
+                class="text-2xl text-gray-500 flex-shrink-0"
+              />
+              <p class="text-sm">
+                This user's liked tracks are set to private.
+              </p>
+            </div>
+
             <!-- Liked Tracks Grid -->
             <div
-              v-if="likedTracks.length > 0"
+              v-else-if="likedTracks.length > 0"
               class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
             >
               <div
@@ -430,7 +445,10 @@
                 </p>
               </div>
             </div>
-            <p v-else class="text-gray-400 text-center py-8">
+            <p
+              v-else-if="isOwnProfile || userData?.likedTracksPublic !== false"
+              class="text-gray-400 text-center py-8"
+            >
               {{
                 isOwnProfile
                   ? "You haven't liked any beats yet."

@@ -5,6 +5,7 @@
       class="bg-gradient-to-b from-[#1a2040] to-dark-900 py-12 md:py-16 border-b border-gray-700/30"
     >
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <BackButton class="mb-4" />
         <div>
           <h1
             class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 tracking-tight"
@@ -68,6 +69,51 @@
                 >
                   Logout
                 </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="border-t border-gray-700/50"></div>
+
+          <!-- Privacy Section -->
+          <div>
+            <h2 class="text-2xl font-bold text-white mb-8">Privacy</h2>
+            <div
+              class="flex items-start justify-between py-6 border-b border-gray-700/50"
+            >
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-white mb-1">
+                  Liked Tracks Visibility
+                </h3>
+                <p class="text-sm text-gray-400 max-w-lg">
+                  Choose whether other users can see which tracks you've liked
+                  on your profile.
+                </p>
+                <div class="flex gap-6 mt-4">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      v-model="likedTracksPublic"
+                      type="radio"
+                      :value="true"
+                      @change="savePrivacySettings"
+                      class="w-4 h-4 text-primary-500 bg-dark-700 border-gray-600 focus:ring-primary-500"
+                    />
+                    <span class="text-white font-medium">Public</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input
+                      v-model="likedTracksPublic"
+                      type="radio"
+                      :value="false"
+                      @change="savePrivacySettings"
+                      class="w-4 h-4 text-primary-500 bg-dark-700 border-gray-600 focus:ring-primary-500"
+                    />
+                    <span class="text-white font-medium">Private</span>
+                  </label>
+                </div>
+                <p v-if="privacySaved" class="text-sm text-green-400 mt-3">
+                  ✓ Privacy settings saved
+                </p>
               </div>
             </div>
           </div>
@@ -785,6 +831,31 @@ const visibleTabs = computed(() => {
 
 // ============ GENERAL TAB ============
 const handleLogout = logout;
+
+// Privacy settings
+const likedTracksPublic = ref<boolean>(
+  userProfile.value?.likedTracksPublic !== false,
+);
+const privacySaved = ref(false);
+
+const savePrivacySettings = async () => {
+  try {
+    await $fetch(`/api/profile/${userProfile.value?.userId}`, {
+      method: "PATCH",
+      body: { likedTracksPublic: likedTracksPublic.value },
+    });
+    userProfile.value = {
+      ...userProfile.value,
+      likedTracksPublic: likedTracksPublic.value,
+    };
+    privacySaved.value = true;
+    setTimeout(() => {
+      privacySaved.value = false;
+    }, 3000);
+  } catch (err) {
+    console.error("Failed to save privacy settings:", err);
+  }
+};
 
 // ============ EDIT PROFILE TAB ============
 const newProfilePicture = ref<string | null>(null);

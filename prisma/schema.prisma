@@ -20,25 +20,26 @@ model User {
 }
 
 model Profile {
-  id              String           @id @default(cuid())
-  userId          String           @unique
-  firstName       String
-  lastName        String
-  username        String           @unique
-  role            Role
-  bio             String?          @db.VarChar(500) // Optional, max length 500 characters
-  profilePicture  String? // URL to the user's profile picture
-  socialLinks     Json? // JSON for social links like Instagram, Twitter, etc.
-  createdAt       DateTime         @default(now())
-  updatedAt       DateTime         @updatedAt
-  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
-  beats           Beat[] // Relation to beats uploaded by this producer
-  likes           Like[]
-  comments        Comment[]
-  following       Follow[]         @relation("Following")
-  followers       Follow[]         @relation("Followers")
-  plays           Play[] // Tracks plays by this user
-  trackPreference TrackPreference? // Producer's default track preferences
+  id                String           @id @default(cuid())
+  userId            String           @unique
+  firstName         String
+  lastName          String
+  username          String           @unique
+  role              Role
+  bio               String?          @db.VarChar(500) // Optional, max length 500 characters
+  profilePicture    String? // URL to the user's profile picture
+  socialLinks       Json? // JSON for social links like Instagram, Twitter, etc.
+  likedTracksPublic Boolean          @default(true) // Whether liked tracks are visible to other users
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  beats             Beat[] // Relation to beats uploaded by this producer
+  likes             Like[]
+  comments          Comment[]
+  following         Follow[]         @relation("Following")
+  followers         Follow[]         @relation("Followers")
+  plays             Play[] // Tracks plays by this user
+  trackPreference   TrackPreference? // Producer's default track preferences
 }
 
 model TrackPreference {

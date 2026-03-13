@@ -10,5 +10,6 @@ export default defineNuxtRouteMiddleware(async () => {
   const user = await useCurrentUser();
 
   if (!user) return navigateTo("/auth/login");
-  if (user.role !== "PRODUCER") return navigateTo("/unauthorized");
+  if (user.role !== "PRODUCER")
+    return navigateTo("/unauthorized?reason=producers-only");
 });

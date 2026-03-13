@@ -25,8 +25,7 @@
 
       <!-- Message -->
       <p class="text-gray-400 mb-8 text-lg">
-        Sorry, you don't have permission to access this page. This area is
-        restricted to producers only.
+        {{ message }}
       </p>
 
       <!-- Buttons -->
@@ -45,18 +44,6 @@
           Go to Profile
         </NuxtLink>
       </div>
-
-      <!-- Help Text -->
-      <p class="mt-8 text-sm text-gray-500">
-        Want to become a producer?
-        <NuxtLink
-          v-if="profileUrl"
-          :to="profileUrl"
-          class="text-primary-500 hover:text-primary-400"
-        >
-          Update your profile
-        </NuxtLink>
-      </p>
     </div>
   </div>
 </template>
@@ -66,6 +53,19 @@ definePageMeta({
   layout: false,
 });
 
+const route = useRoute();
 const user = await useCurrentUser();
 const profileUrl = user ? `/profile/${user.id}` : null;
+
+const reason = route.query.reason as string | undefined;
+
+const message = computed(() => {
+  if (reason === "private-liked-tracks") {
+    return "This user has set their liked tracks to private.";
+  }
+  if (reason === "producers-only") {
+    return "This area is restricted to producers only.";
+  }
+  return "You don't have permission to access this page.";
+});
 </script>
