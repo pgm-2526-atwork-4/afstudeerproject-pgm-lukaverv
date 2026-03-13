@@ -108,7 +108,9 @@ export default defineEventHandler(async (event) => {
       },
       select: {
         id: true,
+        userId: true,
         username: true,
+        profilePicture: true,
       },
     });
 
@@ -117,6 +119,8 @@ export default defineEventHandler(async (event) => {
       const profile = fanProfiles.find((p: any) => p.id === fan.profileId);
       return {
         username: profile?.username || "Unknown User",
+        userId: profile?.userId || null,
+        profilePicture: profile?.profilePicture || null,
         plays: fan._count.id,
       };
     });

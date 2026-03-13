@@ -21,6 +21,7 @@ export default defineEventHandler(async (event) => {
         bio: true,
         profilePicture: true,
         socialLinks: true,
+        likedTracksPublic: true,
         createdAt: true,
         updatedAt: true,
         user: {
@@ -63,6 +64,15 @@ export default defineEventHandler(async (event) => {
       }
     }
 
+    // Count total plays across all beats by this producer
+    const totalPlays = await prisma.play.count({
+      where: {
+        beat: {
+          producerId: profile.id,
+        },
+      },
+    });
+
     // Return formatted profile data
     return {
       id: profile.id,
@@ -74,6 +84,7 @@ export default defineEventHandler(async (event) => {
       bio: profile.bio,
       profilePicture: profile.profilePicture,
       socialLinks: formattedSocialLinks,
+      likedTracksPublic: profile.likedTracksPublic,
       user: {
         email: profile.user.email,
       },
@@ -82,7 +93,7 @@ export default defineEventHandler(async (event) => {
       stats: {
         followers: profile._count.followers,
         following: profile._count.following,
-        plays: 0, // TODO: Implement plays count
+        plays: totalPlays,
         tracks: profile._count.beats,
       },
     };

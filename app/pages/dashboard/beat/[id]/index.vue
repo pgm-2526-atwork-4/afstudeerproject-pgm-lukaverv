@@ -107,8 +107,8 @@
         <div class="bg-dark-800 rounded-xl p-4 md:p-6 shadow-2xl">
           <div class="flex items-center gap-2 md:gap-3 mb-2">
             <Icon
-              name="ph:play-circle"
-              class="w-4 h-4 md:w-5 md:h-5 text-primary-500 flex-shrink-0"
+              name="ph:play-fill"
+              class="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0"
             />
             <span class="text-xs md:text-sm text-gray-400">Total Plays</span>
           </div>
@@ -155,6 +155,180 @@
           :avg-view-duration="avgViewDuration"
           :avg-percentage-viewed="avgPercentageViewed"
         />
+      </div>
+
+      <!-- Engagement Tabs (Comments + Likes) -->
+      <div
+        class="bg-dark-800 rounded-xl shadow-2xl mb-6 sm:mb-8 overflow-hidden"
+      >
+        <!-- Tab Headers -->
+        <div class="flex border-b border-gray-700/30">
+          <button
+            @click="
+              activeTab = 'comments';
+              commentPage = 1;
+            "
+            :class="[
+              'flex-1 flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium transition-all duration-300 whitespace-nowrap relative outline-none select-none',
+              activeTab === 'comments'
+                ? 'bg-primary-500/10'
+                : 'text-gray-400 hover:text-gray-300 hover:bg-dark-800',
+            ]"
+            :style="
+              activeTab === 'comments' ? { color: 'rgb(59, 130, 246)' } : {}
+            "
+          >
+            <Icon name="ph:chat-circle-text" class="w-4 h-4" />
+            Comments
+            <span
+              class="ml-1 px-1.5 py-0.5 rounded-full bg-dark-600 text-xs font-normal text-gray-400"
+              >{{ comments.length }}</span
+            >
+            <div
+              v-if="activeTab === 'comments'"
+              class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 animate-slideIn"
+            ></div>
+          </button>
+          <button
+            @click="
+              activeTab = 'likes';
+              likerPage = 1;
+            "
+            :class="[
+              'flex-1 flex items-center justify-center gap-2 px-4 py-4 text-sm font-medium transition-all duration-300 whitespace-nowrap relative outline-none select-none',
+              activeTab === 'likes'
+                ? 'bg-primary-500/10'
+                : 'text-gray-400 hover:text-gray-300 hover:bg-dark-800',
+            ]"
+            :style="activeTab === 'likes' ? { color: 'rgb(59, 130, 246)' } : {}"
+          >
+            <Icon name="ph:heart-fill" class="w-4 h-4" />
+            Liked By
+            <span
+              class="ml-1 px-1.5 py-0.5 rounded-full bg-dark-600 text-xs font-normal text-gray-400"
+              >{{ likers?.length ?? 0 }}</span
+            >
+            <div
+              v-if="activeTab === 'likes'"
+              class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-500 animate-slideIn"
+            ></div>
+          </button>
+        </div>
+
+        <!-- Comments Panel -->
+        <div v-if="activeTab === 'comments'" class="p-4 sm:p-6">
+          <div v-if="comments.length === 0" class="text-center py-10">
+            <Icon
+              name="ph:chat-circle-text"
+              class="text-4xl text-gray-600 mx-auto mb-2"
+            />
+            <p class="text-gray-500 text-sm">No comments yet.</p>
+          </div>
+          <Pagination
+            v-else
+            :items="comments"
+            :page="commentPage"
+            :items-per-page="commentPageSize"
+            item-label="comments"
+            :per-page-options="[10, 20]"
+            @update:page="commentPage = $event"
+            @update:items-per-page="commentPageSize = $event"
+            v-slot="{ items: slice }"
+          >
+            <div class="space-y-2 mb-2">
+              <div
+                v-for="comment in slice as any[]"
+                :key="comment.id"
+                class="flex items-start gap-3 p-3 rounded-lg hover:bg-dark-700/40 transition-colors"
+              >
+                <img
+                  v-if="comment.authorPicture"
+                  :src="comment.authorPicture"
+                  :alt="comment.author"
+                  class="w-9 h-9 rounded-full flex-shrink-0 object-cover"
+                />
+                <div
+                  v-else
+                  class="w-9 h-9 bg-primary-600 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-semibold text-white"
+                >
+                  {{ comment.author?.charAt(0).toUpperCase() }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <div class="flex items-center justify-between gap-2 mb-1">
+                    <div class="flex items-center gap-2 flex-wrap">
+                      <span class="text-white font-semibold text-sm">{{
+                        comment.author
+                      }}</span>
+                      <span class="text-xs text-gray-500">{{
+                        new Date(comment.createdAt).toLocaleDateString()
+                      }}</span>
+                    </div>
+                    <button
+                      @click="deleteComment(comment.id)"
+                      class="text-gray-600 hover:text-red-400 transition-colors flex-shrink-0"
+                      title="Delete comment"
+                    >
+                      <Icon name="ph:trash" size="15" />
+                    </button>
+                  </div>
+                  <p class="text-gray-300 text-sm leading-relaxed">
+                    {{ comment.text }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </Pagination>
+        </div>
+
+        <!-- Likes Panel -->
+        <div v-if="activeTab === 'likes'" class="p-4 sm:p-6">
+          <div v-if="!likers?.length" class="text-center py-10">
+            <Icon name="ph:heart" class="text-4xl text-gray-600 mx-auto mb-2" />
+            <p class="text-gray-500 text-sm">Nobody has liked this beat yet.</p>
+          </div>
+          <Pagination
+            v-else
+            :items="likers as any[]"
+            :page="likerPage"
+            :items-per-page="likerPageSize"
+            item-label="likes"
+            :per-page-options="[10, 20]"
+            @update:page="likerPage = $event"
+            @update:items-per-page="likerPageSize = $event"
+            v-slot="{ items: slice }"
+          >
+            <div class="space-y-2 mb-2">
+              <NuxtLink
+                v-for="liker in slice as any[]"
+                :key="liker.profileId"
+                :to="`/profile/${liker.userId}`"
+                class="flex items-center gap-3 p-3 rounded-lg hover:bg-dark-700/40 transition-colors"
+              >
+                <img
+                  v-if="liker.profilePicture"
+                  :src="liker.profilePicture"
+                  :alt="liker.username"
+                  class="w-9 h-9 rounded-full object-cover flex-shrink-0"
+                />
+                <div
+                  v-else
+                  class="w-9 h-9 bg-primary-600 rounded-full flex items-center justify-center text-sm font-semibold text-white flex-shrink-0"
+                >
+                  {{ liker.username?.charAt(0).toUpperCase() }}
+                </div>
+                <div class="flex-1 min-w-0">
+                  <p class="text-white font-semibold text-sm">
+                    {{ liker.username }}
+                  </p>
+                  <p class="text-xs text-gray-500">
+                    Liked {{ new Date(liker.likedAt).toLocaleDateString() }}
+                  </p>
+                </div>
+                <Icon name="ph:arrow-right" class="text-gray-600" size="16" />
+              </NuxtLink>
+            </div>
+          </Pagination>
+        </div>
       </div>
 
       <!-- Content Grid -->
@@ -280,7 +454,7 @@ const beat = beatData.value as any;
 
 // Use real stats from the beat data
 const stats = computed(() => ({
-  plays: beat?.playCount || 0,
+  plays: beat?.playsCount || 0,
   likes: beat?.likesCount || 0,
   comments: beat?.commentsCount || 0,
 }));
@@ -290,6 +464,39 @@ const { formatNumber } = useFormatters();
 // Retention graph data (also hardcoded for now)
 const avgViewDuration = "1:45";
 const avgPercentageViewed = 58;
+
+const userProfile = useState<any>("userProfile");
+
+// Comments
+const { data: fetchedComments, refresh: refreshComments } = await useFetch(
+  `/api/interactions/comments/${beatId}`,
+);
+const comments = ref((fetchedComments.value as any[]) || []);
+watch(fetchedComments, (val) => {
+  if (val) comments.value = val as any[];
+});
+
+const deleteComment = async (commentId: string) => {
+  comments.value = comments.value.filter((c: any) => c.id !== commentId);
+  try {
+    await $fetch(`/api/interactions/comments/${commentId}`, {
+      method: "DELETE",
+      query: { profileId: userProfile.value?.id },
+    });
+  } catch {
+    await refreshComments();
+  }
+};
+
+// Likers
+const { data: likers } = await useFetch(`/api/beats/${beatId}/likers`);
+
+// Engagement tabs + pagination
+const activeTab = ref<"comments" | "likes">("comments");
+const commentPage = ref(1);
+const commentPageSize = ref(10);
+const likerPage = ref(1);
+const likerPageSize = ref(10);
 
 // Delete modal
 const showDeleteModal = ref(false);
