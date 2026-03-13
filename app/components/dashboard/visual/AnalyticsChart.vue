@@ -13,20 +13,27 @@
         <p class="text-sm text-gray-400 mt-1">{{ periodLabel }}</p>
       </div>
       <div class="flex items-center gap-2">
-        <select
-          v-model="selectedPeriod"
-          class="bg-dark-700 text-white border border-dark-600 rounded-lg px-3 py-2 text-sm outline-none select-none cursor-pointer hover:bg-dark-600 transition-all"
-        >
-          <option value="week">This Week</option>
-          <option value="month">This Month</option>
-          <option value="year">This Year</option>
-          <option value="all">All Time</option>
-        </select>
+        <div class="relative">
+          <select
+            v-model="selectedPeriod"
+            class="appearance-none bg-[#1a1f35] text-white border border-gray-700/50 rounded-lg px-3 py-2 pr-8 text-sm outline-none cursor-pointer hover:bg-[#252b45] transition-all"
+          >
+            <option value="week">This Week</option>
+            <option value="month">This Month</option>
+            <option value="year">This Year</option>
+            <option value="all">All Time</option>
+          </select>
+          <Icon
+            name="ph:caret-down"
+            class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+            size="14"
+          />
+        </div>
       </div>
     </div>
 
     <!-- Tabs -->
-    <div class="flex gap-6 border-b border-dark-700 mb-6">
+    <div class="flex gap-6 border-b border-gray-700/30 mb-6">
       <button
         v-for="tab in tabs"
         :key="tab.id"
@@ -47,7 +54,20 @@
 
     <!-- Chart -->
     <div class="relative h-80">
-      <Bar :data="chartData" :options="chartOptions" />
+      <!-- Loading skeleton -->
+      <div
+        v-if="pending"
+        class="absolute inset-0 flex items-end gap-2 px-4 pb-8"
+      >
+        <div
+          v-for="i in skeletonBars"
+          :key="i"
+          class="flex-1 rounded animate-pulse bg-gray-700/50"
+          :style="{ height: skeletonHeights[i - 1] + '%' }"
+        ></div>
+      </div>
+      <!-- Chart -->
+      <Bar v-else :data="chartData" :options="chartOptions" />
     </div>
   </div>
 </template>
@@ -106,9 +126,17 @@ const currentTotal = computed(() => {
   return data?.reduce((sum, val) => sum + val, 0) ?? 0;
 });
 
+// Skeleton bars for loading state — random heights to look organic
+const skeletonBars = computed(() =>
+  selectedPeriod.value === "all" ? 5 : selectedPeriod.value === "year" ? 12 : 7,
+);
+const skeletonHeights = computed(() =>
+  Array.from({ length: skeletonBars.value }, () => 20 + Math.random() * 55),
+);
+
 const chartData = computed(() => {
   const labels = apiData.value?.labels ?? [];
-  const data = apiData.value
+  const data: number[] = apiData.value
     ? (((apiData.value as any)[activeTab.value] as number[]) ?? [])
     : [];
   return {
@@ -124,13 +152,48 @@ const chartData = computed(() => {
   };
 });
 
-const chartOptions: ChartOptions<"bar"> = {
+/**
+ * Compute a realistic Y-axis max so that the chart never feels "full" just
+ * because of a handful of plays. Rules:
+ *   - Real max of the dataset is used as the baseline.
+ *   - We add ~30 % headroom so bars never touch the top.
+ *   - The axis always shows at least a minimum scale (10 for plays, 5 for
+ *     the others) so the chart looks proportionate when counts are tiny.
+ *   - Values are rounded up to a "nice" number (nearest 5 / 10 / 50 …)
+ *     so the grid lines stay clean.
+ */
+const yAxisMax = computed(() => {
+  const data: number[] = apiData.value
+    ? (((apiData.value as any)[activeTab.value] as number[]) ?? [])
+    : [];
+  const realMax = Math.max(0, ...data);
+
+  // Minimum axis ceiling per metric — gives the illusion of scale
+  const minimums: Record<string, number> = {
+    plays: 10,
+    likes: 5,
+    comments: 5,
+    follows: 5,
+  };
+  const minCeiling = minimums[activeTab.value] ?? 5;
+
+  // 30 % headroom on top of the actual max
+  const withHeadroom = Math.ceil(realMax * 1.3);
+
+  // Use whichever is larger
+  const raw = Math.max(minCeiling, withHeadroom);
+
+  // Round up to a "nice" step so grid lines are round numbers
+  const step =
+    raw <= 10 ? 1 : raw <= 50 ? 5 : raw <= 200 ? 10 : raw <= 1000 ? 50 : 100;
+  return Math.ceil(raw / step) * step;
+});
+
+const chartOptions = computed<ChartOptions<"bar">>(() => ({
   responsive: true,
   maintainAspectRatio: false,
   plugins: {
-    legend: {
-      display: false,
-    },
+    legend: { display: false },
     tooltip: {
       backgroundColor: "rgba(17, 24, 39, 0.95)",
       titleColor: "#fff",
@@ -140,38 +203,29 @@ const chartOptions: ChartOptions<"bar"> = {
       padding: 12,
       displayColors: false,
       callbacks: {
-        title: (context) => context[0]?.label || "",
-        label: (context) => `${activeTab.value}: ${context.parsed.y}`,
+        title: (ctx) => ctx[0]?.label || "",
+        label: (ctx) => `${activeTab.value}: ${ctx.parsed.y}`,
       },
     },
   },
   scales: {
     x: {
-      grid: {
-        display: false,
-      },
-      ticks: {
-        color: "#9CA3AF",
-        font: {
-          size: 11,
-        },
-      },
+      grid: { display: false },
+      ticks: { color: "#9CA3AF", font: { size: 11 } },
     },
     y: {
       beginAtZero: true,
-      grid: {
-        color: "rgba(75, 85, 99, 0.2)",
-      },
+      max: yAxisMax.value,
+      grid: { color: "rgba(75, 85, 99, 0.2)" },
       ticks: {
         color: "#9CA3AF",
-        font: {
-          size: 11,
-        },
-        stepSize: 1,
+        font: { size: 11 },
+        // Only show integer ticks
+        callback: (val) => (Number.isInteger(val) ? val : undefined),
       },
     },
   },
-};
+}));
 </script>
 
 <style scoped>
