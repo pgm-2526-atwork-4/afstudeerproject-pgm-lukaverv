@@ -34,8 +34,13 @@
       :page="currentPage"
       @update:page="$emit('update:currentPage', $event)"
       :items="beats"
-      :items-per-page="12"
+      :items-per-page="perPage"
+      :per-page-options="[12, 24, 48]"
       item-label="beats"
+      @update:items-per-page="
+        perPage = $event;
+        $emit('update:currentPage', 1);
+      "
     >
       <template #default="{ items }">
         <div class="space-y-0">
@@ -253,6 +258,8 @@ const emit = defineEmits([
   "clear-search",
   "open-license-modal",
 ]);
+
+const perPage = ref(12);
 
 defineOptions({
   inheritAttrs: false,
