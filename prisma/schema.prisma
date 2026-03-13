@@ -37,6 +37,7 @@ model Profile {
   comments        Comment[]
   following       Follow[]         @relation("Following")
   followers       Follow[]         @relation("Followers")
+  plays           Play[] // Tracks plays by this user
   trackPreference TrackPreference? // Producer's default track preferences
 }
 
@@ -85,6 +86,7 @@ model Beat {
   producer      Profile   @relation(fields: [producerId], references: [id], onDelete: Cascade)
   likes         Like[]
   comments      Comment[]
+  plays         Play[] // All plays for this beat
 
   @@index([genre])
   @@index([bpm])
@@ -134,6 +136,20 @@ model Follow {
 
   @@unique([followerProfileId, followingProfileId])
   @@index([followingProfileId])
+}
+
+model Play {
+  id        String   @id @default(cuid())
+  profileId String? // Nullable for guest/anonymous plays
+  beatId    String
+  createdAt DateTime @default(now())
+
+  profile Profile? @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  beat    Beat     @relation(fields: [beatId], references: [id], onDelete: Cascade)
+
+  @@index([beatId])
+  @@index([profileId])
+  @@index([createdAt])
 }
 
 enum Role {
