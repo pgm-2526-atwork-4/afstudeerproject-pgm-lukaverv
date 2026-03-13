@@ -92,7 +92,14 @@
       <div v-if="activeTab === 'analytics'">
         <div class="space-y-8">
           <!-- Weekly Chart -->
-          <AnalyticsChart />
+          <Suspense>
+            <template #default>
+              <AnalyticsChart />
+            </template>
+            <template #fallback>
+              <AnalyticsChartLoader />
+            </template>
+          </Suspense>
 
           <!-- Stats Grid -->
           <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -195,42 +202,48 @@
                 >
                   <p>No fans yet. Keep promoting your beats!</p>
                 </div>
-                <div
+                <NuxtLink
                   v-for="(fan, index) in topFans"
                   :key="index"
-                  class="group bg-dark-700/50 hover:bg-dark-700 rounded-xl p-4 transition-all duration-300 cursor-pointer"
+                  :to="fan.userId ? `/profile/${fan.userId}` : '#'"
+                  class="group flex items-center gap-4 bg-dark-700/50 hover:bg-dark-700 rounded-xl p-4 transition-all duration-300"
                 >
-                  <div class="flex items-center gap-4">
-                    <span
-                      class="flex-shrink-0 w-5 text-right text-sm font-semibold text-gray-500"
-                      >{{ index + 1 }}</span
-                    >
-                    <div
-                      class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0"
-                    >
-                      <span class="text-white font-bold text-xl">{{
-                        fan.username.charAt(0).toUpperCase()
-                      }}</span>
-                    </div>
-                    <div class="flex-1 min-w-0">
-                      <p
-                        class="text-white font-semibold truncate group-hover:text-primary-400 transition-colors"
-                      >
-                        {{ fan.username }}
-                      </p>
-                      <span
-                        class="flex items-center gap-1 text-xs text-gray-400 mt-1"
-                      >
-                        <Icon
-                          name="ph:play-fill"
-                          size="12"
-                          class="text-primary-400"
-                        />
-                        {{ fan.plays }} total plays on your tracks
-                      </span>
-                    </div>
+                  <span
+                    class="flex-shrink-0 w-5 text-right text-sm font-semibold text-gray-500"
+                    >{{ index + 1 }}</span
+                  >
+                  <img
+                    v-if="fan.profilePicture"
+                    :src="fan.profilePicture"
+                    :alt="fan.username"
+                    class="w-14 h-14 rounded-full object-cover flex-shrink-0 group-hover:scale-105 transition-transform"
+                  />
+                  <div
+                    v-else
+                    class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0"
+                  >
+                    <span class="text-white font-bold text-xl">{{
+                      fan.username.charAt(0).toUpperCase()
+                    }}</span>
                   </div>
-                </div>
+                  <div class="flex-1 min-w-0">
+                    <p
+                      class="text-white font-semibold truncate group-hover:text-primary-400 transition-colors"
+                    >
+                      {{ fan.username }}
+                    </p>
+                    <span
+                      class="flex items-center gap-1 text-xs text-gray-400 mt-1"
+                    >
+                      <Icon
+                        name="ph:play-fill"
+                        size="12"
+                        class="text-primary-400"
+                      />
+                      {{ fan.plays }} total plays on your tracks
+                    </span>
+                  </div>
+                </NuxtLink>
               </div>
             </div>
           </div>
@@ -240,7 +253,7 @@
       <!-- Tracks Tab -->
       <div v-if="activeTab === 'tracks'">
         <Pagination
-          :items="userBeats || []"
+          :items="sortedBeats"
           :page="currentPage"
           :items-per-page="beatsPerPage"
           item-label="beats"
@@ -253,31 +266,9 @@
             :beats="paginatedBeats as any"
             :loading="pending"
             :total="userBeats?.length"
+            v-model:sort="beatSort"
           />
         </Pagination>
-      </div>
-
-      <!-- Insights Tab -->
-      <div v-if="activeTab === 'insights'">
-        <div class="bg-dark-800 rounded-xl p-12 shadow-2xl text-center">
-          <svg
-            class="w-16 h-16 mx-auto text-gray-600 mb-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"
-            />
-          </svg>
-          <h3 class="text-xl font-bold text-white mb-2">Coming Soon</h3>
-          <p class="text-gray-400">
-            Advanced insights and analytics will be available here
-          </p>
-        </div>
       </div>
     </div>
   </div>
@@ -299,7 +290,6 @@ const beatsPerPage = ref(12);
 const tabs = [
   { id: "analytics", label: "Analytics" },
   { id: "tracks", label: "Tracks" },
-  { id: "insights", label: "Insights" },
 ];
 
 // Fetch producer's beats dynamically
@@ -315,6 +305,28 @@ const { data: analytics } = await useFetch("/api/dashboard/analytics/", {
 // Use dynamic data from API or fall back to empty arrays
 const topTracks = computed(() => (analytics.value?.topTracks || []) as any[]);
 const topFans = computed(() => (analytics.value?.topFans || []) as any[]);
+
+// Tracks tab sort
+const beatSort = ref("newest");
+watch(beatSort, () => {
+  currentPage.value = 1;
+});
+
+type SortKey = "newest" | "oldest" | "popular" | "unpopular";
+
+const sortFns: Record<SortKey, (a: any, b: any) => number> = {
+  newest: (a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  oldest: (a, b) =>
+    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  popular: (a, b) => (b.playsCount ?? 0) - (a.playsCount ?? 0),
+  unpopular: (a, b) => (a.playsCount ?? 0) - (b.playsCount ?? 0),
+};
+
+const sortedBeats = computed(() => {
+  const beats = [...((userBeats.value as any[]) || [])];
+  return beats.sort(sortFns[beatSort.value as SortKey] ?? sortFns.newest);
+});
 </script>
 
 <style scoped>

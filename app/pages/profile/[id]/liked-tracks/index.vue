@@ -144,6 +144,15 @@ const {
   error,
 } = await useFetch(`/api/profile/${profileId}`);
 
+// Redirect if liked tracks are private and viewer is not the owner
+if (
+  profileData.value &&
+  !isOwnProfile.value &&
+  profileData.value.likedTracksPublic === false
+) {
+  await navigateTo("/unauthorized?reason=private-liked-tracks");
+}
+
 // Fetch all liked beats — must use the DB profile id, not the userId from the URL
 const { data: likedData, pending: likePending } = await useFetch(() =>
   profileData.value

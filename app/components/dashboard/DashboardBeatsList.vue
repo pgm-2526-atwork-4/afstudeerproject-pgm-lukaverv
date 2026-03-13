@@ -12,11 +12,32 @@
           </p>
         </div>
         <div class="flex items-center gap-3">
+          <!-- Sort dropdown -->
+          <div class="relative">
+            <select
+              :value="sort"
+              @change="
+                $emit('update:sort', ($event.target as HTMLSelectElement).value)
+              "
+              class="appearance-none bg-[#1a1f35] text-white border border-gray-700/50 rounded-lg px-3 py-2 pr-8 text-sm outline-none cursor-pointer hover:bg-[#252b45] transition-all"
+            >
+              <option value="newest">Most Recent</option>
+              <option value="oldest">Oldest First</option>
+              <option value="popular">Most Popular</option>
+              <option value="unpopular">Least Popular</option>
+            </select>
+            <Icon
+              name="ph:caret-down"
+              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
+              size="14"
+            />
+          </div>
+          <!-- Search -->
           <input
             type="text"
             v-model="searchQuery"
             placeholder="Search beats..."
-            class="bg-dark-700 text-black border border-dark-600 rounded-lg px-3 sm:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full sm:w-64"
+            class="appearance-none bg-[#1a1f35] text-white border border-gray-700/50 rounded-lg px-3 sm:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full sm:w-64 hover:bg-[#252b45] transition-all"
           />
         </div>
       </div>
@@ -31,7 +52,10 @@
     </div>
 
     <!-- Beats List -->
-    <div v-else-if="beats && beats.length > 0" class="divide-y divide-dark-700">
+    <div
+      v-else-if="beats && beats.length > 0"
+      class="divide-y divide-gray-700/30"
+    >
       <NuxtLink
         v-for="beat in filteredBeats"
         :key="beat._id"
@@ -66,7 +90,23 @@
                 beat.genre
               }}</span>
             </div>
-            <div class="flex items-center gap-4 mt-1">
+            <div class="flex items-center gap-3 mt-1.5">
+              <span class="flex items-center gap-1 text-xs text-gray-500">
+                <Icon name="ph:play-fill" size="11" class="text-primary-400" />
+                {{ beat.playsCount ?? 0 }}
+              </span>
+              <span class="flex items-center gap-1 text-xs text-gray-500">
+                <Icon name="ph:heart-fill" size="11" class="text-red-400" />
+                {{ beat.likesCount ?? 0 }}
+              </span>
+              <span class="flex items-center gap-1 text-xs text-gray-500">
+                <Icon
+                  name="ph:chat-circle-fill"
+                  size="11"
+                  class="text-blue-400"
+                />
+                {{ beat.commentsCount ?? 0 }}
+              </span>
               <span class="text-xs text-gray-500">{{
                 formatDate(beat.createdAt)
               }}</span>
@@ -159,15 +199,20 @@ interface Beat {
   key: string;
   genre: string;
   createdAt: string;
+  playsCount?: number;
+  likesCount?: number;
+  commentsCount?: number;
 }
 
 interface Props {
   beats?: Beat[];
   loading?: boolean;
   total?: number;
+  sort?: string;
 }
 
-const props = defineProps<Props>();
+const props = withDefaults(defineProps<Props>(), { sort: "newest" });
+const emit = defineEmits<{ "update:sort": [value: string] }>();
 
 const searchQuery = ref("");
 
