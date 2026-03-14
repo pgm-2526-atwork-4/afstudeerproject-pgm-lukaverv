@@ -116,6 +116,9 @@
             >
               {{ beat.producer }}
             </NuxtLink>
+            <p v-if="beat.createdAt" class="text-gray-500 text-sm mt-1">
+              Released {{ formatDate(beat.createdAt) }}
+            </p>
           </div>
 
           <!-- Interaction Buttons -->
@@ -628,7 +631,7 @@ const {
   fetchLikeStatus,
   toggleLike: handleLikeToggle,
 } = useLikes(beatId);
-const { formatNumber } = useFormatters();
+const { formatNumber, formatDate } = useFormatters();
 
 // Seed like count from initial beat data (avoids an extra API call)
 watch(

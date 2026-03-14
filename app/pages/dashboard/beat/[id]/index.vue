@@ -40,6 +40,14 @@
               {{ beat?.description || "No description provided" }}
             </p>
 
+            <p
+              v-if="beat?.createdAt"
+              class="text-xs text-gray-500 mb-3 flex items-center gap-1.5"
+            >
+              <Icon name="ph:calendar" size="13" />
+              Posted {{ formatDate(beat.createdAt) }}
+            </p>
+
             <div class="flex flex-wrap gap-2 md:gap-3 mb-4">
               <span
                 class="px-2.5 md:px-3 py-1 bg-dark-700 text-gray-300 rounded-full text-xs md:text-sm"
@@ -459,7 +467,7 @@ const stats = computed(() => ({
   comments: beat?.commentsCount || 0,
 }));
 
-const { formatNumber } = useFormatters();
+const { formatNumber, formatDate } = useFormatters();
 
 // Retention graph data (also hardcoded for now)
 const avgViewDuration = "1:45";

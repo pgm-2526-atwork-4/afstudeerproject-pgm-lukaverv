@@ -66,6 +66,7 @@ export default defineEventHandler(async (event) => {
       likesCount: beat._count.likes,
       commentsCount: beat._count.comments,
       playsCount: beat._count.plays,
+      createdAt: beat.createdAt,
     };
   } catch (error) {
     console.error("Error fetching beat:", error);

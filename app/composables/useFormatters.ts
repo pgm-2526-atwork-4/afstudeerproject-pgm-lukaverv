@@ -12,5 +12,17 @@ export const useFormatters = () => {
     return num.toString();
   };
 
-  return { formatNumber };
+  /**
+   * Formats a date to a human-readable string.
+   * e.g. "14 March 2026"
+   */
+  const formatDate = (date: string | Date): string => {
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+    });
+  };
+
+  return { formatNumber, formatDate };
 };
