@@ -535,24 +535,35 @@
             <div class="space-y-4">
               <div v-for="comment in comments" :key="comment.id">
                 <div class="flex items-start gap-3">
-                  <img
-                    v-if="comment.authorPicture"
-                    :src="comment.authorPicture"
-                    :alt="comment.author"
-                    class="w-8 h-8 rounded-full flex-shrink-0 object-cover"
-                  />
-                  <div
-                    v-else
-                    class="w-8 h-8 bg-blue-600 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold text-white"
+                  <NuxtLink
+                    :to="`/profile/${comment.authorUserId}`"
+                    class="flex-shrink-0"
                   >
-                    {{ comment.author.charAt(0).toUpperCase() }}
-                  </div>
+                    <img
+                      v-if="comment.authorPicture"
+                      :src="comment.authorPicture"
+                      :alt="comment.author"
+                      class="w-8 h-8 rounded-full object-cover hover:ring-2 hover:ring-blue-500 transition-all"
+                    />
+                    <div
+                      v-else
+                      class="w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center hover:ring-2 hover:ring-blue-500 transition-all"
+                    >
+                      <Icon
+                        name="mdi:account-circle"
+                        class="w-6 h-6 text-gray-400"
+                      />
+                    </div>
+                  </NuxtLink>
                   <div class="flex-1 min-w-0">
                     <div class="flex items-center justify-between gap-2 mb-1">
                       <div class="flex items-center gap-2">
-                        <p class="text-white font-semibold text-sm">
+                        <NuxtLink
+                          :to="`/profile/${comment.authorUserId}`"
+                          class="text-white font-semibold text-sm hover:text-blue-400 transition-colors"
+                        >
                           {{ comment.author }}
-                        </p>
+                        </NuxtLink>
                         <p class="text-xs text-gray-500">
                           {{ new Date(comment.createdAt).toLocaleDateString() }}
                         </p>

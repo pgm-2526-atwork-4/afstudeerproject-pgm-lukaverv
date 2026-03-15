@@ -22,6 +22,26 @@ export default defineEventHandler(async (event) => {
     },
   });
 
+  // Create notification for the beat producer
+  try {
+    const beat = await prisma.beat.findUnique({
+      where: { id: beatId },
+      select: { producerId: true },
+    });
+    if (beat && beat.producerId !== profileId) {
+      await prisma.notification.create({
+        data: {
+          recipientId: beat.producerId,
+          actorId: profileId,
+          type: "COMMENT",
+          beatId,
+        },
+      });
+    }
+  } catch (e) {
+    console.error("Failed to create comment notification:", e);
+  }
+
   return {
     id: comment.id,
     text: comment.text,

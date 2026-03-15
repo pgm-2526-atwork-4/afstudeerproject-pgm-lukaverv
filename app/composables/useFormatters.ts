@@ -24,5 +24,28 @@ export const useFormatters = () => {
     });
   };
 
-  return { formatNumber, formatDate };
+  /**
+   * Formats a date to a relative time string.
+   * e.g. "just now", "5m ago", "2h ago", "3d ago"
+   */
+  const formatTimeAgo = (date: string | Date): string => {
+    const now = new Date();
+    const diff = now.getTime() - new Date(date).getTime();
+    const seconds = Math.floor(diff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(hours / 24);
+
+    if (seconds < 60) return "just now";
+    if (minutes < 60) return `${minutes}m ago`;
+    if (hours < 24) return `${hours}h ago`;
+    if (days < 7) return `${days}d ago`;
+
+    return new Date(date).toLocaleDateString("en-GB", {
+      day: "numeric",
+      month: "short",
+    });
+  };
+
+  return { formatNumber, formatDate, formatTimeAgo };
 };

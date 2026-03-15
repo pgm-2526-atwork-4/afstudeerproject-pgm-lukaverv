@@ -48,6 +48,16 @@
             <span>Profile</span>
           </NuxtLink>
 
+          <!-- Notifications -->
+          <NuxtLink
+            to="/notifications"
+            @click="closeDropdown"
+            class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+          >
+            <Icon name="ph:bell" class="w-5 h-5" />
+            <span>Notifications</span>
+          </NuxtLink>
+
           <!-- Liked Tracks -->
           <NuxtLink
             :to="`/profile/${userProfile?.userId}/liked-tracks`"

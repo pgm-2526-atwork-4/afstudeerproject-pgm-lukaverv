@@ -251,24 +251,34 @@
                 :key="comment.id"
                 class="flex items-start gap-3 p-3 rounded-lg hover:bg-dark-700/40 transition-colors"
               >
-                <img
-                  v-if="comment.authorPicture"
-                  :src="comment.authorPicture"
-                  :alt="comment.author"
-                  class="w-9 h-9 rounded-full flex-shrink-0 object-cover"
-                />
-                <div
-                  v-else
-                  class="w-9 h-9 bg-primary-600 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-semibold text-white"
+                <NuxtLink
+                  :to="`/profile/${comment.authorUserId}`"
+                  class="flex-shrink-0"
                 >
-                  {{ comment.author?.charAt(0).toUpperCase() }}
-                </div>
+                  <img
+                    v-if="comment.authorPicture"
+                    :src="comment.authorPicture"
+                    :alt="comment.author"
+                    class="w-9 h-9 rounded-full object-cover hover:ring-2 hover:ring-blue-500 transition-all"
+                  />
+                  <div
+                    v-else
+                    class="w-9 h-9 bg-gray-700 rounded-full flex items-center justify-center hover:ring-2 hover:ring-blue-500 transition-all"
+                  >
+                    <Icon
+                      name="mdi:account-circle"
+                      class="w-7 h-7 text-gray-400"
+                    />
+                  </div>
+                </NuxtLink>
                 <div class="flex-1 min-w-0">
                   <div class="flex items-center justify-between gap-2 mb-1">
                     <div class="flex items-center gap-2 flex-wrap">
-                      <span class="text-white font-semibold text-sm">{{
-                        comment.author
-                      }}</span>
+                      <NuxtLink
+                        :to="`/profile/${comment.authorUserId}`"
+                        class="text-white font-semibold text-sm hover:text-blue-400 transition-colors"
+                        >{{ comment.author }}</NuxtLink
+                      >
                       <span class="text-xs text-gray-500">{{
                         new Date(comment.createdAt).toLocaleDateString()
                       }}</span>
@@ -322,9 +332,12 @@
                 />
                 <div
                   v-else
-                  class="w-9 h-9 bg-primary-600 rounded-full flex items-center justify-center text-sm font-semibold text-white flex-shrink-0"
+                  class="w-9 h-9 rounded-full bg-gray-700 flex items-center justify-center flex-shrink-0"
                 >
-                  {{ liker.username?.charAt(0).toUpperCase() }}
+                  <Icon
+                    name="mdi:account-circle"
+                    class="w-7 h-7 text-gray-400"
+                  />
                 </div>
                 <div class="flex-1 min-w-0">
                   <p class="text-white font-semibold text-sm">

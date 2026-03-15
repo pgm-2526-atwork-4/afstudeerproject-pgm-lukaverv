@@ -10,17 +10,25 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Verify the comment belongs to this profile before deleting
-  const comment = await prisma.comment.findUnique({ where: { id } });
+  // Verify the comment exists and fetch its beat information
+  const comment = await prisma.comment.findUnique({
+    where: { id },
+    include: { beat: true },
+  });
 
   if (!comment) {
     throw createError({ statusCode: 404, message: "Comment not found" });
   }
 
-  if (comment.profileId !== profileId) {
+  // Allow deletion if user is either the comment author OR the beat owner
+  const isCommentAuthor = comment.profileId === profileId;
+  const isBeatOwner = comment.beat.producerId === profileId;
+
+  if (!isCommentAuthor && !isBeatOwner) {
     throw createError({
       statusCode: 403,
-      message: "You can only delete your own comments",
+      message:
+        "You can only delete your own comments or comments on your beats",
     });
   }
 

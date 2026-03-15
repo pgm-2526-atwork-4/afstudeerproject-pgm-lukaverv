@@ -111,6 +111,24 @@
         <!-- User Actions (if logged in) -->
         <div v-if="currentUser" class="space-y-2 pt-6 border-t border-gray-700">
           <NuxtLink
+            to="/notifications"
+            @click="$emit('close')"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            active-class="bg-blue-600/10 text-blue-400"
+          >
+            <div class="relative">
+              <Icon name="ph:bell" class="w-5 h-5" />
+              <span
+                v-if="unreadCount > 0"
+                class="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] px-0.5 bg-blue-600 text-white text-[9px] font-bold rounded-full flex items-center justify-center"
+              >
+                {{ unreadCount > 99 ? "99+" : unreadCount }}
+              </span>
+            </div>
+            <span class="font-medium">Notifications</span>
+          </NuxtLink>
+
+          <NuxtLink
             :to="`/profile/${userProfile?.userId}`"
             @click="$emit('close')"
             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
@@ -193,6 +211,7 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 
 const { logout } = useLogout();
+const { unreadCount } = useNotifications();
 
 // Handle logout from mobile menu
 const handleLogout = async () => {

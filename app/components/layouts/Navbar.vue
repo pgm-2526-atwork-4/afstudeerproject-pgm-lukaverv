@@ -70,6 +70,9 @@
             />
           </button>
 
+          <!-- Notifications (Only for authenticated users) -->
+          <NotificationDropdown v-if="currentUser && !loading" />
+
           <!-- Loading Skeleton -->
           <template v-if="loading">
             <div class="hidden sm:block animate-pulse">

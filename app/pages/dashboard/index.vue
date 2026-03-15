@@ -196,11 +196,12 @@
                     />
                     <div
                       v-else
-                      class="w-14 h-14 rounded-full bg-gradient-to-br from-primary-500 to-primary-700 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0"
+                      class="w-14 h-14 rounded-full bg-gray-700 flex items-center justify-center group-hover:scale-105 transition-transform flex-shrink-0"
                     >
-                      <span class="text-white font-bold text-xl">{{
-                        fan.username.charAt(0).toUpperCase()
-                      }}</span>
+                      <Icon
+                        name="mdi:account-circle"
+                        class="w-12 h-12 text-gray-400"
+                      />
                     </div>
                     <div class="flex-1 min-w-0">
                       <p

@@ -9,7 +9,12 @@ export default defineEventHandler(async (event) => {
     where: { beatId },
     include: {
       profile: {
-        select: { id: true, username: true, profilePicture: true },
+        select: {
+          id: true,
+          userId: true,
+          username: true,
+          profilePicture: true,
+        },
       },
     },
     orderBy: { createdAt: "desc" },
@@ -22,5 +27,6 @@ export default defineEventHandler(async (event) => {
     profileId: c.profileId,
     author: c.profile.username,
     authorPicture: c.profile.profilePicture,
+    authorUserId: c.profile.userId,
   }));
 });

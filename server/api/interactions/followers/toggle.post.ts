@@ -29,6 +29,34 @@ export default defineEventHandler(async (event) => {
     await prisma.follow.create({
       data: { followerProfileId, followingProfileId },
     });
+
+    // Create notification for the followed user (deduplicated)
+    try {
+      const existing = await prisma.notification.findFirst({
+        where: {
+          recipientId: followingProfileId,
+          actorId: followerProfileId,
+          type: "FOLLOW",
+        },
+      });
+      if (!existing) {
+        await prisma.notification.create({
+          data: {
+            recipientId: followingProfileId,
+            actorId: followerProfileId,
+            type: "FOLLOW",
+          },
+        });
+      } else {
+        await prisma.notification.update({
+          where: { id: existing.id },
+          data: { isRead: false, createdAt: new Date() },
+        });
+      }
+    } catch (e) {
+      console.error("Failed to create follow notification:", e);
+    }
+
     return { following: true };
   }
 });
