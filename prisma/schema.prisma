@@ -40,6 +40,8 @@ model Profile {
   followers         Follow[]         @relation("Followers")
   plays             Play[] // Tracks plays by this user
   trackPreference   TrackPreference? // Producer's default track preferences
+  notifications     Notification[]   @relation("ReceivedNotifications")
+  sentNotifications Notification[]   @relation("SentNotifications")
 }
 
 model TrackPreference {
@@ -78,16 +80,17 @@ model Beat {
 
   coverImage    String // URL to cover image
   audioFile     String // URL to audio file (mp3/wav)
-  description   String?   @db.VarChar(1000)
-  isPublished   Boolean   @default(false)
-  playCount     Int       @default(0)
-  downloadCount Int       @default(0)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  producer      Profile   @relation(fields: [producerId], references: [id], onDelete: Cascade)
+  description   String?        @db.VarChar(1000)
+  isPublished   Boolean        @default(false)
+  playCount     Int            @default(0)
+  downloadCount Int            @default(0)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  producer      Profile        @relation(fields: [producerId], references: [id], onDelete: Cascade)
   likes         Like[]
   comments      Comment[]
   plays         Play[] // All plays for this beat
+  notifications Notification[]
 
   @@index([genre])
   @@index([bpm])
@@ -157,6 +160,30 @@ model Play {
 enum Role {
   PRODUCER
   LISTENER
+}
+
+enum NotificationType {
+  LIKE
+  COMMENT
+  FOLLOW
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  recipientId String
+  actorId     String
+  type        NotificationType
+  beatId      String?
+  isRead      Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  recipient Profile @relation("ReceivedNotifications", fields: [recipientId], references: [id], onDelete: Cascade)
+  actor     Profile @relation("SentNotifications", fields: [actorId], references: [id], onDelete: Cascade)
+  beat      Beat?   @relation(fields: [beatId], references: [id], onDelete: Cascade)
+
+  @@index([recipientId, isRead])
+  @@index([recipientId, createdAt])
+  @@index([actorId])
 }
 
 model BlacklistedToken {
