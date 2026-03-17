@@ -514,7 +514,7 @@ usePageTitle(
 
 // Pre-fill form with real beat data
 const beatCoverUrl = ref(beat?.coverImage || "");
-const wavUrl = ref(beat?.audioUrl || "");
+const wavUrl = ref(beat?.audioUrlWav || "");
 const mp3Url = ref(beat?.audioUrl || "");
 const title = ref(beat?.title || "");
 const description = ref(beat?.description || "");
@@ -566,7 +566,8 @@ const handleSubmit = async () => {
         priceExclusive: priceExclusive.value,
         isPublished: isPublished.value,
         coverImage: beatCoverUrl.value,
-        audioFile: mp3Url.value || wavUrl.value,
+        audioFileMp3: mp3Url.value,
+        audioFileWav: wavUrl.value,
         duration: audioDuration.value || null,
       },
     });

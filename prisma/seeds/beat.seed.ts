@@ -76,7 +76,9 @@ export async function seedBeats() {
       pricePremium: 49.99,
       priceExclusive: 199.99,
       coverImage: "https://picsum.photos/seed/beat1/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
       description: "A smooth lo-fi beat perfect for late night vibes",
       isPublished: true,
@@ -93,7 +95,9 @@ export async function seedBeats() {
       pricePremium: 59.99,
       priceExclusive: 249.99,
       coverImage: "https://picsum.photos/seed/beat2/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
       description: "Heavy hitting trap beat with punchy 808s",
       isPublished: true,
@@ -110,7 +114,9 @@ export async function seedBeats() {
       pricePremium: 44.99,
       priceExclusive: 179.99,
       coverImage: "https://picsum.photos/seed/beat3/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
       description: "Uplifting pop beat with summer vibes",
       isPublished: true,
@@ -127,7 +133,9 @@ export async function seedBeats() {
       pricePremium: 64.99,
       priceExclusive: 299.99,
       coverImage: "https://picsum.photos/seed/beat4/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
       description: "Aggressive drill beat with dark atmosphere",
       isPublished: true,
@@ -144,7 +152,9 @@ export async function seedBeats() {
       pricePremium: 54.99,
       priceExclusive: 229.99,
       coverImage: "https://picsum.photos/seed/beat5/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
       description: "Smooth R&B beat with soulful melodies",
       isPublished: true,
@@ -161,7 +171,9 @@ export async function seedBeats() {
       pricePremium: 47.99,
       priceExclusive: 189.99,
       coverImage: "https://picsum.photos/seed/beat6/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
       description: "Old school boom bap with classic vibes",
       isPublished: true,
@@ -178,7 +190,9 @@ export async function seedBeats() {
       pricePremium: 45.99,
       priceExclusive: 199.99,
       coverImage: "https://picsum.photos/seed/beat7/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
       description: "Dreamy lo-fi beat for chill moments",
       isPublished: true,
@@ -195,7 +209,9 @@ export async function seedBeats() {
       pricePremium: 50.99,
       priceExclusive: 209.99,
       coverImage: "https://picsum.photos/seed/beat8/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
       description: "Modern hip-hop beat with urban vibes",
       isPublished: true,
@@ -212,7 +228,9 @@ export async function seedBeats() {
       pricePremium: 55.99,
       priceExclusive: 249.99,
       coverImage: "https://picsum.photos/seed/beat9/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
       description: "Energetic synthwave beat with retro vibes",
       isPublished: true,
@@ -229,7 +247,9 @@ export async function seedBeats() {
       pricePremium: 48.99,
       priceExclusive: 189.99,
       coverImage: "https://picsum.photos/seed/beat10/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
       description: "Peaceful acoustic beat for relaxing moments",
       isPublished: true,
@@ -246,7 +266,9 @@ export async function seedBeats() {
       pricePremium: 60.99,
       priceExclusive: 259.99,
       coverImage: "https://picsum.photos/seed/beat11/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
       description: "High-energy future bass beat",
       isPublished: true,
@@ -263,7 +285,9 @@ export async function seedBeats() {
       pricePremium: 42.99,
       priceExclusive: 199.99,
       coverImage: "https://picsum.photos/seed/beat12/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
       description: "Relaxing lo-fi beat for study sessions",
       isPublished: true,
@@ -280,7 +304,9 @@ export async function seedBeats() {
       pricePremium: 55.99,
       priceExclusive: 249.99,
       coverImage: "https://picsum.photos/seed/beat13/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3",
       description: "Hard-hitting trap beat with deep bass",
       isPublished: true,
@@ -297,7 +323,9 @@ export async function seedBeats() {
       pricePremium: 48.99,
       priceExclusive: 219.99,
       coverImage: "https://picsum.photos/seed/beat14/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3",
       description: "Smooth jazz hop beat for chill evenings",
       isPublished: true,
@@ -314,7 +342,9 @@ export async function seedBeats() {
       pricePremium: 70.99,
       priceExclusive: 299.99,
       coverImage: "https://picsum.photos/seed/beat15/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3",
       description: "Epic cinematic beat for trailers",
       isPublished: true,
@@ -331,7 +361,9 @@ export async function seedBeats() {
       pricePremium: 40.99,
       priceExclusive: 179.99,
       coverImage: "https://picsum.photos/seed/beat16/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3",
       description: "Atmospheric ambient beat for meditation",
       isPublished: true,
@@ -348,7 +380,9 @@ export async function seedBeats() {
       pricePremium: 64.99,
       priceExclusive: 299.99,
       coverImage: "https://picsum.photos/seed/beat17/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3",
       description: "Aggressive drill beat with punchy 808s",
       isPublished: true,
@@ -365,7 +399,9 @@ export async function seedBeats() {
       pricePremium: 55.99,
       priceExclusive: 249.99,
       coverImage: "https://picsum.photos/seed/beat18/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3",
       description: "Energetic synthwave beat with dreamy vibes",
       isPublished: true,
@@ -382,7 +418,9 @@ export async function seedBeats() {
       pricePremium: 47.99,
       priceExclusive: 189.99,
       coverImage: "https://picsum.photos/seed/beat19/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3",
       description: "Classic boom bap beat with old-school vibes",
       isPublished: true,
@@ -399,7 +437,9 @@ export async function seedBeats() {
       pricePremium: 60.99,
       priceExclusive: 259.99,
       coverImage: "https://picsum.photos/seed/beat20/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3",
       description: "High-energy future bass beat",
       isPublished: true,
@@ -416,7 +456,9 @@ export async function seedBeats() {
       pricePremium: 54.99,
       priceExclusive: 229.99,
       coverImage: "https://picsum.photos/seed/beat21/400/400",
-      audioFile:
+      audioFileMp3:
+        "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+      audioFileWav:
         "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
       description: "Smooth R&B beat with soulful melodies",
       isPublished: true,
@@ -433,7 +475,8 @@ export async function seedBeats() {
       pricePremium: 49.99,
       priceExclusive: 199.99,
       coverImage: "https://picsum.photos/seed/beat22/400/400",
-      audioFile: "https://example.com/beats/chillhop-escape.mp3",
+      audioFileMp3: "https://example.com/beats/chillhop-escape.mp3",
+      audioFileWav: "https://example.com/beats/chillhop-escape.mp3",
       description: "A smooth chillhop beat perfect for relaxing",
       isPublished: true,
     },
@@ -449,7 +492,8 @@ export async function seedBeats() {
       pricePremium: 59.99,
       priceExclusive: 249.99,
       coverImage: "https://picsum.photos/seed/beat23/400/400",
-      audioFile: "https://example.com/beats/trap-energy.mp3",
+      audioFileMp3: "https://example.com/beats/trap-energy.mp3",
+      audioFileWav: "https://example.com/beats/trap-energy.mp3",
       description: "Heavy hitting trap beat with punchy 808s",
       isPublished: true,
     },
@@ -465,7 +509,8 @@ export async function seedBeats() {
       pricePremium: 44.99,
       priceExclusive: 179.99,
       coverImage: "https://picsum.photos/seed/beat24/400/400",
-      audioFile: "https://example.com/beats/summer-chill.mp3",
+      audioFileMp3: "https://example.com/beats/summer-chill.mp3",
+      audioFileWav: "https://example.com/beats/summer-chill.mp3",
       description: "Uplifting pop beat with summer vibes",
       isPublished: true,
     },
@@ -481,14 +526,15 @@ export async function seedBeats() {
       pricePremium: 64.99,
       priceExclusive: 299.99,
       coverImage: "https://picsum.photos/seed/beat25/400/400",
-      audioFile: "https://example.com/beats/dark-pulse.mp3",
+      audioFileMp3: "https://example.com/beats/dark-pulse.mp3",
+      audioFileWav: "https://example.com/beats/dark-pulse.mp3",
       description: "Aggressive drill beat with dark atmosphere",
       isPublished: true,
     },
   ];
 
   // Deduplicate audio URLs and fetch all durations in parallel
-  const uniqueUrls = [...new Set(beatDefinitions.map((b) => b.audioFile))];
+  const uniqueUrls = [...new Set(beatDefinitions.map((b) => b.audioFileMp3))];
   console.log(
     `Fetching durations for ${uniqueUrls.length} unique audio files...`,
   );
@@ -499,7 +545,7 @@ export async function seedBeats() {
   );
 
   for (const beatData of beatDefinitions) {
-    const duration = durationMap[beatData.audioFile] || beatData.duration;
+    const duration = durationMap[beatData.audioFileMp3] || beatData.duration;
     const { duration: _ignored, ...beatWithoutDuration } = beatData;
     const beatId = `beat-${beatData.title.toLowerCase().replace(/\s+/g, "-")}`;
 

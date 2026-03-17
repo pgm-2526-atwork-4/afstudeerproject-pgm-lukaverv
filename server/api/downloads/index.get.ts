@@ -54,7 +54,8 @@ export default defineEventHandler(async (event) => {
           id: true,
           title: true,
           coverImage: true,
-          audioFile: true,
+          audioFileMp3: true,
+          audioFileWav: true,
           bpm: true,
           key: true,
           genre: true,
@@ -84,32 +85,33 @@ export default defineEventHandler(async (event) => {
     genre: item.beat.genre,
     // File URLs - the actual audio file serves as MP3
     // In a production app, you'd have separate WAV files stored
-    files: getFilesForLicense(item.licenseType, item.beat.audioFile),
+    files: getFilesForLicense(
+      item.licenseType,
+      item.beat.audioFileMp3,
+      item.beat.audioFileWav,
+    ),
   }));
 });
 
-function getFilesForLicense(licenseType: string, audioFile: string) {
-  // Build download URLs based on license type
-  // The audioFile is the MP3 file stored in Cloudinary/S3
-  const mp3Url = audioFile;
-  // For WAV, in production you'd store a separate WAV file
-  // For now, we use the same file with a flag to indicate WAV availability
-  const wavUrl = audioFile.replace(".mp3", ".wav");
-
+function getFilesForLicense(
+  licenseType: string,
+  audioFileMp3: string,
+  audioFileWav: string,
+) {
   switch (licenseType) {
     case "BASIC":
-      return [{ type: "MP3", url: mp3Url }];
+      return [{ type: "MP3", url: audioFileMp3 }];
     case "PREMIUM":
       return [
-        { type: "MP3", url: mp3Url },
-        { type: "WAV", url: wavUrl },
+        { type: "MP3", url: audioFileMp3 },
+        { type: "WAV", url: audioFileWav },
       ];
     case "EXCLUSIVE":
       return [
-        { type: "MP3", url: mp3Url },
-        { type: "WAV", url: wavUrl },
+        { type: "MP3", url: audioFileMp3 },
+        { type: "WAV", url: audioFileWav },
       ];
     default:
-      return [{ type: "MP3", url: mp3Url }];
+      return [{ type: "MP3", url: audioFileMp3 }];
   }
 }

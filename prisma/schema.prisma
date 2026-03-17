@@ -81,7 +81,8 @@ model Beat {
   exclusiveBuyer  String? // User ID who bought exclusive rights
 
   coverImage    String // URL to cover image
-  audioFile     String // URL to audio file (mp3/wav)
+  audioFileMp3  String // URL to MP3 file (tagged)
+  audioFileWav  String // URL to WAV file (untagged)
   description   String?        @db.VarChar(1000)
   isPublished   Boolean        @default(false)
   playCount     Int            @default(0)
