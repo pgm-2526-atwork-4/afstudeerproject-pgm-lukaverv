@@ -68,6 +68,16 @@
             <span>Liked Tracks</span>
           </NuxtLink>
 
+          <!-- My Downloads -->
+          <NuxtLink
+            to="/downloads"
+            @click="closeDropdown"
+            class="flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+          >
+            <Icon name="ph:download-simple" class="w-5 h-5" />
+            <span>My Downloads</span>
+          </NuxtLink>
+
           <!-- Settings -->
           <NuxtLink
             to="/settings"
