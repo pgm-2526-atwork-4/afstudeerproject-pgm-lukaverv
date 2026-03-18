@@ -43,7 +43,12 @@ export default defineEventHandler(async (event) => {
   );
 
   const appUrl =
-    process.env.APP_URL || process.env.BASE_URL || "http://localhost:3000";
+    process.env.APP_URL ||
+    process.env.BASE_URL ||
+    process.env.NUXT_AUTH_ORIGIN ||
+    (process.env.VERCEL_URL
+      ? `https://${process.env.VERCEL_URL}`
+      : "http://localhost:3000");
   await sendDeleteAccountEmail(
     user.email,
     `${appUrl}/auth/delete-account?token=${deleteToken}`,

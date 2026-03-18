@@ -383,7 +383,6 @@ useHead({
   ],
 });
 
-const config = useRuntimeConfig();
 const loading = ref(false);
 const error = ref("");
 const currentStep = ref(1);

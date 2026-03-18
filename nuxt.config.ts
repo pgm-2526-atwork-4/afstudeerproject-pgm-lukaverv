@@ -85,7 +85,12 @@ export default defineNuxtConfig({
   ],
 
   auth: {
-    baseURL: process.env.NUXT_AUTH_ORIGIN || "http://localhost:3000",
+    baseURL:
+      process.env.BASE_URL ||
+      process.env.NUXT_AUTH_ORIGIN ||
+      (process.env.VERCEL_URL
+        ? `https://${process.env.VERCEL_URL}`
+        : "http://localhost:3000"),
     provider: {
       type: "authjs",
       trustHost: true,

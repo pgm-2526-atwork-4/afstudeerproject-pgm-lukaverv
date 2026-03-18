@@ -25,7 +25,11 @@ export default defineEventHandler(async (event) => {
     );
 
     // Send the reset email
-    const resetLink = `${process.env.BASE_URL}/auth/reset-password?token=${resetToken}`;
+    const baseUrl =
+      process.env.BASE_URL ||
+      process.env.NUXT_AUTH_ORIGIN ||
+      "http://localhost:3000";
+    const resetLink = `${baseUrl}/auth/reset-password?token=${resetToken}`;
     await sendResetPasswordEmail(user.email, resetLink);
 
     // Return success response
