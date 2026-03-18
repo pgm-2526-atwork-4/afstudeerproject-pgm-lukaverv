@@ -86,6 +86,7 @@ const tabs = [
   { id: "likes", label: "Likes" },
   { id: "comments", label: "Comments" },
   { id: "follows", label: "Follows" },
+  { id: "sales", label: "Sales" },
 ];
 
 // Fetch real chart data from the API, re-fetches when period changes
@@ -157,6 +158,7 @@ const yAxisMax = computed(() => {
     likes: 5,
     comments: 5,
     follows: 5,
+    sales: 1,
   };
   const minCeiling = minimums[activeTab.value] ?? 5;
 

@@ -59,16 +59,7 @@
         <!-- User Actions -->
         <div class="flex items-center gap-4">
           <!-- Shopping Cart (Only for authenticated users) -->
-          <button
-            v-if="currentUser"
-            class="p-2 text-gray-300 hover:text-white hover:bg-gray-800 rounded-lg transition-all duration-200"
-            aria-label="Shopping Cart"
-          >
-            <Icon
-              name="material-symbols-light:shopping-bag-outline"
-              class="w-8 h-8"
-            />
-          </button>
+          <CartDropdown v-if="currentUser && !loading" />
 
           <!-- Notifications (Only for authenticated users) -->
           <NotificationDropdown v-if="currentUser && !loading" />

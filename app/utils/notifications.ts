@@ -12,6 +12,8 @@ export const getNotificationMessage = (notif: any): string => {
       return ` commented on your track ${beatTitle}`;
     case "FOLLOW":
       return " is now following your profile";
+    case "SALE":
+      return ` purchased your beat ${beatTitle}`;
     default:
       return "";
   }
@@ -25,6 +27,8 @@ export const getNotificationIcon = (type: string): string => {
       return "ph:chat-circle-fill";
     case "FOLLOW":
       return "ph:user-plus-fill";
+    case "SALE":
+      return "ph:currency-dollar-fill";
     default:
       return "ph:bell-fill";
   }
@@ -38,6 +42,8 @@ export const getNotificationBadgeColor = (type: string): string => {
       return "bg-green-500";
     case "FOLLOW":
       return "bg-blue-500";
+    case "SALE":
+      return "bg-yellow-500";
     default:
       return "bg-gray-500";
   }
@@ -46,6 +52,8 @@ export const getNotificationBadgeColor = (type: string): string => {
 export const navigateFromNotification = (notif: any) => {
   if (notif.type === "FOLLOW") {
     return `/profile/${notif.actor?.userId}`;
+  } else if (notif.type === "SALE" && notif.orderItemId) {
+    return `/dashboard/sale/${notif.orderItemId}`;
   } else if (notif.beatId) {
     return `/beat/${notif.beatId}`;
   }

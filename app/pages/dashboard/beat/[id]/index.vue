@@ -17,6 +17,27 @@
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton label="Back to Dashboard" to="/dashboard" class="mb-4" />
 
+        <!-- Exclusive Sold Notice -->
+        <div
+          v-if="beat?.isExclusiveSold"
+          class="mb-4 bg-purple-600/20 border border-purple-500/50 rounded-lg p-4 flex items-start gap-3"
+        >
+          <Icon
+            name="ph:lock-key"
+            class="w-5 h-5 text-purple-400 flex-shrink-0 mt-0.5"
+          />
+          <div>
+            <h3 class="text-purple-300 font-semibold text-sm mb-1">
+              Exclusive Rights Sold
+            </h3>
+            <p class="text-purple-200/80 text-xs">
+              This beat was sold exclusively and is no longer available for
+              editing or public viewing. You retain access to historical
+              analytics.
+            </p>
+          </div>
+        </div>
+
         <div class="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start">
           <!-- Beat Artwork -->
           <div class="flex-shrink-0 w-full sm:w-auto">
@@ -76,6 +97,7 @@
             <!-- Action Buttons -->
             <div class="flex flex-wrap gap-2 md:gap-3">
               <NuxtLink
+                v-if="!beat?.isExclusiveSold"
                 :to="`/dashboard/beat/${beatId}/edit`"
                 class="px-4 md:px-6 py-2 md:py-3 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors font-medium flex items-center gap-2 text-sm md:text-base"
               >
@@ -84,6 +106,7 @@
                 <span class="sm:hidden">Edit</span>
               </NuxtLink>
               <NuxtLink
+                v-if="!beat?.isExclusiveSold"
                 :to="`/beat/${beatId}`"
                 target="_blank"
                 class="px-4 md:px-6 py-2 md:py-3 bg-dark-700 hover:bg-dark-600 text-white rounded-lg transition-colors font-medium flex items-center gap-2 text-sm md:text-base"
@@ -93,6 +116,7 @@
                 <span class="sm:hidden">View</span>
               </NuxtLink>
               <button
+                v-if="!beat?.isExclusiveSold"
                 @click="showDeleteModal = true"
                 class="px-4 md:px-6 py-2 md:py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors font-medium flex items-center gap-2 text-sm md:text-base"
               >
@@ -100,6 +124,13 @@
                 <span class="hidden sm:inline">Delete Beat</span>
                 <span class="sm:hidden">Delete</span>
               </button>
+              <div
+                v-if="beat?.isExclusiveSold"
+                class="px-4 md:px-6 py-2 md:py-3 bg-dark-700/50 text-gray-400 rounded-lg font-medium flex items-center gap-2 text-sm md:text-base cursor-not-allowed"
+              >
+                <Icon name="ph:lock-key" class="w-4 h-4 md:w-5 md:h-5" />
+                <span>Editing Restricted</span>
+              </div>
             </div>
           </div>
         </div>
@@ -110,7 +141,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 md:py-12">
       <!-- Stats Grid -->
       <div
-        class="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8"
+        class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 mb-6 sm:mb-8"
       >
         <div class="bg-dark-800 rounded-xl p-4 md:p-6 shadow-2xl">
           <div class="flex items-center gap-2 md:gap-3 mb-2">
@@ -138,18 +169,29 @@
           </p>
         </div>
 
-        <div
-          class="bg-dark-800 rounded-xl p-4 md:p-6 shadow-2xl col-span-2 md:col-span-1"
-        >
+        <div class="bg-dark-800 rounded-xl p-4 md:p-6 shadow-2xl">
           <div class="flex items-center gap-2 md:gap-3 mb-2">
             <Icon
               name="ph:chat-circle-text"
-              class="w-4 h-4 md:w-5 md:h-5 text-green-500 flex-shrink-0"
+              class="w-4 h-4 md:w-5 md:h-5 text-blue-500 flex-shrink-0"
             />
             <span class="text-xs md:text-sm text-gray-400">Comments</span>
           </div>
           <p class="text-2xl md:text-3xl font-bold text-white">
             {{ formatNumber(stats.comments) }}
+          </p>
+        </div>
+
+        <div class="bg-dark-800 rounded-xl p-4 md:p-6 shadow-2xl">
+          <div class="flex items-center gap-2 md:gap-3 mb-2">
+            <Icon
+              name="ph:receipt"
+              class="w-4 h-4 md:w-5 md:h-5 text-green-500 flex-shrink-0"
+            />
+            <span class="text-xs md:text-sm text-gray-400">Sold Copies</span>
+          </div>
+          <p class="text-2xl md:text-3xl font-bold text-white">
+            {{ formatNumber(stats.soldCopies) }}
           </p>
         </div>
       </div>
@@ -158,12 +200,14 @@
       <div
         class="bg-dark-800 rounded-xl p-4 sm:p-6 md:p-8 shadow-2xl mb-6 sm:mb-8"
       >
+        <RetentionGraphLoader v-if="retentionPending" />
         <RetentionGraph
+          v-else
           :duration="beat?.durationSeconds ?? 180"
-          :avg-view-duration="retention?.avgViewDuration ?? '0:00'"
-          :avg-percentage-viewed="retention?.avgPercentageViewed ?? 0"
-          :beat-retention="retention?.beatRetention ?? []"
-          :typical-retention="retention?.typicalRetention ?? []"
+          :avg-view-duration="(retention as any)?.avgViewDuration ?? '0:00'"
+          :avg-percentage-viewed="(retention as any)?.avgPercentageViewed ?? 0"
+          :beat-retention="(retention as any)?.beatRetention ?? []"
+          :typical-retention="(retention as any)?.typicalRetention ?? []"
         />
       </div>
 
@@ -363,7 +407,7 @@
           >
             <Icon
               name="ph:currency-circle-dollar"
-              class="w-4 h-4 md:w-5 md:h-5 text-primary-500"
+              class="w-4 h-4 md:w-5 md:h-5 text-white"
             />
             Pricing
           </h2>
@@ -409,7 +453,7 @@
           >
             <Icon
               name="ph:music-notes"
-              class="w-4 h-4 md:w-5 md:h-5 text-primary-500"
+              class="w-4 h-4 md:w-5 md:h-5 text-white"
             />
             Audio Files
           </h2>
@@ -421,7 +465,7 @@
               <div class="flex items-center gap-2 md:gap-3">
                 <Icon
                   name="ph:music-note"
-                  class="w-4 h-4 md:w-5 md:h-5 text-primary-500 flex-shrink-0"
+                  class="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0"
                 />
                 <span class="text-sm md:text-base text-gray-300"
                   >MP3 (Tagged)</span
@@ -437,7 +481,7 @@
               <div class="flex items-center gap-2 md:gap-3">
                 <Icon
                   name="ph:waveform"
-                  class="w-4 h-4 md:w-5 md:h-5 text-primary-500 flex-shrink-0"
+                  class="w-4 h-4 md:w-5 md:h-5 text-white flex-shrink-0"
                 />
                 <span class="text-sm md:text-base text-gray-300"
                   >WAV (Untagged)</span
@@ -480,12 +524,13 @@ const stats = computed(() => ({
   plays: beat?.playsCount || 0,
   likes: beat?.likesCount || 0,
   comments: beat?.commentsCount || 0,
+  soldCopies: beat?.soldCopies || 0,
 }));
 
 const { formatNumber, formatDate } = useFormatters();
 
-// Retention graph data
-const { data: retention } = await useFetch(
+// Retention graph data (non-blocking so skeleton shows while it loads)
+const { data: retention, pending: retentionPending } = useFetch(
   `/api/dashboard/retention/${beatId}`,
   { headers: useRequestHeaders(["cookie"]) },
 );

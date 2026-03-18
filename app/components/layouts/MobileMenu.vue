@@ -149,6 +149,26 @@
           </NuxtLink>
 
           <NuxtLink
+            to="/shop/cart"
+            @click="$emit('close')"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            active-class="bg-blue-600/10 text-blue-400"
+          >
+            <Icon name="ph:shopping-cart" class="w-5 h-5" />
+            <span class="font-medium">Cart</span>
+          </NuxtLink>
+
+          <NuxtLink
+            to="/downloads"
+            @click="$emit('close')"
+            class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"
+            active-class="bg-blue-600/10 text-blue-400"
+          >
+            <Icon name="ph:download-simple" class="w-5 h-5" />
+            <span class="font-medium">Downloads</span>
+          </NuxtLink>
+
+          <NuxtLink
             to="/settings"
             @click="$emit('close')"
             class="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-colors"

@@ -71,6 +71,7 @@
               <option value="LIKE">Likes</option>
               <option value="COMMENT">Comments</option>
               <option value="FOLLOW">Follows</option>
+              <option value="SALE">Sales</option>
             </select>
             <Icon
               name="ph:caret-down"

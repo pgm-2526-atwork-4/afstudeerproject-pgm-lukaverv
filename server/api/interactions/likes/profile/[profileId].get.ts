@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
         duration: formatDuration(beat.duration),
         durationSeconds: beat.duration,
         coverImage: beat.coverImage,
-        audioUrl: beat.audioFile,
+        audioUrl: beat.audioFileMp3,
         likesCount: beat._count.likes,
         commentsCount: beat._count.comments,
       }));

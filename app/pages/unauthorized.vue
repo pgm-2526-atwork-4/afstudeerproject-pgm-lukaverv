@@ -67,6 +67,9 @@ const message = computed(() => {
   if (reason === "producers-only") {
     return "This area is restricted to producers only.";
   }
+  if (reason === "exclusive-sold") {
+    return "This beat has been exclusively sold and is no longer available for purchase or public viewing.";
+  }
   return "You don't have permission to access this page.";
 });
 </script>

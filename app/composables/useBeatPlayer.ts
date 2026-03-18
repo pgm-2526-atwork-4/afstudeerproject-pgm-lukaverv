@@ -20,7 +20,7 @@ export function useBeatPlayer() {
       title: beat.title,
       producer: beat.producer,
       producerId: beat.producerUserId,
-      audioUrl: beat.audioUrl ?? beat.audioFile,
+      audioUrl: beat.audioUrl,
       coverImage: beat.coverImage,
       duration: beat.durationSeconds ?? 0,
     };

@@ -316,16 +316,27 @@
 
               <!-- Exclusive License -->
               <button
-                @click="selectedLicense = 'exclusive'"
-                :class="
-                  selectedLicense === 'exclusive'
-                    ? 'border-blue-500 bg-blue-600/10'
-                    : 'border-gray-700/50 hover:border-blue-500/50'
+                @click="
+                  !beat.isExclusiveSold && (selectedLicense = 'exclusive')
                 "
+                :disabled="beat.isExclusiveSold"
+                :class="[
+                  beat.isExclusiveSold
+                    ? 'border-gray-700/30 opacity-50 cursor-not-allowed'
+                    : selectedLicense === 'exclusive'
+                      ? 'border-blue-500 bg-blue-600/10'
+                      : 'border-gray-700/50 hover:border-blue-500/50',
+                ]"
                 class="relative p-6 rounded-xl border-2 transition-all text-center"
               >
+                <div v-if="beat.isExclusiveSold" class="absolute top-3 right-3">
+                  <span
+                    class="text-xs font-semibold text-red-400 bg-red-400/10 px-2 py-0.5 rounded-full"
+                    >SOLD</span
+                  >
+                </div>
                 <div
-                  v-if="selectedLicense === 'exclusive'"
+                  v-else-if="selectedLicense === 'exclusive'"
                   class="absolute top-3 right-3"
                 >
                   <Icon
@@ -415,11 +426,20 @@
 
             <!-- Add to Cart Button -->
             <button
+              v-if="!isOwnBeat"
               @click="!userProfile ? redirectToLogin() : addToCart()"
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-colors shadow-lg text-lg flex items-center justify-center gap-2"
+              :class="
+                addedToCart
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              "
+              class="w-full text-white font-bold py-4 px-8 rounded-xl transition-colors shadow-lg text-lg flex items-center justify-center gap-2"
             >
-              <Icon name="ph:shopping-cart" size="24" />
-              Add to cart
+              <Icon
+                :name="addedToCart ? 'ph:check' : 'ph:shopping-cart'"
+                size="24"
+              />
+              {{ addedToCart ? "Added to cart!" : "Add to cart" }}
             </button>
           </div>
 
@@ -608,6 +628,15 @@ const beatId = route.params.id;
 // Fetch beat details
 const { data: beat, pending, error } = await useFetch(`/api/beats/${beatId}`);
 
+// Redirect if exclusively sold and user is not the owner
+const userProfile = useState("userProfile");
+if (
+  beat.value?.isExclusiveSold &&
+  userProfile.value?.id !== beat.value?.producerId
+) {
+  await navigateTo("/unauthorized?reason=exclusive-sold", { replace: true });
+}
+
 // Set dynamic title based on beat data
 usePageTitle(() => beat.value?.title, "Beat");
 
@@ -640,8 +669,38 @@ const selectedLicenseLabel = computed(() =>
 );
 const usageTerms = computed(() => getUsageTerms(selectedLicense.value));
 
+// Cart
+const cartStore = useCartStore();
+const addedToCart = ref(false);
+
+const selectedPrice = computed(() => {
+  if (!beat.value) return 0;
+  const prices = {
+    basic: beat.value.priceBasic,
+    premium: beat.value.pricePremium,
+    exclusive: beat.value.priceExclusive,
+  };
+  return prices[selectedLicense.value] || 0;
+});
+
+const addToCart = () => {
+  if (!beat.value) return;
+  cartStore.addItem({
+    beatId: beat.value.id,
+    title: beat.value.title,
+    producer: beat.value.producer,
+    producerId: beat.value.producerId,
+    coverImage: beat.value.coverImage,
+    licenseType: selectedLicense.value,
+    price: selectedPrice.value,
+  });
+  addedToCart.value = true;
+  setTimeout(() => {
+    addedToCart.value = false;
+  }, 2000);
+};
+
 // Likes — shared state with the AudioPlayer via useLikes keyed by beatId
-const userProfile = useState("userProfile");
 const {
   isLiked,
   likeCount,
@@ -661,6 +720,13 @@ watch(
 );
 
 const { redirectToLogin } = useNavigation();
+
+const isOwnBeat = computed(
+  () =>
+    !!userProfile.value &&
+    !!beat.value &&
+    userProfile.value.id === beat.value.producerId,
+);
 
 onMounted(() => {
   fetchLikeStatus();

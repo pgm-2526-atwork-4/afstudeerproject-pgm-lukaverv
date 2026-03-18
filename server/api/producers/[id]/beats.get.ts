@@ -39,6 +39,7 @@ export default defineEventHandler(async (event) => {
       where: {
         producerId: id,
         isPublished: true,
+        isExclusiveSold: false,
       },
       include: {
         producer: {
@@ -81,7 +82,7 @@ export default defineEventHandler(async (event) => {
         duration: formattedDuration,
         durationSeconds: beat.duration,
         coverImage: beat.coverImage,
-        audioUrl: beat.audioFile,
+        audioUrl: beat.audioFileMp3,
         likesCount: beat._count.likes,
         commentsCount: beat._count.comments,
       };

@@ -28,6 +28,7 @@ export default defineEventHandler(async (event) => {
             likes: true,
             comments: true,
             plays: true,
+            orderItems: true,
           },
         },
       },
@@ -60,12 +61,14 @@ export default defineEventHandler(async (event) => {
       duration: formattedDuration,
       durationSeconds: beat.duration,
       coverImage: beat.coverImage,
-      audioUrl: beat.audioFile,
+      audioUrl: beat.audioFileMp3,
+      audioUrlWav: beat.audioFileWav,
       isPublished: beat.isPublished,
       isExclusiveSold: beat.isExclusiveSold,
       likesCount: beat._count.likes,
       commentsCount: beat._count.comments,
       playsCount: beat._count.plays,
+      soldCopies: beat._count.orderItems,
       createdAt: beat.createdAt,
     };
   } catch (error) {

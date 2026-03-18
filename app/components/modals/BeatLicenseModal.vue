@@ -224,9 +224,20 @@
 
             <!-- Add to Cart Button -->
             <button
-              class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 px-8 rounded-xl transition-colors shadow-lg text-xl"
+              v-if="!isOwnBeat"
+              @click="handleAddToCart"
+              :class="
+                addedToCart
+                  ? 'bg-green-600 hover:bg-green-700'
+                  : 'bg-blue-600 hover:bg-blue-700'
+              "
+              class="w-full text-white font-bold py-5 px-8 rounded-xl transition-colors shadow-lg text-xl flex items-center justify-center gap-2"
             >
-              Add to cart
+              <Icon
+                :name="addedToCart ? 'ph:check' : 'ph:shopping-cart'"
+                size="24"
+              />
+              {{ addedToCart ? "Added to cart!" : "Add to cart" }}
             </button>
           </div>
         </div>
@@ -250,9 +261,47 @@ const props = defineProps({
 const emit = defineEmits(["close"]);
 
 const { getLicenseLabel, getUsageTerms } = useLicenseData();
+const cartStore = useCartStore();
+const userProfile = useState("userProfile");
+
+const isOwnBeat = computed(
+  () =>
+    !!userProfile.value &&
+    !!props.beat &&
+    userProfile.value.id === props.beat.producerId,
+);
 
 const selectedLicense = ref("basic");
 const usageTerms = computed(() => getUsageTerms(selectedLicense.value));
+const addedToCart = ref(false);
+
+const selectedPrice = computed(() => {
+  if (!props.beat) return 0;
+  const prices = {
+    basic: props.beat.priceBasic,
+    premium: props.beat.pricePremium,
+    exclusive: props.beat.priceExclusive,
+  };
+  return prices[selectedLicense.value] || 0;
+});
+
+const handleAddToCart = () => {
+  if (!props.beat) return;
+  cartStore.addItem({
+    beatId: props.beat.id,
+    title: props.beat.title,
+    producer: props.beat.producer,
+    producerId: props.beat.producerId,
+    coverImage: props.beat.coverImage,
+    licenseType: selectedLicense.value,
+    price: selectedPrice.value,
+  });
+  addedToCart.value = true;
+  setTimeout(() => {
+    addedToCart.value = false;
+    closeModal();
+  }, 1500);
+};
 
 const closeModal = () => {
   emit("close");

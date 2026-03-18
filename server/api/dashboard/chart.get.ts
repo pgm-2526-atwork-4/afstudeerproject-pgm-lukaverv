@@ -185,7 +185,7 @@ export default defineEventHandler(async (event) => {
     const { startDate, buckets, labels, getKey } = buildConfig(period);
 
     // Fetch all four metrics in parallel
-    const [plays, likes, comments, follows] = await Promise.all([
+    const [plays, likes, comments, follows, sales] = await Promise.all([
       prisma.play.findMany({
         where: {
           beat: { producerId: profileId },
@@ -211,6 +211,14 @@ export default defineEventHandler(async (event) => {
         where: { followingProfileId: profileId, createdAt: { gte: startDate } },
         select: { createdAt: true },
       }),
+      prisma.orderItem.findMany({
+        where: {
+          beat: { producerId: profileId },
+          order: { status: "COMPLETED" },
+          createdAt: { gte: startDate },
+        },
+        select: { createdAt: true },
+      }),
     ]);
 
     return {
@@ -232,6 +240,11 @@ export default defineEventHandler(async (event) => {
       ),
       follows: toCounts(
         follows.map((f) => f.createdAt),
+        buckets,
+        getKey,
+      ),
+      sales: toCounts(
+        sales.map((s) => s.createdAt),
         buckets,
         getKey,
       ),

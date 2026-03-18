@@ -228,6 +228,39 @@
         </div>
       </div>
 
+      <!-- Sales Tab -->
+      <div v-if="activeTab === 'sales'">
+        <div class="space-y-6">
+          <!-- Sales Chart -->
+          <Suspense>
+            <template #default>
+              <SalesChart v-model:period="salesPeriod" />
+            </template>
+            <template #fallback>
+              <SalesChartLoader />
+            </template>
+          </Suspense>
+
+          <!-- Sales List -->
+          <Pagination
+            :items="sortedSales"
+            v-model:page="salesCurrentPage"
+            :items-per-page="salesPerPage"
+            item-label="sales"
+            :per-page-options="[10, 20, 50]"
+            @update:items-per-page="salesPerPage = $event"
+            v-slot="{ items: paginatedSales }"
+          >
+            <DashboardSalesList
+              :sales="paginatedSales as any"
+              :loading="salesPending"
+              :total="(salesData as any[])?.length ?? 0"
+              v-model:sort="salesSort"
+            />
+          </Pagination>
+        </div>
+      </div>
+
       <!-- Tracks Tab -->
       <div v-if="activeTab === 'tracks'">
         <Pagination
@@ -269,6 +302,7 @@ const beatsPerPage = ref(12);
 const tabs = [
   { id: "analytics", label: "Analytics" },
   { id: "tracks", label: "Tracks" },
+  { id: "sales", label: "Sales" },
 ];
 
 // Tracks tab sort
@@ -304,8 +338,44 @@ const { data: analytics } = await useFetch(
 const topTracks = computed(() => (analytics.value?.topTracks || []) as any[]);
 const topFans = computed(() => (analytics.value?.topFans || []) as any[]);
 
-watch(beatSort, () => {
-  currentPage.value = 1;
+// Sales period filter
+const salesPeriod = ref("all");
+
+const salesPeriodLabel = computed(() => {
+  const labels: Record<string, string> = {
+    week: "This Week",
+    month: "This Month",
+    year: "This Year",
+    all: "All Time",
+  };
+  return labels[salesPeriod.value] || "All Time";
+});
+
+// Fetch sales data
+const { data: salesData, pending: salesPending } = await useFetch(
+  () => `/api/dashboard/sales?period=${salesPeriod.value}`,
+  { headers: useRequestHeaders(["cookie"]) },
+);
+
+const salesCurrentPage = ref(1);
+const salesPerPage = ref(10);
+const salesSort = ref("newest");
+
+// Sales sort functions
+const salesSortFns: Record<string, (a: any, b: any) => number> = {
+  newest: (a, b) =>
+    new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+  oldest: (a, b) =>
+    new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
+  highest: (a, b) => b.price - a.price,
+  lowest: (a, b) => a.price - b.price,
+};
+
+// Sorted sales (search is handled inside DashboardSalesList)
+const sortedSales = computed(() => {
+  const result = [...((salesData.value as any[]) || [])];
+  const sortFn = salesSortFns[salesSort.value] ?? salesSortFns.newest;
+  return result.sort(sortFn);
 });
 
 type SortKey = "newest" | "oldest" | "popular" | "unpopular";
@@ -323,6 +393,16 @@ const sortedBeats = computed(() => {
   const beats = [...((userBeats.value as any[]) || [])];
   return beats.sort(sortFns[beatSort.value as SortKey] ?? sortFns.newest);
 });
+
+watch(beatSort, () => {
+  currentPage.value = 1;
+});
+
+watch(salesSort, () => {
+  salesCurrentPage.value = 1;
+});
+
+const { formatDate } = useFormatters();
 </script>
 
 <style scoped>

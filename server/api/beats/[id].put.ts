@@ -64,7 +64,8 @@ export default defineEventHandler(async (event) => {
       pricePremium,
       priceExclusive,
       coverImage,
-      audioFile,
+      audioFileMp3,
+      audioFileWav,
       isPublished,
     } = body;
 
@@ -85,7 +86,8 @@ export default defineEventHandler(async (event) => {
           priceExclusive: parseFloat(priceExclusive),
         }),
         ...(coverImage !== undefined && { coverImage }),
-        ...(audioFile !== undefined && { audioFile }),
+        ...(audioFileMp3 !== undefined && { audioFileMp3 }),
+        ...(audioFileWav !== undefined && { audioFileWav }),
         ...(isPublished !== undefined && { isPublished }),
       },
     });

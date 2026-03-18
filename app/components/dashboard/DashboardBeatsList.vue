@@ -2,45 +2,20 @@
   <div class="bg-dark-800 rounded-xl shadow-2xl">
     <!-- Header -->
     <div class="p-4 sm:p-6 md:p-8 border-b border-dark-700/50">
-      <div
-        class="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
-      >
-        <div>
-          <h2 class="text-lg sm:text-xl font-bold text-white">My Beats</h2>
-          <p class="text-xs sm:text-sm text-gray-400 mt-1">
-            {{ total ?? beats?.length ?? 0 }} total beats
-          </p>
-        </div>
-        <div class="flex items-center gap-3">
-          <!-- Sort dropdown -->
-          <div class="relative">
-            <select
-              :value="sort"
-              @change="
-                $emit('update:sort', ($event.target as HTMLSelectElement).value)
-              "
-              class="appearance-none bg-[#1a1f35] text-white border border-gray-700/50 rounded-lg px-3 py-2 pr-8 text-sm outline-none cursor-pointer hover:bg-[#252b45] transition-all"
-            >
-              <option value="newest">Most Recent</option>
-              <option value="oldest">Oldest First</option>
-              <option value="popular">Most Popular</option>
-              <option value="unpopular">Least Popular</option>
-            </select>
-            <Icon
-              name="ph:caret-down"
-              class="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"
-              size="14"
-            />
-          </div>
-          <!-- Search -->
-          <input
-            type="text"
-            v-model="searchQuery"
-            placeholder="Search beats..."
-            class="appearance-none bg-[#1a1f35] text-white border border-gray-700/50 rounded-lg px-3 sm:px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 w-full sm:w-64 hover:bg-[#252b45] transition-all"
-          />
-        </div>
-      </div>
+      <DashboardFilterBar
+        title="My Beats"
+        :subtitle="`${total ?? beats?.length ?? 0} total beats`"
+        :sort="sort"
+        @update:sort="$emit('update:sort', $event)"
+        v-model:search="searchQuery"
+        :sort-options="[
+          { value: 'newest', label: 'Most Recent' },
+          { value: 'oldest', label: 'Oldest First' },
+          { value: 'popular', label: 'Most Popular' },
+          { value: 'unpopular', label: 'Least Popular' },
+        ]"
+        search-placeholder="Search beats..."
+      />
     </div>
 
     <!-- Loading State -->
@@ -74,11 +49,19 @@
 
           <!-- Beat Info -->
           <div class="flex-1 min-w-0">
-            <h3
-              class="text-sm sm:text-base text-white font-medium truncate group-hover:text-primary-400 transition-colors"
-            >
-              {{ beat.title }}
-            </h3>
+            <div class="flex items-center gap-2">
+              <h3
+                class="text-sm sm:text-base text-white font-medium truncate group-hover:text-primary-400 transition-colors"
+              >
+                {{ beat.title }}
+              </h3>
+              <span
+                v-if="beat.isExclusiveSold"
+                class="flex-shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full bg-purple-600/20 text-purple-400"
+              >
+                SOLD
+              </span>
+            </div>
             <div class="flex flex-wrap items-center gap-2 sm:gap-4 mt-1">
               <span class="text-xs sm:text-sm text-gray-400"
                 >{{ beat.bpm }} BPM</span
@@ -106,6 +89,10 @@
                   class="text-blue-400"
                 />
                 {{ beat.commentsCount ?? 0 }}
+              </span>
+              <span class="flex items-center gap-1 text-xs text-gray-500">
+                <Icon name="ph:receipt" size="11" class="text-green-400" />
+                {{ beat.soldCopies ?? 0 }}
               </span>
               <span class="text-xs text-gray-500">{{
                 formatDate(beat.createdAt)
@@ -202,6 +189,8 @@ interface Beat {
   playsCount?: number;
   likesCount?: number;
   commentsCount?: number;
+  soldCopies?: number;
+  isExclusiveSold?: boolean;
 }
 
 interface Props {

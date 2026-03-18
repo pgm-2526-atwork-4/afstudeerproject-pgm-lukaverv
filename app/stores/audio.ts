@@ -1,5 +1,3 @@
-import { defineStore } from "pinia";
-
 // Track interface - defines what a track looks like
 export interface Track {
   id: string;
