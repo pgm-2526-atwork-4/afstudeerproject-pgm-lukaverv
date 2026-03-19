@@ -68,6 +68,7 @@
     <StickySearchHeader
       v-model="searchQuery"
       :has-active-filters="hasActiveFilters"
+      @clear-all="clearAll"
     />
 
     <!-- Results Section -->
@@ -127,8 +128,9 @@
           :show-producer="true"
           :pending="pending"
           :has-beats="beats && beats.length > 0"
+          :has-active-filters="hasActiveFilters"
           empty-message="No beats available at the moment."
-          @clear-search="searchQuery = ''"
+          @clear-search="clearAll"
           @open-license-modal="openLicenseModal"
         />
       </div>
@@ -284,6 +286,13 @@ watch(
   },
   { deep: true },
 );
+
+// Clear search input and all filters
+const clearAll = () => {
+  searchQuery.value = "";
+  selectedFilters.value = { genre: [], bpm: [], key: [] };
+  bpmFilter.value = { min: null, max: null };
+};
 
 // Sync filtered beats to audio player playlist
 usePlaylistSync(filteredBeats);

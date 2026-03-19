@@ -124,7 +124,7 @@
           <!-- Interaction Buttons -->
           <div class="flex gap-4">
             <button
-              @click="userProfile ? handleLikeToggle() : redirectToLogin"
+              @click="userProfile ? handleLikeToggle() : redirectToLogin()"
               :class="
                 isLiked ? 'text-red-400' : 'text-gray-400 hover:text-red-400'
               "
@@ -425,22 +425,38 @@
             </div>
 
             <!-- Add to Cart Button -->
-            <button
-              v-if="!isOwnBeat"
-              @click="!userProfile ? redirectToLogin() : addToCart()"
-              :class="
-                addedToCart
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              "
-              class="w-full text-white font-bold py-4 px-8 rounded-xl transition-colors shadow-lg text-lg flex items-center justify-center gap-2"
-            >
-              <Icon
-                :name="addedToCart ? 'ph:check' : 'ph:shopping-cart'"
-                size="24"
-              />
-              {{ addedToCart ? "Added to cart!" : "Add to cart" }}
-            </button>
+            <template v-if="!isOwnBeat">
+              <!-- Guest: redirect to login -->
+              <button
+                v-if="!userProfile && !authLoading"
+                @click="redirectToLogin()"
+                class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl transition-colors shadow-lg text-lg flex items-center justify-center gap-2"
+              >
+                <Icon name="ph:sign-in" size="24" />
+                Login to purchase
+              </button>
+              <!-- Authenticated or loading -->
+              <div v-else>
+                <button
+                  @click="addToCart()"
+                  :disabled="authLoading"
+                  :class="[
+                    authLoading
+                      ? 'bg-gray-600 cursor-not-allowed opacity-60'
+                      : addedToCart
+                        ? 'bg-green-600 hover:bg-green-700'
+                        : 'bg-blue-600 hover:bg-blue-700',
+                  ]"
+                  class="w-full text-white font-bold py-4 px-8 rounded-xl transition-colors shadow-lg text-lg flex items-center justify-center gap-2"
+                >
+                  <Icon
+                    :name="addedToCart ? 'ph:check' : 'ph:shopping-cart'"
+                    size="24"
+                  />
+                  {{ addedToCart ? "Added to cart!" : "Add to cart" }}
+                </button>
+              </div>
+            </template>
           </div>
 
           <!-- More from Producer Section -->
@@ -684,7 +700,7 @@ const selectedPrice = computed(() => {
 });
 
 const addToCart = () => {
-  if (!beat.value) return;
+  if (!beat.value || !userProfile.value || isOwnBeat.value) return;
   cartStore.addItem({
     beatId: beat.value.id,
     title: beat.value.title,
@@ -721,12 +737,9 @@ watch(
 
 const { redirectToLogin } = useNavigation();
 
-const isOwnBeat = computed(
-  () =>
-    !!userProfile.value &&
-    !!beat.value &&
-    userProfile.value.id === beat.value.producerId,
-);
+const { isOwnBeat: checkIsOwnBeat } = useIsOwnBeat();
+const authLoading = useState("authLoading", () => true);
+const isOwnBeat = computed(() => checkIsOwnBeat(beat.value));
 
 onMounted(() => {
   fetchLikeStatus();

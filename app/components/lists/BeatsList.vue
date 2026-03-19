@@ -173,7 +173,14 @@
               </button>
               <button
                 @click.stop.prevent="openLicenseModal(beat)"
-                class="bg-gray-800 hover:bg-gray-700 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition flex items-center gap-1.5 md:gap-2 font-semibold whitespace-nowrap text-sm"
+                :disabled="isOwnBeat(beat)"
+                :title="isOwnBeat(beat) ? 'You cannot buy your own beat' : ''"
+                :class="
+                  isOwnBeat(beat)
+                    ? 'bg-gray-800/40 text-gray-500 cursor-not-allowed'
+                    : 'bg-gray-800 hover:bg-gray-700 text-white cursor-pointer'
+                "
+                class="px-3 md:px-4 py-1.5 md:py-2 rounded-lg transition flex items-center gap-1.5 md:gap-2 font-semibold whitespace-nowrap text-sm"
               >
                 <Icon name="ph:shopping-cart" size="16" class="md:hidden" />
                 <Icon
@@ -199,14 +206,24 @@
         class="text-gray-600 text-6xl mx-auto mb-4"
       />
       <p class="text-gray-400 text-lg mb-2">
-        No beats found matching "{{ searchQuery }}"
+        <template v-if="searchQuery && hasActiveFilters">
+          No beats found matching "{{ searchQuery }}" with the current filters
+        </template>
+        <template v-else-if="searchQuery">
+          No beats found matching "{{ searchQuery }}"
+        </template>
+        <template v-else>
+          No beats found matching your current filters
+        </template>
       </p>
-      <p class="text-gray-500 text-sm mb-4">Try adjusting your search terms</p>
+      <p class="text-gray-500 text-sm mb-4">
+        Try adjusting your search or filters
+      </p>
       <button
         @click="$emit('clear-search')"
         class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition font-semibold"
       >
-        Clear Search
+        Clear All
       </button>
     </div>
 
@@ -251,6 +268,10 @@ const props = defineProps({
     type: String,
     default: "No beats available.",
   },
+  hasActiveFilters: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
@@ -271,8 +292,12 @@ const { playingBeatId, isPlaying, togglePlay } = useBeatPlayer();
 // Navigation
 const { navigateToBeat } = useNavigation();
 
+// Current user — to prevent producers from buying their own beats in the list
+const { isOwnBeat } = useIsOwnBeat();
+
 // License modal handler
 const openLicenseModal = (beat) => {
+  if (isOwnBeat(beat)) return;
   emit("open-license-modal", beat);
 };
 </script>

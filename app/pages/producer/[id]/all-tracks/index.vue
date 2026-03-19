@@ -62,11 +62,12 @@
           </div>
 
           <!-- Username -->
-          <h1
-            class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 tracking-tight"
+          <NuxtLink
+            :to="`/profile/${producerId}`"
+            class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 tracking-tight hover:underline block"
           >
             @{{ data.producer.username }}
-          </h1>
+          </NuxtLink>
 
           <!-- Bio if available -->
           <p

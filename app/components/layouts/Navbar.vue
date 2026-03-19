@@ -132,6 +132,10 @@ const { data: currentUser, pending: loading } = await useFetch(
 const userProfile = useState("userProfile", () => null);
 const username = useState("username", () => "User");
 
+// Global auth-loading flag — true until auth + profile fetch both complete.
+// Other pages read this to guard actions that require a known auth state.
+const authLoading = useState("authLoading", () => true);
+
 // Mobile menu state
 const isMobileMenuOpen = ref(false);
 
@@ -162,9 +166,18 @@ watch(
         username.value = profile.username;
       } catch (error) {
         console.error("Failed to fetch profile:", error);
+      } finally {
+        authLoading.value = false;
       }
     }
   },
   { immediate: true },
 );
+
+// When the fetch finishes but no user is logged in, mark auth as resolved
+watch(loading, (isLoading) => {
+  if (!isLoading && !currentUser.value) {
+    authLoading.value = false;
+  }
+});
 </script>

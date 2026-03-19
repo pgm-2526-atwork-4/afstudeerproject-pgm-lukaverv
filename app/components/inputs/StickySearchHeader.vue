@@ -77,7 +77,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "clear-all"]);
 
 const inputValue = ref("");
 const scrolledPastThreshold = ref(false);
@@ -91,6 +91,7 @@ const applySearch = () => {
 const clearSearch = () => {
   inputValue.value = "";
   emit("update:modelValue", "");
+  emit("clear-all");
 };
 
 // Sync input value with model value when cleared from parent
@@ -103,9 +104,9 @@ watch(
   },
 );
 
-// Show header when scrolled past threshold OR when there's active search query
+// Show header only when scrolled past threshold
 const showHeader = computed(() => {
-  return scrolledPastThreshold.value || !!props.modelValue;
+  return scrolledPastThreshold.value;
 });
 
 const handleScroll = () => {

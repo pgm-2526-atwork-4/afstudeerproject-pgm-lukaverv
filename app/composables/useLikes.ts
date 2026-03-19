@@ -51,6 +51,18 @@ export const useLikes = (beatId: Ref<string> | string) => {
     }
   };
 
+  // Auto-fetch like status when userProfile becomes available (handles the case
+  // where the Navbar resolves auth after the component has already mounted).
+  if (import.meta.client) {
+    watch(
+      [() => userProfile.value?.id, beatIdRef],
+      ([profileId, bId]) => {
+        if (profileId && bId) fetchLikeStatus();
+      },
+      { immediate: true },
+    );
+  }
+
   /** Toggle like / unlike. Updates the shared store so all components react. */
   const toggleLike = async () => {
     if (!userProfile.value?.id || !beatIdRef.value) return;

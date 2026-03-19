@@ -536,16 +536,22 @@ const isOwnProfile = computed(() => currentUser?.id === profileId);
 const isFollowing = ref(false);
 const followerCount = ref(userData.value?.stats?.followers ?? 0);
 
-// Fetch follow status once we have the logged-in profile
-if (userProfile.value?.id && userData.value?.id && !isOwnProfile.value) {
-  const status = await $fetch("/api/interactions/followers/check", {
-    params: {
-      followerProfileId: userProfile.value.id,
-      followingProfileId: userData.value.id,
-    },
-  }).catch(() => ({ following: false }));
-  isFollowing.value = status.following;
-}
+// Reactively fetch follow status whenever the logged-in profile becomes available.
+// Works on both SSR and after the Navbar lazily resolves auth on the client.
+watch(
+  () => userProfile.value?.id,
+  async (myProfileId) => {
+    if (!myProfileId || !userData.value?.id || isOwnProfile.value) return;
+    const status = await $fetch("/api/interactions/followers/check", {
+      params: {
+        followerProfileId: myProfileId,
+        followingProfileId: userData.value.id,
+      },
+    }).catch(() => ({ following: false }));
+    isFollowing.value = status.following;
+  },
+  { immediate: true },
+);
 
 const toggleFollow = async () => {
   if (!userProfile.value?.id) return navigateTo("/auth/login");

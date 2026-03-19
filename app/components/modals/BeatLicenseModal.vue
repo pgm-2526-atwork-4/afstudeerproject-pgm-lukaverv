@@ -223,22 +223,35 @@
             </div>
 
             <!-- Add to Cart Button -->
-            <button
-              v-if="!isOwnBeat"
-              @click="handleAddToCart"
-              :class="
-                addedToCart
-                  ? 'bg-green-600 hover:bg-green-700'
-                  : 'bg-blue-600 hover:bg-blue-700'
-              "
-              class="w-full text-white font-bold py-5 px-8 rounded-xl transition-colors shadow-lg text-xl flex items-center justify-center gap-2"
-            >
-              <Icon
-                :name="addedToCart ? 'ph:check' : 'ph:shopping-cart'"
-                size="24"
-              />
-              {{ addedToCart ? "Added to cart!" : "Add to cart" }}
-            </button>
+            <template v-if="!isOwnBeat">
+              <!-- Guest: redirect to login -->
+              <button
+                v-if="!userProfile"
+                @click="redirectToLogin"
+                class="w-full text-white font-bold py-5 px-8 rounded-xl transition-colors shadow-lg text-xl flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700"
+              >
+                <Icon name="ph:sign-in" size="24" />
+                Login to purchase
+              </button>
+              <!-- Authenticated: add to cart -->
+              <div v-else>
+                <button
+                  @click="handleAddToCart"
+                  :class="
+                    addedToCart
+                      ? 'bg-green-600 hover:bg-green-700'
+                      : 'bg-blue-600 hover:bg-blue-700'
+                  "
+                  class="w-full text-white font-bold py-5 px-8 rounded-xl transition-colors shadow-lg text-xl flex items-center justify-center gap-2"
+                >
+                  <Icon
+                    :name="addedToCart ? 'ph:check' : 'ph:shopping-cart'"
+                    size="24"
+                  />
+                  {{ addedToCart ? "Added to cart!" : "Add to cart" }}
+                </button>
+              </div>
+            </template>
           </div>
         </div>
       </div>
@@ -260,9 +273,10 @@ const props = defineProps({
 
 const emit = defineEmits(["close"]);
 
-const { getLicenseLabel, getUsageTerms } = useLicenseData();
+const { getUsageTerms } = useLicenseData();
 const cartStore = useCartStore();
 const userProfile = useState("userProfile");
+const { redirectToLogin } = useNavigation();
 
 const isOwnBeat = computed(
   () =>
@@ -286,7 +300,7 @@ const selectedPrice = computed(() => {
 });
 
 const handleAddToCart = () => {
-  if (!props.beat) return;
+  if (!props.beat || !userProfile.value) return;
   cartStore.addItem({
     beatId: props.beat.id,
     title: props.beat.title,

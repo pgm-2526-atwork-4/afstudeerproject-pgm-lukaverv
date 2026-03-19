@@ -61,11 +61,12 @@
           </div>
 
           <!-- Username -->
-          <h1
-            class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 tracking-tight"
+          <NuxtLink
+            :to="`/profile/${profileId}`"
+            class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 tracking-tight hover:underline block"
           >
             @{{ profileData.username }}
-          </h1>
+          </NuxtLink>
 
           <!-- Subtitle -->
           <p class="text-lg md:text-xl text-gray-300 max-w-3xl mx-auto mb-6">
