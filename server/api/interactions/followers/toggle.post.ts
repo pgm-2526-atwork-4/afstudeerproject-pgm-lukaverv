@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
         });
       }
     } catch (e) {
-      console.error("Failed to create follow notification:", e);
+      // Failed to create notification (non-critical)
     }
 
     return { following: true };

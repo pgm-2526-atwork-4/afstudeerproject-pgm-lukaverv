@@ -31,7 +31,6 @@ export default defineEventHandler(async (event) => {
 
     return notifications;
   } catch (error: any) {
-    console.error("Fetch notifications error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to fetch notifications",

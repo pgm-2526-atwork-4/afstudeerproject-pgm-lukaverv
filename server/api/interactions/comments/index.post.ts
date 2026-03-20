@@ -39,7 +39,7 @@ export default defineEventHandler(async (event) => {
       });
     }
   } catch (e) {
-    console.error("Failed to create comment notification:", e);
+    // Failed to create notification (non-critical)
   }
 
   return {

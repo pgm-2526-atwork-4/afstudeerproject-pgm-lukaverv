@@ -74,7 +74,7 @@ export default defineEventHandler(async (event) => {
           }
         }
       } catch (e) {
-        console.error("Failed to create like notification:", e);
+        // Failed to create notification (non-critical)
       }
 
       return {
@@ -83,7 +83,6 @@ export default defineEventHandler(async (event) => {
       };
     }
   } catch (error: any) {
-    console.error("Like toggle error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to toggle like",

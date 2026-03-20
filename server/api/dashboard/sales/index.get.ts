@@ -1,80 +1,14 @@
-import jwt from "jsonwebtoken";
-import { getToken } from "#auth";
-
-type Period = "week" | "month" | "year" | "all";
-
-function getPeriodStartDate(period: Period): Date {
-  const now = new Date();
-
-  if (period === "week") {
-    const dayOfWeek = now.getDay();
-    const daysFromMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
-    const monday = new Date(now);
-    monday.setDate(now.getDate() - daysFromMonday);
-    monday.setHours(0, 0, 0, 0);
-    return monday;
-  }
-
-  if (period === "month") {
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-  }
-
-  if (period === "year") {
-    return new Date(now.getFullYear(), 0, 1);
-  }
-
-  // "all"
-  return new Date("2020-01-01");
-}
-
 export default defineEventHandler(async (event) => {
   const period = (getQuery(event).period as Period) || "all";
 
-  // Auth
-  let userId: string | null = null;
+  const userId = await requireAuthUserId(event);
+  const profileId = await getProfileIdFromUserId(userId);
 
-  const token = await getToken({ event });
-  if (token?.email) {
-    const user = await prisma.user.findUnique({
-      where: { email: token.email as string },
-      select: { id: true },
-    });
-    if (user) userId = user.id;
-  }
-
-  if (!userId) {
-    const authToken = getCookie(event, "auth_token");
-    if (authToken) {
-      try {
-        const decoded = jwt.verify(
-          authToken,
-          process.env.JWT_SECRET || "your-secret-key",
-        ) as { id: string };
-        userId = decoded.id;
-      } catch {
-        throw createError({ statusCode: 401, message: "Invalid token" });
-      }
-    }
-  }
-
-  if (!userId) {
-    throw createError({ statusCode: 401, message: "Authentication required" });
-  }
-
-  const profile = await prisma.profile.findUnique({
-    where: { userId },
-    select: { id: true },
-  });
-
-  if (!profile) {
-    throw createError({ statusCode: 404, message: "Profile not found" });
-  }
-
-  const startDate = getPeriodStartDate(period);
+  const startDate = getPeriodStartDate(period, true);
 
   const sales = await prisma.orderItem.findMany({
     where: {
-      beat: { producerId: profile.id },
+      beat: { producerId: profileId },
       order: { status: "COMPLETED" },
       createdAt: { gte: startDate },
     },

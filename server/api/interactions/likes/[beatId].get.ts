@@ -21,7 +21,6 @@ export default defineEventHandler(async (event) => {
       count: likesCount,
     };
   } catch (error: any) {
-    console.error("Get likes count error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to get likes count",

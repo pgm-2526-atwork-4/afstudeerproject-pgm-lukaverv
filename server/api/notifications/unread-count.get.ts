@@ -19,7 +19,6 @@ export default defineEventHandler(async (event) => {
 
     return { count };
   } catch (error: any) {
-    console.error("Unread count error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to get unread count",

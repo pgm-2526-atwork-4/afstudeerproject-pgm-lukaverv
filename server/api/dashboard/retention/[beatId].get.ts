@@ -1,38 +1,10 @@
-import jwt from "jsonwebtoken";
-import { getToken } from "#auth";
-
-async function getUserId(event: any): Promise<string | null> {
-  const token = await getToken({ event });
-  if (token?.email) {
-    const user = await prisma.user.findUnique({
-      where: { email: token.email as string },
-      select: { id: true },
-    });
-    if (user) return user.id;
-  }
-  const authToken = getCookie(event, "auth_token");
-  if (authToken) {
-    try {
-      const decoded = jwt.verify(
-        authToken,
-        process.env.JWT_SECRET || "your-secret-key",
-      ) as { id: string };
-      return decoded.id;
-    } catch {}
-  }
-  return null;
-}
-
 export default defineEventHandler(async (event) => {
   const beatId = getRouterParam(event, "beatId");
   if (!beatId) {
     throw createError({ statusCode: 400, message: "Beat ID is required" });
   }
 
-  const userId = await getUserId(event);
-  if (!userId) {
-    throw createError({ statusCode: 401, message: "Unauthorized" });
-  }
+  const userId = await requireAuthUserId(event);
 
   // Get the beat and verify ownership
   const beat = await prisma.beat.findUnique({

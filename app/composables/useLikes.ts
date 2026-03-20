@@ -47,7 +47,7 @@ export const useLikes = (beatId: Ref<string> | string) => {
       });
       likeStore.value[beatIdRef.value]!.liked = status.liked;
     } catch (e) {
-      console.error("Failed to fetch like status:", e);
+      // Failed to fetch like status
     }
   };
 
@@ -75,7 +75,7 @@ export const useLikes = (beatId: Ref<string> | string) => {
       likeStore.value[beatIdRef.value]!.liked = response.liked;
       likeStore.value[beatIdRef.value]!.count += response.liked ? 1 : -1;
     } catch (e) {
-      console.error("Failed to toggle like:", e);
+      // Failed to toggle like
     }
   };
 

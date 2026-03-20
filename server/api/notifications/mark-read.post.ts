@@ -30,7 +30,6 @@ export default defineEventHandler(async (event) => {
     return { success: true };
   } catch (error: any) {
     if (error.statusCode) throw error;
-    console.error("Mark read error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to update notification",

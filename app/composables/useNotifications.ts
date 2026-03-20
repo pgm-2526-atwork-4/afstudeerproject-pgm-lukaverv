@@ -18,7 +18,7 @@ export const useNotifications = () => {
       });
       unreadCount.value = data.count;
     } catch (e) {
-      console.error("Failed to fetch unread count:", e);
+      // Failed to fetch unread count
     }
   };
 
@@ -32,7 +32,7 @@ export const useNotifications = () => {
       });
       notifications.value = data;
     } catch (e) {
-      console.error("Failed to fetch notifications:", e);
+      // Failed to fetch notifications
     } finally {
       loading.value = false;
     }
@@ -54,7 +54,7 @@ export const useNotifications = () => {
         unreadCount.value = Math.max(0, unreadCount.value + (isRead ? -1 : 1));
       }
     } catch (e) {
-      console.error("Failed to update notification:", e);
+      // Failed to update notification
     }
   };
 
@@ -75,14 +75,13 @@ export const useNotifications = () => {
       notifications.value.forEach((n: any) => (n.isRead = true));
       unreadCount.value = 0;
     } catch (e) {
-      console.error("Failed to mark all as read:", e);
+      // Failed to mark all as read
     }
   };
 
   /** Delete a single notification */
   const deleteNotification = async (notificationId: string) => {
     if (!userProfile.value?.id) {
-      console.error("User profile not available");
       return;
     }
 
@@ -107,7 +106,6 @@ export const useNotifications = () => {
         query: { profileId: userProfile.value.id },
       });
     } catch (e) {
-      console.error("Failed to delete notification:", e);
       // Re-add notification on failure
       notifications.value.push(notification);
       if (!notification.isRead) {
@@ -127,7 +125,7 @@ export const useNotifications = () => {
       notifications.value = [];
       unreadCount.value = 0;
     } catch (e) {
-      console.error("Failed to clear notifications:", e);
+      // Failed to clear notifications
     }
   };
 

@@ -23,7 +23,6 @@ export default defineEventHandler(async (event) => {
       liked: !!like,
     };
   } catch (error: any) {
-    console.error("Check like error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to check like status",
