@@ -87,7 +87,7 @@
   <PrivacyModal v-model="showPrivacyModal" />
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   title: "Register",
 });
@@ -103,7 +103,7 @@ const showPrivacyModal = ref(false);
 const { signIn } = useAuth();
 
 // Function to handle user registration
-const handleRegister = async (values) => {
+const handleRegister = async (values: any) => {
   if (!agreeToTerms.value) {
     error.value =
       "Please agree to the Terms of Service and Privacy Policy before continuing.";
@@ -123,7 +123,7 @@ const handleRegister = async (values) => {
     await navigateTo(
       `/auth/verification-pending?email=${encodeURIComponent(values.email)}`,
     );
-  } catch (err) {
+  } catch (err: any) {
     error.value =
       err.data?.message || "Failed to create account. Please try again.";
   } finally {
@@ -132,11 +132,10 @@ const handleRegister = async (values) => {
 };
 
 // Function to handle OAuth registration
-const handleOAuth = async (provider) => {
+const handleOAuth = async (provider: string) => {
   try {
     await signIn(provider, { callbackUrl: "/discover" });
   } catch (err) {
-    console.error("OAuth registration error:", err);
     error.value = `Failed to sign up with ${provider}. Please try again.`;
   }
 };

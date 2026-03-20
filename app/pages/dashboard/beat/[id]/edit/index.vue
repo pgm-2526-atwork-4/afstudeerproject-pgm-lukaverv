@@ -574,7 +574,6 @@ const handleSubmit = async () => {
 
     router.push(`/dashboard/beat/${beatId}`);
   } catch (err: any) {
-    console.error("Failed to update beat:", err);
     serverError.value =
       err?.data?.message || "Failed to save changes. Please try again.";
   } finally {
@@ -594,7 +593,6 @@ const confirmDelete = async () => {
     showDeleteModal.value = false;
     router.push("/dashboard?tab=tracks");
   } catch (err: any) {
-    console.error("Failed to delete beat:", err);
     alert(err?.data?.message || "Failed to delete beat. Please try again.");
   } finally {
     loading.value = false;

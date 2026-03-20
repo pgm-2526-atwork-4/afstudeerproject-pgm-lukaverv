@@ -28,7 +28,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   title: "Verification Pending",
 });
@@ -56,7 +56,7 @@ const resendVerificationEmail = async () => {
     alert(
       "A new verification email has been sent to your inbox. Please check your email and follow the instructions to verify your account.",
     );
-  } catch (error) {
+  } catch (error: any) {
     alert(
       error.data?.message ||
         "Failed to resend verification email. Please try again later.",

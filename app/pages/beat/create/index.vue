@@ -504,7 +504,7 @@ onMounted(async () => {
           : true;
     }
   } catch (error) {
-    console.log("No track preferences found, using defaults");
+    // No track preferences found, using defaults
   }
 });
 
@@ -580,7 +580,6 @@ async function handleSubmit() {
     // Redirect to dashboard while keeping modal visible
     navigateTo("/dashboard");
   } catch (error: any) {
-    console.error("Failed to create beat:", error);
     serverError.value =
       error.data?.message || "Failed to publish beat. Please try again.";
   } finally {

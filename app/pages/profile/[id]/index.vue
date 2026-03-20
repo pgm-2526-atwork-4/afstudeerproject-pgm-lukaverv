@@ -566,7 +566,7 @@ const toggleFollow = async () => {
     isFollowing.value = res.following;
     followerCount.value += res.following ? 1 : -1;
   } catch (e) {
-    console.error("Failed to toggle follow:", e);
+    // Follow toggle failed
   }
 };
 

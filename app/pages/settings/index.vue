@@ -165,10 +165,7 @@
                     class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-700 ring-4 ring-gray-700/50 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105"
                   >
                     <img
-                      v-if="
-                        (newProfilePicture || userProfile?.profilePicture) &&
-                        !wantsToRemoveProfilePicture
-                      "
+                      v-if="hasProfilePicture"
                       :src="newProfilePicture || userProfile.profilePicture"
                       alt="Profile Picture"
                       class="w-full h-full object-cover"
@@ -192,17 +189,11 @@
                     class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200"
                   >
                     {{
-                      (newProfilePicture || userProfile?.profilePicture) &&
-                      !wantsToRemoveProfilePicture
-                        ? "Change Picture"
-                        : "Upload Picture"
+                      hasProfilePicture ? "Change Picture" : "Upload Picture"
                     }}
                   </button>
                   <button
-                    v-if="
-                      (newProfilePicture || userProfile?.profilePicture) &&
-                      !wantsToRemoveProfilePicture
-                    "
+                    v-if="hasProfilePicture"
                     type="button"
                     @click="removeProfilePicture"
                     class="px-6 py-3 bg-red-600/20 hover:bg-red-600/30 text-red-400 font-semibold rounded-xl transition-all duration-200 border border-red-600/50"
@@ -869,7 +860,7 @@ const savePrivacySettings = async () => {
       privacySaved.value = false;
     }, 3000);
   } catch (err) {
-    console.error("Failed to save privacy settings:", err);
+    // Failed to save privacy settings
   }
 };
 
@@ -880,6 +871,13 @@ const profileError = ref("");
 const profileSuccess = ref("");
 const bioLength = ref(0);
 const wantsToRemoveProfilePicture = ref(false);
+
+// Computed property to simplify template conditions
+const hasProfilePicture = computed(
+  () =>
+    (newProfilePicture.value || userProfile.value?.profilePicture) &&
+    !wantsToRemoveProfilePicture.value,
+);
 
 // Form fields refs
 const bio = ref("");
@@ -1043,7 +1041,7 @@ const loadTrackPreferences = async () => {
       };
     }
   } catch (error) {
-    console.error("Error loading track preferences:", error);
+    // Failed to load preferences, use defaults
   }
 };
 

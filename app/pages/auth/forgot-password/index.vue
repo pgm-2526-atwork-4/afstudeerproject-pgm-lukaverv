@@ -42,7 +42,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   title: "Forgot Password",
 });
@@ -52,7 +52,7 @@ const error = ref("");
 const loading = ref(false);
 
 // Function to handle the forgot password form submission
-const handleSubmit = async (values) => {
+const handleSubmit = async (values: any) => {
   try {
     loading.value = true;
     message.value = "";

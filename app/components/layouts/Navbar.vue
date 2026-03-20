@@ -165,7 +165,7 @@ watch(
         userProfile.value = profile;
         username.value = profile.username;
       } catch (error) {
-        console.error("Failed to fetch profile:", error);
+        // Failed to fetch profile
       } finally {
         authLoading.value = false;
       }

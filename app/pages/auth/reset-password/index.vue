@@ -54,7 +54,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   title: "Reset Password",
 });
@@ -66,7 +66,7 @@ const error = ref("");
 const loading = ref(false);
 
 // Function to handle the password reset form submission
-const handleSubmit = async (values) => {
+const handleSubmit = async (values : any) => {
   try {
     error.value = "";
     message.value = "";
@@ -84,7 +84,7 @@ const handleSubmit = async (values) => {
     });
 
     message.value = "Your password has been reset successfully.";
-  } catch (err) {
+  } catch (err: any) {
     error.value = err.message || "Failed to reset password. Please try again.";
   } finally {
     loading.value = false;

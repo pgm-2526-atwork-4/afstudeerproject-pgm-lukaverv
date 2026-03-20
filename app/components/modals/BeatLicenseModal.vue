@@ -223,7 +223,7 @@
             </div>
 
             <!-- Add to Cart Button -->
-            <template v-if="!isOwnBeat">
+            <template v-if="!isOwnBeat(beat)">
               <!-- Guest: redirect to login -->
               <button
                 v-if="!userProfile"
@@ -278,12 +278,7 @@ const cartStore = useCartStore();
 const userProfile = useState("userProfile");
 const { redirectToLogin } = useNavigation();
 
-const isOwnBeat = computed(
-  () =>
-    !!userProfile.value &&
-    !!props.beat &&
-    userProfile.value.id === props.beat.producerId,
-);
+const { isOwnBeat } = useIsOwnBeat();
 
 const selectedLicense = ref("basic");
 const usageTerms = computed(() => getUsageTerms(selectedLicense.value));

@@ -771,7 +771,7 @@ const addComment = async () => {
     newComment.value = "";
     await refreshComments();
   } catch (e) {
-    console.error("Failed to post comment:", e);
+    // Failed to post comment
   } finally {
     postingComment.value = false;
   }
@@ -788,7 +788,6 @@ const deleteComment = async (commentId) => {
       query: { profileId: userProfile.value.id },
     });
   } catch (e) {
-    console.error("Failed to delete comment:", e);
     // Restore from server on error
     await refreshComments();
   }
