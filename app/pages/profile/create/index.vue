@@ -277,8 +277,8 @@
               class="mt-2 px-3 py-1 text-xs font-semibold rounded-full"
               :class="
                 form.role === 'PRODUCER'
-                  ? 'bg-blue-600/20 text-blue-400'
-                  : 'bg-purple-600/20 text-purple-400'
+                  ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  : 'bg-green-500/20 text-green-400 border border-green-500/30'
               "
             >
               {{ form.role }}
