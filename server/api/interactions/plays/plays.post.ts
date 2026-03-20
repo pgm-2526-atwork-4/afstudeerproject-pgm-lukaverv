@@ -1,6 +1,3 @@
-import jwt from "jsonwebtoken";
-import { getToken } from "#auth";
-
 export default defineEventHandler(async (event) => {
   try {
     const body = await readBody(event);
@@ -21,35 +18,7 @@ export default defineEventHandler(async (event) => {
       profileId = clientProfileId;
     } else {
       // 2. Try to get from auth token
-      let userId: string | null = null;
-
-      // Try OAuth session first
-      const token = await getToken({ event });
-      if (token?.email) {
-        const oauthUser = await prisma.user.findUnique({
-          where: { email: token.email as string },
-          select: { id: true },
-        });
-        if (oauthUser) {
-          userId = oauthUser.id;
-        }
-      }
-
-      // Fallback to JWT token
-      if (!userId) {
-        const authToken = getCookie(event, "auth_token");
-        if (authToken) {
-          try {
-            const decoded = jwt.verify(
-              authToken,
-              process.env.JWT_SECRET || "your-secret-key",
-            ) as { id: string };
-            userId = decoded.id;
-          } catch (error) {
-            // Invalid token, continue as anonymous
-          }
-        }
-      }
+      const userId = await getAuthUserId(event);
 
       // Get profile from userId
       if (userId) {
@@ -102,7 +71,6 @@ export default defineEventHandler(async (event) => {
       playId: play.id,
     };
   } catch (error: any) {
-    console.error("Error registering play:", error);
     throw createError({
       statusCode: error.statusCode || 500,
       message: error.message || "Failed to register play",

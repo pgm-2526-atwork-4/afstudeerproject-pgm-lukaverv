@@ -165,10 +165,7 @@
                     class="w-32 h-32 md:w-40 md:h-40 rounded-full bg-gray-700 ring-4 ring-gray-700/50 flex items-center justify-center overflow-hidden transition-transform group-hover:scale-105"
                   >
                     <img
-                      v-if="
-                        (newProfilePicture || userProfile?.profilePicture) &&
-                        !wantsToRemoveProfilePicture
-                      "
+                      v-if="hasProfilePicture"
                       :src="newProfilePicture || userProfile.profilePicture"
                       alt="Profile Picture"
                       class="w-full h-full object-cover"
@@ -192,17 +189,11 @@
                     class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition-all duration-200"
                   >
                     {{
-                      (newProfilePicture || userProfile?.profilePicture) &&
-                      !wantsToRemoveProfilePicture
-                        ? "Change Picture"
-                        : "Upload Picture"
+                      hasProfilePicture ? "Change Picture" : "Upload Picture"
                     }}
                   </button>
                   <button
-                    v-if="
-                      (newProfilePicture || userProfile?.profilePicture) &&
-                      !wantsToRemoveProfilePicture
-                    "
+                    v-if="hasProfilePicture"
                     type="button"
                     @click="removeProfilePicture"
                     class="px-6 py-3 bg-red-600/20 hover:bg-red-600/30 text-red-400 font-semibold rounded-xl transition-all duration-200 border border-red-600/50"
@@ -237,9 +228,9 @@
 
               <!-- First Name (Read-only) -->
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2">
-                  First Name
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-2"
+                  >First Name</label
+                >
                 <div
                   class="w-full px-4 py-3.5 bg-gray-800/30 border border-gray-700/50 rounded-xl text-gray-400 cursor-not-allowed"
                 >
@@ -249,9 +240,9 @@
 
               <!-- Last Name (Read-only) -->
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-2">
-                  Last Name
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-2"
+                  >Last Name</label
+                >
                 <div
                   class="w-full px-4 py-3.5 bg-gray-800/30 border border-gray-700/50 rounded-xl text-gray-400 cursor-not-allowed"
                 >
@@ -261,9 +252,9 @@
 
               <!-- Email (Read-only) -->
               <div class="md:col-span-2">
-                <label class="block text-sm font-semibold text-gray-300 mb-2">
-                  Email Address
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-2"
+                  >Email Address</label
+                >
                 <div
                   class="w-full px-4 py-3.5 bg-gray-800/30 border border-gray-700/50 rounded-xl text-gray-400 cursor-not-allowed"
                 >
@@ -313,9 +304,9 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
               <!-- Instagram -->
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-3">
-                  Instagram
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-3"
+                  >Instagram</label
+                >
                 <VField
                   name="instagram"
                   type="url"
@@ -331,9 +322,9 @@
 
               <!-- Twitter -->
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-3">
-                  Twitter
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-3"
+                  >Twitter</label
+                >
                 <VField
                   name="twitter"
                   type="url"
@@ -349,9 +340,9 @@
 
               <!-- SoundCloud -->
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-3">
-                  SoundCloud
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-3"
+                  >SoundCloud</label
+                >
                 <VField
                   name="soundcloud"
                   type="url"
@@ -367,9 +358,9 @@
 
               <!-- Spotify -->
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-3">
-                  Spotify
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-3"
+                  >Spotify</label
+                >
                 <VField
                   name="spotify"
                   type="url"
@@ -412,30 +403,17 @@
               class="flex items-start justify-between gap-3 text-red-400 bg-red-900/20 border border-red-700/50 rounded-xl p-4"
             >
               <div class="flex items-start gap-3">
-                <svg
+                <Icon
+                  name="ph:x-circle-fill"
                   class="w-5 h-5 flex-shrink-0 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                />
                 <p class="font-medium">{{ profileError }}</p>
               </div>
               <button
                 @click="profileError = ''"
                 class="text-red-400 hover:text-red-300 flex-shrink-0 transition-colors"
               >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                <Icon name="ph:x" class="w-5 h-5" />
               </button>
             </div>
             <div
@@ -443,30 +421,17 @@
               class="flex items-start justify-between gap-3 text-green-400 bg-green-900/20 border border-green-700/50 rounded-xl p-4"
             >
               <div class="flex items-start gap-3">
-                <svg
+                <Icon
+                  name="ph:check-circle-fill"
                   class="w-5 h-5 flex-shrink-0 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                />
                 <p class="font-medium">{{ profileSuccess }}</p>
               </div>
               <button
                 @click="profileSuccess = ''"
                 class="text-green-400 hover:text-green-300 flex-shrink-0 transition-colors"
               >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                <Icon name="ph:x" class="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -535,9 +500,9 @@
             </p>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-3">
-                  Basic License
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-3"
+                  >Basic License</label
+                >
                 <div class="relative">
                   <span
                     class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium z-10"
@@ -558,11 +523,10 @@
                   class="text-red-400 text-sm mt-2"
                 />
               </div>
-
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-3">
-                  Premium License
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-3"
+                  >Premium License</label
+                >
                 <div class="relative">
                   <span
                     class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium z-10"
@@ -583,11 +547,10 @@
                   class="text-red-400 text-sm mt-2"
                 />
               </div>
-
               <div>
-                <label class="block text-sm font-semibold text-gray-300 mb-3">
-                  Exclusive License
-                </label>
+                <label class="block text-sm font-semibold text-gray-300 mb-3"
+                  >Exclusive License</label
+                >
                 <div class="relative">
                   <span
                     class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium z-10"
@@ -702,30 +665,17 @@
               class="flex items-start justify-between gap-3 text-red-400 bg-red-900/20 border border-red-700/50 rounded-xl p-4"
             >
               <div class="flex items-start gap-3">
-                <svg
+                <Icon
+                  name="ph:x-circle-fill"
                   class="w-5 h-5 flex-shrink-0 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                />
                 <p class="font-medium">{{ preferencesError }}</p>
               </div>
               <button
                 @click="preferencesError = ''"
                 class="text-red-400 hover:text-red-300 flex-shrink-0 transition-colors"
               >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                <Icon name="ph:x" class="w-5 h-5" />
               </button>
             </div>
             <div
@@ -733,30 +683,17 @@
               class="flex items-start justify-between gap-3 text-green-400 bg-green-900/20 border border-green-700/50 rounded-xl p-4"
             >
               <div class="flex items-start gap-3">
-                <svg
+                <Icon
+                  name="ph:check-circle-fill"
                   class="w-5 h-5 flex-shrink-0 mt-0.5"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                />
                 <p class="font-medium">{{ preferencesSuccess }}</p>
               </div>
               <button
                 @click="preferencesSuccess = ''"
                 class="text-green-400 hover:text-green-300 flex-shrink-0 transition-colors"
               >
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path
-                    fill-rule="evenodd"
-                    d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
+                <Icon name="ph:x" class="w-5 h-5" />
               </button>
             </div>
           </div>
@@ -796,10 +733,7 @@ definePageMeta({
 // Load Cloudinary upload widget script
 useHead({
   script: [
-    {
-      src: "https://upload-widget.cloudinary.com/global/all.js",
-      defer: true,
-    },
+    { src: "https://upload-widget.cloudinary.com/global/all.js", defer: true },
   ],
 });
 
@@ -869,7 +803,7 @@ const savePrivacySettings = async () => {
       privacySaved.value = false;
     }, 3000);
   } catch (err) {
-    console.error("Failed to save privacy settings:", err);
+    // Failed to save privacy settings
   }
 };
 
@@ -880,6 +814,13 @@ const profileError = ref("");
 const profileSuccess = ref("");
 const bioLength = ref(0);
 const wantsToRemoveProfilePicture = ref(false);
+
+// Computed property to simplify template conditions
+const hasProfilePicture = computed(
+  () =>
+    (newProfilePicture.value || userProfile.value?.profilePicture) &&
+    !wantsToRemoveProfilePicture.value,
+);
 
 // Form fields refs
 const bio = ref("");
@@ -1043,7 +984,7 @@ const loadTrackPreferences = async () => {
       };
     }
   } catch (error) {
-    console.error("Error loading track preferences:", error);
+    // Failed to load preferences, use defaults
   }
 };
 
@@ -1058,7 +999,6 @@ const savePreferences = async () => {
       method: "PATCH",
       body: preferences.value,
     });
-
     preferencesSuccess.value = "Track preferences saved successfully!";
   } catch (err: any) {
     preferencesError.value =

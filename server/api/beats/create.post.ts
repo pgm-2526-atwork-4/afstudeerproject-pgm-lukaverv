@@ -62,7 +62,6 @@ export default defineEventHandler(async (event) => {
     setResponseStatus(event, 201);
     return beat;
   } catch (error: any) {
-    console.error("Beat creation error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to create beat",

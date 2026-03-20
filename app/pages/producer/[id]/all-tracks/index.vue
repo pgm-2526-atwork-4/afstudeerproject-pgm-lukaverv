@@ -140,7 +140,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   title: "Producer Tracks",
 });
@@ -166,7 +166,7 @@ usePageTitle(
 const isModalOpen = ref(false);
 const selectedBeat = ref(null);
 
-const openLicenseModal = (beat) => {
+const openLicenseModal = (beat: any) => {
   selectedBeat.value = beat;
   isModalOpen.value = true;
 };

@@ -25,7 +25,6 @@ export function useLogout() {
         await navigateTo("/auth/login");
       }
     } catch (error) {
-      console.error("Logout error:", error);
       // Force redirect to login even on error
       await navigateTo("/auth/login");
     }

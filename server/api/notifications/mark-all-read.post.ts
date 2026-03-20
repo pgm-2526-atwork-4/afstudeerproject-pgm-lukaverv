@@ -20,7 +20,6 @@ export default defineEventHandler(async (event) => {
 
     return { success: true };
   } catch (error: any) {
-    console.error("Mark all read error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to mark all notifications as read",

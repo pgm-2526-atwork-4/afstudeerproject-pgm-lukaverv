@@ -542,12 +542,19 @@
             <!-- Comment Form (logged in) or login prompt (guest) -->
             <div class="mb-6 pb-6 border-b border-gray-700/30">
               <template v-if="userProfile">
-                <textarea
-                  v-model="newComment"
-                  placeholder="Add a comment..."
-                  class="w-full bg-[#0f1219]/50 text-white placeholder-gray-500 rounded-lg p-4 border border-gray-700/30 focus:border-blue-500 outline-none transition-colors resize-none"
-                  rows="3"
-                ></textarea>
+                <InputCharCount
+                  :current="newComment.length"
+                  :max="300"
+                  position="bottom"
+                >
+                  <textarea
+                    v-model="newComment"
+                    placeholder="Add a comment..."
+                    maxlength="300"
+                    class="w-full bg-[#0f1219]/50 text-white placeholder-gray-500 rounded-lg p-4 pb-7 border border-gray-700/30 focus:border-blue-500 outline-none transition-colors resize-none"
+                    rows="3"
+                  ></textarea>
+                </InputCharCount>
                 <button
                   @click="addComment"
                   :disabled="!newComment.trim() || postingComment"
@@ -771,7 +778,7 @@ const addComment = async () => {
     newComment.value = "";
     await refreshComments();
   } catch (e) {
-    console.error("Failed to post comment:", e);
+    // Failed to post comment
   } finally {
     postingComment.value = false;
   }
@@ -788,7 +795,6 @@ const deleteComment = async (commentId) => {
       query: { profileId: userProfile.value.id },
     });
   } catch (e) {
-    console.error("Failed to delete comment:", e);
     // Restore from server on error
     await refreshComments();
   }

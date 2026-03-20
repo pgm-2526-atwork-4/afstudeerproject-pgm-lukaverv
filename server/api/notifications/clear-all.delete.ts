@@ -10,7 +10,6 @@ export default defineEventHandler(async (event) => {
     await prisma.notification.deleteMany({ where: { recipientId: profileId } });
     return { success: true };
   } catch (error: any) {
-    console.error("Clear notifications error:", error);
     throw createError({
       statusCode: 500,
       message: "Failed to clear notifications",

@@ -1,51 +1,10 @@
-import jwt from "jsonwebtoken";
-import { getToken } from "#auth";
-
 export default defineEventHandler(async (event) => {
-  // Authenticate user
-  let userId: string | null = null;
-
-  const token = await getToken({ event });
-  if (token?.email) {
-    const oauthUser = await prisma.user.findUnique({
-      where: { email: token.email as string },
-      select: { id: true },
-    });
-    if (oauthUser) userId = oauthUser.id;
-  }
-
-  if (!userId) {
-    const authToken = getCookie(event, "auth_token");
-    if (authToken) {
-      try {
-        const decoded = jwt.verify(
-          authToken,
-          process.env.JWT_SECRET || "your-secret-key",
-        ) as { id: string };
-        userId = decoded.id;
-      } catch {
-        throw createError({ statusCode: 401, message: "Invalid token" });
-      }
-    }
-  }
-
-  if (!userId) {
-    throw createError({ statusCode: 401, message: "Authentication required" });
-  }
-
-  const profile = await prisma.profile.findUnique({
-    where: { userId },
-    select: { id: true },
-  });
-
-  if (!profile) {
-    throw createError({ statusCode: 404, message: "Profile not found" });
-  }
+  const profileId = await requireAuthProfileId(event);
 
   // Get all completed order items for this user
   const orderItems = await prisma.orderItem.findMany({
     where: {
-      buyerId: profile.id,
+      buyerId: profileId,
       order: { status: "COMPLETED" },
     },
     include: {

@@ -78,7 +78,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   title: "Login",
 });
@@ -91,7 +91,7 @@ const rememberMe = ref(false);
 const { signIn } = useAuth();
 
 // Function to handle user login
-const handleLogin = async (values) => {
+const handleLogin = async (values: any) => {
   try {
     loading.value = true;
     error.value = "";
@@ -116,7 +116,7 @@ const handleLogin = async (values) => {
     } else {
       error.value = "Invalid email or password. Please try again.";
     }
-  } catch (err) {
+  } catch (err: any) {
     if (
       err.statusCode === 403 ||
       err.data?.message?.includes("verify your email")
@@ -136,11 +136,10 @@ const handleLogin = async (values) => {
 };
 
 // Function to handle OAuth login
-const handleOAuth = async (provider) => {
+const handleOAuth = async (provider: string) => {
   try {
     await signIn(provider, { callbackUrl: "/discover" });
   } catch (err) {
-    console.error("OAuth login error:", err);
     error.value = `Failed to sign in with ${provider}. Please try again.`;
   }
 };

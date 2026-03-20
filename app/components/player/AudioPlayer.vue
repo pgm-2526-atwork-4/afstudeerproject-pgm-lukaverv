@@ -458,7 +458,7 @@ async function loadTrack(track: Track) {
 
     sound.value.play();
   } catch (error) {
-    console.error("Failed to load track:", error);
+    // Failed to load track
   } finally {
     isLoading.value = false;
   }
@@ -499,7 +499,6 @@ async function registerPlay(beatId: string) {
     currentPlayId.value = res.playId;
   } catch (error) {
     // Silently fail - don't interrupt user experience
-    console.error("Failed to register play:", error);
   }
 }
 

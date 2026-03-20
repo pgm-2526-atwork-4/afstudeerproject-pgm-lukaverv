@@ -1,49 +1,9 @@
 import Stripe from "stripe";
-import jwt from "jsonwebtoken";
-import { getToken } from "#auth";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
 export default defineEventHandler(async (event) => {
-  // Authenticate user
-  let userId: string | null = null;
-
-  const token = await getToken({ event });
-  if (token?.email) {
-    const oauthUser = await prisma.user.findUnique({
-      where: { email: token.email as string },
-      select: { id: true },
-    });
-    if (oauthUser) userId = oauthUser.id;
-  }
-
-  if (!userId) {
-    const authToken = getCookie(event, "auth_token");
-    if (authToken) {
-      try {
-        const decoded = jwt.verify(
-          authToken,
-          process.env.JWT_SECRET || "your-secret-key",
-        ) as { id: string };
-        userId = decoded.id;
-      } catch {
-        throw createError({ statusCode: 401, message: "Invalid token" });
-      }
-    }
-  }
-
-  if (!userId) {
-    throw createError({ statusCode: 401, message: "Authentication required" });
-  }
-
-  const profile = await prisma.profile.findUnique({
-    where: { userId },
-    select: { id: true },
-  });
-
-  if (!profile) {
-    throw createError({ statusCode: 404, message: "Profile not found" });
-  }
+  const profileId = await requireAuthProfileId(event);
 
   const body = await readBody(event);
   const { items } = body;
@@ -69,7 +29,7 @@ export default defineEventHandler(async (event) => {
   });
 
   // Prevent purchasing own beats
-  const ownBeat = beats.find((b) => b.producerId === profile.id);
+  const ownBeat = beats.find((b) => b.producerId === profileId);
   if (ownBeat) {
     throw createError({
       statusCode: 400,
@@ -131,13 +91,13 @@ export default defineEventHandler(async (event) => {
   // Create order in DB
   const order = await prisma.order.create({
     data: {
-      buyerId: profile.id,
+      buyerId: profileId,
       totalAmount: orderItems.reduce((sum, i) => sum + i.price, 0),
       status: "PENDING",
       items: {
         create: orderItems.map((i) => ({
           beatId: i.beatId,
-          buyerId: profile.id,
+          buyerId: profileId,
           licenseType: i.licenseType as any,
           price: i.price,
         })),

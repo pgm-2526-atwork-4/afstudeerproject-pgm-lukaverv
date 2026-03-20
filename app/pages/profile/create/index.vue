@@ -43,7 +43,6 @@
           <h3 class="text-lg font-semibold text-white mb-4">
             Basic Information
           </h3>
-
           <div>
             <label
               for="firstName"
@@ -59,7 +58,6 @@
               placeholder="John"
             />
           </div>
-
           <div>
             <label
               for="lastName"
@@ -75,7 +73,6 @@
               placeholder="Doe"
             />
           </div>
-
           <div>
             <label
               for="username"
@@ -98,7 +95,6 @@
           <h3 class="text-lg font-semibold text-white mb-4">
             Choose Your Role
           </h3>
-
           <div class="space-y-3">
             <label
               class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all"
@@ -119,7 +115,6 @@
                 <div class="text-sm text-gray-400">Create and share music</div>
               </div>
             </label>
-
             <label
               class="flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all"
               :class="
@@ -149,15 +144,15 @@
           <h3 class="text-lg font-semibold text-white mb-4">
             Additional Details
           </h3>
-
-          <div class="grid grid-cols-2 gap-8">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             <!-- Left Column: Biography -->
             <div class="flex flex-col">
               <label
                 for="bio"
                 class="block text-sm font-medium text-gray-300 mb-2"
-                >Biography (Optional)</label
               >
+                Biography (Optional)
+              </label>
               <InputCharCount
                 :current="form.bio?.length || 0"
                 :max="500"
@@ -166,7 +161,7 @@
                 <textarea
                   id="bio"
                   v-model="form.bio"
-                  rows="7"
+                  rows="20"
                   maxlength="500"
                   class="w-full px-4 py-3 pb-7 bg-[#0d1230] border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition resize-none"
                   placeholder="Tell us about yourself..."
@@ -177,11 +172,11 @@
             <!-- Right Column: Profile Picture & Social Links -->
             <div class="space-y-4">
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2"
-                  >Profile Picture (Optional)</label
-                >
-
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                  Profile Picture (Optional)
+                </label>
                 <!-- Profile Picture Preview -->
+
                 <div class="flex flex-col items-center mb-4">
                   <div
                     class="w-32 h-32 rounded-full bg-[#0d1230] border-2 border-gray-700 flex items-center justify-center overflow-hidden"
@@ -194,19 +189,10 @@
                       @error="form.profilePicture = ''"
                     />
                     <div v-else class="text-gray-500 text-center px-4">
-                      <svg
+                      <Icon
+                        name="mdi:account-circle"
                         class="w-12 h-12 mx-auto mb-2"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          stroke-linecap="round"
-                          stroke-linejoin="round"
-                          stroke-width="2"
-                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                        ></path>
-                      </svg>
+                      />
                       <p class="text-xs">No image</p>
                     </div>
                   </div>
@@ -214,8 +200,6 @@
                     Upload your profile picture below
                   </p>
                 </div>
-
-                <!-- Cloudinary Upload Button -->
                 <button
                   type="button"
                   class="w-full px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-200 shadow-lg shadow-blue-600/20"
@@ -228,9 +212,9 @@
               </div>
 
               <div>
-                <label class="block text-sm font-medium text-gray-300 mb-2"
-                  >Social Links (Optional)</label
-                >
+                <label class="block text-sm font-medium text-gray-300 mb-2">
+                  Social Links (Optional)
+                </label>
                 <div class="space-y-2">
                   <input
                     v-model="form.socialLinks.instagram"
@@ -268,32 +252,43 @@
             Review Your Profile
           </h3>
 
+          <!-- Profile Picture centered at top -->
+          <div class="flex flex-col items-center mb-6">
+            <div
+              class="w-24 h-24 rounded-full overflow-hidden border-4 border-blue-500/30 bg-[#0d1230] flex items-center justify-center mb-3"
+            >
+              <img
+                v-if="form.profilePicture"
+                :src="form.profilePicture"
+                alt="Profile Picture"
+                class="w-full h-full object-cover"
+              />
+              <Icon
+                v-else
+                name="mdi:account-circle"
+                class="w-16 h-16 text-gray-500"
+              />
+            </div>
+            <p class="text-white font-bold text-xl">
+              {{ form.firstName }} {{ form.lastName }}
+            </p>
+            <p class="text-gray-400 text-sm">@{{ form.username }}</p>
+            <span
+              class="mt-2 px-3 py-1 text-xs font-semibold rounded-full"
+              :class="
+                form.role === 'PRODUCER'
+                  ? 'bg-red-500/20 text-red-400 border border-red-500/30'
+                  : 'bg-green-500/20 text-green-400 border border-green-500/30'
+              "
+            >
+              {{ form.role }}
+            </span>
+          </div>
+
+          <!-- Details -->
           <div
             class="bg-[#0d1230] border border-gray-700 rounded-lg p-4 space-y-4"
           >
-            <div>
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                Name
-              </p>
-              <p class="text-sm font-medium text-white">
-                {{ form.firstName }} {{ form.lastName }}
-              </p>
-            </div>
-
-            <div>
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                Username
-              </p>
-              <p class="text-sm font-medium text-white">{{ form.username }}</p>
-            </div>
-
-            <div>
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                Role
-              </p>
-              <p class="text-sm font-medium text-white">{{ form.role }}</p>
-            </div>
-
             <div v-if="form.bio">
               <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">
                 Bio
@@ -301,33 +296,62 @@
               <p class="text-sm text-gray-300">{{ form.bio }}</p>
             </div>
 
-            <div v-if="form.profilePicture">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">
-                Profile Picture
-              </p>
-              <p class="text-sm text-gray-300 break-all">
-                {{ form.profilePicture }}
-              </p>
-            </div>
-
             <div v-if="hasSocialLinks">
-              <p class="text-xs text-gray-500 uppercase tracking-wide mb-1">
+              <p class="text-xs text-gray-500 uppercase tracking-wide mb-2">
                 Social Links
               </p>
-              <div class="text-sm text-gray-300 space-y-1">
-                <p v-if="form.socialLinks.instagram">
-                  Instagram: {{ form.socialLinks.instagram }}
-                </p>
-                <p v-if="form.socialLinks.twitter">
-                  Twitter: {{ form.socialLinks.twitter }}
-                </p>
-                <p v-if="form.socialLinks.soundcloud">
-                  SoundCloud: {{ form.socialLinks.soundcloud }}
-                </p>
-                <p v-if="form.socialLinks.spotify">
-                  Spotify: {{ form.socialLinks.spotify }}
-                </p>
+              <div class="grid grid-cols-2 gap-2">
+                <div
+                  v-if="form.socialLinks.instagram"
+                  class="flex items-center gap-2 text-sm text-gray-300"
+                >
+                  <Icon
+                    name="ph:instagram-logo"
+                    class="text-pink-400 flex-shrink-0"
+                    size="16"
+                  />
+                  <span class="truncate">Instagram</span>
+                </div>
+                <div
+                  v-if="form.socialLinks.twitter"
+                  class="flex items-center gap-2 text-sm text-gray-300"
+                >
+                  <Icon
+                    name="ph:twitter-logo"
+                    class="text-sky-400 flex-shrink-0"
+                    size="16"
+                  />
+                  <span class="truncate">Twitter</span>
+                </div>
+                <div
+                  v-if="form.socialLinks.soundcloud"
+                  class="flex items-center gap-2 text-sm text-gray-300"
+                >
+                  <Icon
+                    name="ph:soundcloud-logo"
+                    class="text-orange-400 flex-shrink-0"
+                    size="16"
+                  />
+                  <span class="truncate">SoundCloud</span>
+                </div>
+                <div
+                  v-if="form.socialLinks.spotify"
+                  class="flex items-center gap-2 text-sm text-gray-300"
+                >
+                  <Icon
+                    name="ph:spotify-logo"
+                    class="text-green-400 flex-shrink-0"
+                    size="16"
+                  />
+                  <span class="truncate">Spotify</span>
+                </div>
               </div>
+            </div>
+
+            <div v-if="!form.bio && !hasSocialLinks" class="text-center py-2">
+              <p class="text-sm text-gray-500 italic">
+                No additional details added.
+              </p>
             </div>
           </div>
         </div>
@@ -342,7 +366,6 @@
           >
             Back
           </button>
-
           <button
             v-if="currentStep < 4"
             @click="nextStep"
@@ -352,7 +375,6 @@
           >
             Next
           </button>
-
           <button
             v-if="currentStep === 4"
             @click="handleSubmit"
@@ -369,17 +391,11 @@
 </template>
 
 <script setup lang="ts">
-definePageMeta({
-  title: "Create Profile",
-});
+definePageMeta({ title: "Create Profile" });
 
-// Load Cloudinary upload widget script
 useHead({
   script: [
-    {
-      src: "https://upload-widget.cloudinary.com/global/all.js",
-      defer: true,
-    },
+    { src: "https://upload-widget.cloudinary.com/global/all.js", defer: true },
   ],
 });
 
@@ -412,14 +428,13 @@ const canProceed = computed(() => {
   return true;
 });
 
-const hasSocialLinks = computed(() => {
-  return (
+const hasSocialLinks = computed(
+  () =>
     form.value.socialLinks.instagram ||
     form.value.socialLinks.twitter ||
     form.value.socialLinks.soundcloud ||
-    form.value.socialLinks.spotify
-  );
-});
+    form.value.socialLinks.spotify,
+);
 
 const nextStep = () => {
   if (canProceed.value && currentStep.value < 4) {
@@ -438,19 +453,13 @@ const previousStep = () => {
 const handleSubmit = async () => {
   loading.value = true;
   error.value = "";
-
   try {
     const currentUser = await useCurrentUser();
     const userId = currentUser?.id;
-
     if (!userId) {
       error.value = "User session not found. Please log in again.";
       return;
     }
-
-    // Prepare social links
-    const socialLinks = hasSocialLinks.value ? form.value.socialLinks : null;
-
     await $fetch("/api/profile/create", {
       method: "POST",
       body: {
@@ -461,10 +470,9 @@ const handleSubmit = async () => {
         role: form.value.role,
         bio: form.value.bio || null,
         profilePicture: form.value.profilePicture || null,
-        socialLinks,
+        socialLinks: hasSocialLinks.value ? form.value.socialLinks : null,
       },
     });
-
     window.location.href = "/discover";
   } catch (err: any) {
     error.value =

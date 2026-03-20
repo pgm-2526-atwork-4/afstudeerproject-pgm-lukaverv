@@ -1,46 +1,6 @@
-import jwt from "jsonwebtoken";
-import { getToken } from "#auth";
-
 export default defineEventHandler(async (event) => {
-  // Auth
-  let userId: string | null = null;
-
-  const token = await getToken({ event });
-  if (token?.email) {
-    const user = await prisma.user.findUnique({
-      where: { email: token.email as string },
-      select: { id: true },
-    });
-    if (user) userId = user.id;
-  }
-
-  if (!userId) {
-    const authToken = getCookie(event, "auth_token");
-    if (authToken) {
-      try {
-        const decoded = jwt.verify(
-          authToken,
-          process.env.JWT_SECRET || "your-secret-key",
-        ) as { id: string };
-        userId = decoded.id;
-      } catch {
-        throw createError({ statusCode: 401, message: "Invalid token" });
-      }
-    }
-  }
-
-  if (!userId) {
-    throw createError({ statusCode: 401, message: "Authentication required" });
-  }
-
-  const profile = await prisma.profile.findUnique({
-    where: { userId },
-    select: { id: true },
-  });
-
-  if (!profile) {
-    throw createError({ statusCode: 404, message: "Profile not found" });
-  }
+  const userId = await requireAuthUserId(event);
+  const profileId = await getProfileIdFromUserId(userId);
 
   const id = getRouterParam(event, "id");
   if (!id) throw createError({ statusCode: 400, message: "Sale ID required" });
@@ -110,7 +70,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Ensure the requesting producer owns this beat
-  if (item.beat.producerId !== profile.id) {
+  if (item.beat.producerId !== profileId) {
     throw createError({ statusCode: 403, message: "Forbidden" });
   }
 

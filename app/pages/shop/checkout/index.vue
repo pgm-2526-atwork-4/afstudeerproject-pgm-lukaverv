@@ -167,7 +167,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 definePageMeta({
   title: "Checkout",
 });
@@ -200,7 +200,7 @@ const handleCheckout = async () => {
     if (url) {
       window.location.href = url;
     }
-  } catch (err) {
+  } catch (err: any) {
     errorMsg.value =
       err?.data?.message || "Something went wrong. Please try again.";
   } finally {

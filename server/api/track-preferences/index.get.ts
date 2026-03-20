@@ -1,47 +1,6 @@
-import jwt from "jsonwebtoken";
-import { getToken } from "#auth";
-
 export default defineEventHandler(async (event) => {
   try {
-    let userId: string | null = null;
-
-    // Try OAuth session first (GitHub/Google login)
-    const token = await getToken({ event });
-
-    if (token?.email) {
-      const oauthUser = await prisma.user.findUnique({
-        where: { email: token.email as string },
-        select: {
-          id: true,
-        },
-      });
-      if (oauthUser) {
-        userId = oauthUser.id;
-      }
-    }
-
-    // Fallback to JWT token (manual email/password login)
-    if (!userId) {
-      const authToken = getCookie(event, "auth_token");
-      if (authToken) {
-        try {
-          const decoded = jwt.verify(
-            authToken,
-            process.env.JWT_SECRET || "your-secret-key",
-          ) as { id: string; email: string };
-          userId = decoded.id;
-        } catch (error) {
-          // Invalid token
-        }
-      }
-    }
-
-    if (!userId) {
-      throw createError({
-        statusCode: 401,
-        message: "Unauthorized",
-      });
-    }
+    const userId = await requireAuthUserId(event);
 
     // Get user's profile to check role
     const profile = await prisma.profile.findUnique({
@@ -87,7 +46,6 @@ export default defineEventHandler(async (event) => {
 
     return preferences;
   } catch (error: any) {
-    console.error("Error fetching track preferences:", error);
     throw error;
   }
 });

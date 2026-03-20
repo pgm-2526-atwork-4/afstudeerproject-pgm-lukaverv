@@ -40,7 +40,6 @@ export default NuxtAuthHandler({
 
         return true;
       } catch (error) {
-        console.error("OAuth sign-in error:", error);
         return false;
       }
     },

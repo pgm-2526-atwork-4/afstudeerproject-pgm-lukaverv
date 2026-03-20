@@ -19,7 +19,6 @@ export const useCloudinaryUpload = () => {
       options.uploadPreset || (config.public.cloudinary as any).uploadPreset;
 
     if (!cloudName || !uploadPreset) {
-      console.error("Upload configuration missing");
       return;
     }
 
