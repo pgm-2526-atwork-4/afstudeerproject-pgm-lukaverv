@@ -63,7 +63,7 @@
 
           <!-- Username -->
           <NuxtLink
-            :to="`/profile/${producerId}`"
+            :to="`/profile/${data.producer.userId}`"
             class="text-4xl md:text-5xl lg:text-6xl font-black text-white mb-3 tracking-tight hover:underline block"
           >
             @{{ data.producer.username }}
@@ -191,7 +191,7 @@ const filteredBeats = computed(() => {
   // Apply search filter
   if (searchQuery.value.trim()) {
     const query = searchQuery.value.toLowerCase().trim();
-    result = result.filter((beat) => {
+    result = result.filter((beat: any) => {
       // Search in title
       const matchesTitle = beat.title.toLowerCase().includes(query);
 
@@ -199,7 +199,7 @@ const filteredBeats = computed(() => {
       const matchesGenre = beat.genre.toLowerCase().includes(query);
 
       // Search in tags
-      const matchesTags = beat.tags.some((tag) =>
+      const matchesTags = beat.tags.some((tag: string) =>
         tag.toLowerCase().includes(query),
       );
 
